@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
+  const test = '123123';
   return (
     <main className="p-4">
       <h1 className="mb-4 text-2xl font-bold">홈페이지</h1>
@@ -15,7 +16,7 @@ export default function HomePage() {
         <Link href="/login" className="text-blue-500 hover:underline">
           로그인
         </Link>
-        <Link href="/dashboard" className="text-blue-500 hover:underline">
+        <Link href="/dashboard " className="text-blue-500 hover:underline">
           대시보드
         </Link>
       </div>
