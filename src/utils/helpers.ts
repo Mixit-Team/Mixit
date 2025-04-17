@@ -42,8 +42,8 @@ export const truncateText = (text: string, maxLength: number): string => {
 };
 
 /**
- * 이메일 유효성을 검사하는 함수
- * @param email - 검사할 이메일
+ * 아이디 유효성을 검사하는 함수
+ * @param email - 검사할 아이디
  * @returns 유효성 여부
  */
 export const isValidEmail = (email: string): boolean => {

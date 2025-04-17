@@ -7,7 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  const test = '123123';
   return (
     <main className="p-4">
       <h1 className="mb-4 text-2xl font-bold">홈페이지</h1>
