@@ -8,18 +8,19 @@ export default defineConfig({
     viewportHeight: 720,
     video: false,
     screenshotOnRunFailure: false,
-    supportFile: 'cypress/support/e2e.ts',
+    // supportFile: 'cypress/support/e2e.ts',
+    supportFile: false,
     setupNodeEvents(on, config) {
       // implement node event listeners here
       return config;
     },
   },
-  component: {
-    devServer: {
-      framework: 'next',
-      bundler: 'webpack',
-    },
-    specPattern: 'src/**/*.cy.{js,jsx,ts,tsx}',
-    supportFile: 'cypress/support/component.ts',
-  },
+  // component: {
+  //   devServer: {
+  //     framework: 'next',
+  //     bundler: 'webpack',
+  //   },
+  //   specPattern: 'src/**/*.cy.{js,jsx,ts,tsx}',
+  //   supportFile: 'cypress/support/component.ts',
+  // },
 });

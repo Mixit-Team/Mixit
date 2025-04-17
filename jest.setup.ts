@@ -1,6 +1,4 @@
 import '@testing-library/jest-dom';
-import '@testing-library/jest-dom/jest-globals';
-import 'whatwg-fetch';
 
 // Mock next/router
 jest.mock('next/router', () => ({
@@ -15,7 +13,6 @@ jest.mock('next/router', () => ({
   }),
 }));
 
-// Reset all mocks automatically between tests
 beforeEach(() => {
   jest.clearAllMocks();
 });
