@@ -1,21 +1,22 @@
+'use client';
+
 import React from 'react';
 import LoginForm from '../organisms/LoginForm';
+import BackButton from '../atoms/BackButton';
 
-// 임시 layout 추가
 const LoginTemplate: React.FC = () => {
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="bg-gray-100 p-4 text-center">
-        <h1 className="text-xl font-semibold">Mixit</h1>
-      </header>
-      <main className="flex flex-grow flex-col items-center justify-center p-4">
-        <div className="w-full max-w-lg rounded bg-white p-6 shadow">
+    <div className="fixed inset-0 bg-gray-100">
+      <div className="flex h-full w-full flex-col">
+        <div className="flex-1" />
+        <div className="relative mx-auto w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+          <div className="absolute top-6 left-4">
+            <BackButton />
+          </div>
           <LoginForm />
         </div>
-      </main>
-      <footer className="bg-gray-100 p-4 text-center">
-        <small>&copy; {new Date().getFullYear()} All rights reserved.</small>
-      </footer>
+        <div className="flex-1" />
+      </div>
     </div>
   );
 };
