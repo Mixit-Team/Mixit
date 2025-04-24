@@ -1,27 +1,30 @@
-describe('로그인 페이지 테스트', () => {
+describe('Login Page', () => {
   beforeEach(() => {
     cy.visit('/login');
   });
 
-  it('로그인 폼이 올바르게 표시되는지 확인', () => {
-    cy.get('form').should('be.visible');
-
-    cy.get('input#email').should('exist').and('have.attr', 'placeholder', '아이디을 입력하세요');
-
-    cy.get('input#password')
-      .should('exist')
-      .and('have.attr', 'placeholder', '비밀번호를 입력하세요');
-
-    cy.get('button[type="submit"]').should('contain.text', '로그인');
+  it('로그인 폼 요소가 모두 렌더링 되어야 한다.', () => {
+    // Check if form elements are visible
+    cy.get('input[name="username"]').should('be.visible');
+    cy.get('input[name="password"]').should('be.visible');
+    cy.get('input[type="checkbox"]').should('be.visible');
+    cy.get('button[type="submit"]').should('be.visible');
+    cy.contains('카카오로 로그인').should('be.visible');
   });
 
-  it('사용자 입력 후 폼 제출 테스트', () => {
-    cy.get('input#email').type('test@mixit.com');
-    cy.get('input#password').type('123');
+  it('빈 항목이 있으면 에러 메시지가 나와야 한다.', () => {
+    cy.get('button[type="submit"]').click();
+    cy.contains('아이디를 입력해주세요').should('be.visible');
+    cy.contains('비밀번호를 입력해주세요').should('be.visible');
+  });
 
-    // 폼 제출
-    cy.get('form').submit();
+  it('회원가입 링크를 클릭하면 회원가입 페이지로 이동해야 한다.', () => {
+    cy.contains('회원가입').click();
+    cy.url().should('include', '/signup');
+  });
 
-    cy.url().should('include', '/login');
+  it('뒤로가기 버튼을 클릭하면 메인 페이지로 이동해야 한다.', () => {
+    cy.get('.absolute.top-6.left-4 button').click();
+    cy.url().should('not.include', '/login');
   });
 });
