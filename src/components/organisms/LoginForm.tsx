@@ -1,12 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { login } from '@/services/auth/login';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 const loginSchema = z.object({
-  username: z.string().min(1, '아이디를 입력해주세요'),
+  loginId: z.string().min(1, '아이디를 입력해주세요'),
   password: z.string().min(1, '비밀번호를 입력해주세요'),
   saveId: z.boolean(),
 });
@@ -14,10 +18,14 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginForm: React.FC = () => {
+  const router = useRouter();
+  const { handleLoginSuccess } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -25,10 +33,41 @@ export const LoginForm: React.FC = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<LoginFormData> = data => {
-    console.log(data);
-    // TODO: Implement login logic
-  };
+  // 저장된 아이디 불러오기
+  useEffect(() => {
+    const savedId = localStorage.getItem('savedId');
+    if (savedId) {
+      setValue('loginId', savedId);
+      setValue('saveId', true);
+    }
+  }, [setValue]);
+
+  const onSubmit: SubmitHandler<LoginFormData> = useCallback(
+    async data => {
+      try {
+        setIsLoading(true);
+        const { saveId, ...loginData } = data;
+
+        // 아이디 저장 처리
+        if (saveId) {
+          localStorage.setItem('savedId', loginData.loginId);
+        } else {
+          localStorage.removeItem('savedId');
+        }
+
+        const response = await login(loginData);
+        handleLoginSuccess(response);
+        toast.success('로그인에 성공했습니다!');
+        router.push('/');
+      } catch (error) {
+        const err = error as { message: string };
+        toast.error(err.message || '로그인에 실패했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router, handleLoginSuccess]
+  );
 
   return (
     <form
@@ -54,11 +93,9 @@ export const LoginForm: React.FC = () => {
             type="text"
             placeholder="아이디"
             className="w-full rounded border border-gray-300 px-4 py-2 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none"
-            {...register('username')}
+            {...register('loginId')}
           />
-          {errors.username && (
-            <p className="mt-1 text-sm text-red-500">{errors.username.message}</p>
-          )}
+          {errors.loginId && <p className="mt-1 text-sm text-red-500">{errors.loginId.message}</p>}
         </div>
         <div>
           <input
@@ -89,9 +126,10 @@ export const LoginForm: React.FC = () => {
       {/* Login Button */}
       <button
         type="submit"
-        className="w-full rounded bg-orange-500 py-2 font-semibold text-white hover:bg-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:outline-none"
+        disabled={isLoading}
+        className="w-full rounded bg-orange-500 py-2 font-semibold text-white hover:bg-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
-        로그인하기
+        {isLoading ? '로그인 중...' : '로그인하기'}
       </button>
 
       {/* Links */}

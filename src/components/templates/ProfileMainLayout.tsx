@@ -4,20 +4,20 @@ import React from 'react';
 import BottomNavigation from '../molecules/BottomNavigation';
 import BackButton from '../atoms/BackButton';
 
-interface ProfileProfileMainLayoutProps {
+interface ProfileMainLayoutProps {
   children: React.ReactNode;
   title?: string;
   showBackButton?: boolean;
 }
 
-const ProfileProfileMainLayout: React.FC<ProfileProfileMainLayoutProps> = ({
+const ProfileMainLayout: React.FC<ProfileMainLayoutProps> = ({
   children,
   title,
   showBackButton = false,
 }) => {
   return (
     <div className="fixed inset-0 bg-gray-100">
-      <div className="relative mx-auto flex h-full w-full max-w-md flex-col bg-white shadow-lg">
+      <div className="relative mx-auto flex h-full w-full max-w-sm flex-col bg-white shadow-lg md:max-w-md lg:max-w-lg">
         {title && (
           <header className="sticky top-0 z-10 flex h-12 flex-shrink-0 items-center justify-center border-b border-gray-200 bg-white px-4">
             {showBackButton && (
@@ -37,4 +37,4 @@ const ProfileProfileMainLayout: React.FC<ProfileProfileMainLayoutProps> = ({
   );
 };
 
-export default ProfileProfileMainLayout;
+export default ProfileMainLayout;

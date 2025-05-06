@@ -9,7 +9,7 @@ interface UserInfoSectionProps {
 const UserInfoSection: React.FC<UserInfoSectionProps> = React.memo(({ nickname }) => {
   return (
     <div className="py-4">
-      <p className="text-lg font-semibold text-gray-800">{nickname}</p>
+      <p className="text-lg font-semibold text-gray-800">{nickname}님, 안녕하세요!</p>
     </div>
   );
 });

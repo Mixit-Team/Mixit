@@ -13,7 +13,7 @@ interface ProfileAuthFormData {
 
 interface ProfileAuthFormProps {
   onAuthenticated: () => void;
-  userId?: string; // Pre-filled user ID (optional)
+  userId?: string;
 }
 
 const ProfileAuthForm: React.FC<ProfileAuthFormProps> = ({ onAuthenticated, userId = '' }) => {
@@ -43,11 +43,9 @@ const ProfileAuthForm: React.FC<ProfileAuthFormProps> = ({ onAuthenticated, user
       setAuthError(null);
 
       try {
-        // Simulate API call to verify credentials
         console.log('Verifying credentials:', data);
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Simulate successful authentication (in real app, you'd check the response)
         if (Math.random() > 0.2) {
           onAuthenticated();
         } else {

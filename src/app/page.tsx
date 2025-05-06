@@ -15,8 +15,8 @@ export default function HomePage() {
         <Link href="/login" className="text-blue-500 hover:underline">
           로그인
         </Link>
-        <Link href="/dashboard " className="text-blue-500 hover:underline">
-          대시보드
+        <Link href="/mypage " className="text-blue-500 hover:underline">
+          마이페이지
         </Link>
       </div>
     </main>

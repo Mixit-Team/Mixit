@@ -1,58 +1,34 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
-import ProfileMainLayout from '@/components/templates/ProfileMainLayout';
-import ProfileAuthForm from '@/components/molecules/ProfileAuthForm';
+import React, { useState, useCallback } from 'react';
 import ProfileInfoForm from '@/components/molecules/ProfileInfoForm';
+import ProfileAuthForm from '@/components/molecules/ProfileAuthForm';
 import Modal from '@/components/atoms/Modal';
+import ProfileMainLayout from '@/components/templates/ProfileMainLayout';
+import { useUserProfile } from '@/store/user';
 
-interface ProfileData {
+interface ProfileFormData {
   userId: string;
   name: string;
   birthdate: string;
   email: string;
   nickname: string;
-  password?: string;
-  passwordConfirm?: string;
 }
 
-const MOCK_USER: ProfileData = {
-  userId: 'Mixit12',
-  name: '김믹스',
-  birthdate: '940101',
-  email: 'mixit@example.com',
-  nickname: '믹스잇',
-};
-
-const ProfilePage: React.FC = () => {
+export default function ProfilePage() {
+  const userProfile = useUserProfile();
   const [authenticated, setAuthenticated] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: '', message: '' });
-  const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState(MOCK_USER);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      setIsLoading(true);
-      try {
-        await new Promise(resolve => setTimeout(resolve, 800));
-
-        setUserData(MOCK_USER);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
+  const [modalContent, setModalContent] = useState({
+    title: '',
+    message: '',
+  });
 
   const handleAuthentication = useCallback(() => {
     setAuthenticated(true);
   }, []);
 
-  const handleSaveProfile = useCallback((data: ProfileData) => {
+  const handleSaveProfile = useCallback((data: ProfileFormData) => {
     console.log('Saving profile data:', data);
 
     setModalContent({
@@ -60,22 +36,17 @@ const ProfilePage: React.FC = () => {
       message: '회원정보가 성공적으로 업데이트되었습니다.',
     });
     setIsModalOpen(true);
-
-    setUserData(prev => ({
-      ...prev,
-      ...data,
-    }));
   }, []);
 
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
   }, []);
 
-  if (isLoading) {
+  if (!userProfile) {
     return (
       <ProfileMainLayout title="회원정보" showBackButton>
         <div className="flex h-60 items-center justify-center">
-          <p className="text-gray-500">로딩 중...</p>
+          <p className="text-gray-500">로그인이 필요합니다.</p>
         </div>
       </ProfileMainLayout>
     );
@@ -85,9 +56,19 @@ const ProfilePage: React.FC = () => {
     <ProfileMainLayout title="회원정보 인증" showBackButton>
       <div className="p-4">
         {!authenticated ? (
-          <ProfileAuthForm onAuthenticated={handleAuthentication} userId={userData.userId} />
+          <ProfileAuthForm onAuthenticated={handleAuthentication} userId={userProfile.loginId} />
         ) : (
-          <ProfileInfoForm initialData={userData} onSave={handleSaveProfile} />
+          <ProfileInfoForm
+            initialData={{
+              userId: userProfile.loginId,
+              name: userProfile.name,
+              birthdate: userProfile.birth,
+              email: userProfile.email,
+              nickname: userProfile.nickname,
+              // imageId: userProfile.imageSrc,
+            }}
+            onSave={handleSaveProfile}
+          />
         )}
 
         {/* Success Modal */}
@@ -101,6 +82,4 @@ const ProfilePage: React.FC = () => {
       </div>
     </ProfileMainLayout>
   );
-};
-
-export default ProfilePage;
+}
