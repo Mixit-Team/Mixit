@@ -72,27 +72,27 @@ export const LoginForm: React.FC = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="contents-center flex h-screen max-h-full flex-col items-center justify-center space-y-6"
+      className="contents-center flex min-h-screen flex-col items-center justify-start gap-6 pt-50"
     >
       {/* Logo */}
-      <div className="pt-1 text-4xl font-bold">
+      <div className="text-5xl font-bold">
         <span className="text-black">mix</span>
         <span className="text-orange-500">i</span>
         <span className="text-pink-500">t</span>
       </div>
       <p className="text-md pb-10 text-center text-gray-600">
-        요즘 뜨는 꿀조합부터 나만의 비밀 조합까지
+        요즘 뜨는 꿀조합부터
         <br />
-        이제 믹스잇에서 한 번에 만나보세요.
+        나만의 비밀 조합까지 믹스잇!
       </p>
 
       {/* Form Fields */}
-      <div className="w-full space-y-4 pt-30">
+      <div className="w-full space-y-4 pt-20">
         <div>
           <input
             type="text"
             placeholder="아이디"
-            className="w-full rounded border border-gray-300 px-4 py-2 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none"
+            className="w-full rounded border border-gray-300 px-4 py-3 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none"
             {...register('loginId')}
           />
           {errors.loginId && <p className="mt-1 text-sm text-red-500">{errors.loginId.message}</p>}
@@ -101,7 +101,7 @@ export const LoginForm: React.FC = () => {
           <input
             type="password"
             placeholder="비밀번호"
-            className="w-full rounded border border-gray-300 px-4 py-2 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none"
+            className="w-full rounded border border-gray-300 px-4 py-3 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none"
             {...register('password')}
           />
           {errors.password && (
@@ -127,15 +127,15 @@ export const LoginForm: React.FC = () => {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full rounded bg-orange-500 py-2 font-semibold text-white hover:bg-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full cursor-pointer rounded-md bg-orange-500 py-3.5 font-semibold text-white hover:bg-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isLoading ? '로그인 중...' : '로그인하기'}
       </button>
 
       {/* Links */}
-      <div className="text-center text-xs text-gray-500">
+      <div className="text-center text-sm text-gray-500">
         <a href="#" className="hover:underline">
-          아이디/비밀번호 찾기
+          아이디 / 비밀번호 찾기
         </a>
         <span className="mx-2">|</span>
         <a href="/signup" className="hover:underline">
@@ -146,7 +146,7 @@ export const LoginForm: React.FC = () => {
       {/* Kakao Login Button */}
       <button
         type="button"
-        className="mt-4 w-full rounded border border-white bg-yellow-300 py-2 text-white hover:bg-yellow-400 focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2 focus:outline-none"
+        className="mt-4 w-full cursor-pointer rounded-md border border-white bg-yellow-400 py-3.5 text-white hover:bg-yellow-500 focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2 focus:outline-none"
       >
         카카오로 로그인하기
       </button>

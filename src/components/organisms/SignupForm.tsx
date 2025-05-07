@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useSignup } from '../../hooks/useSignup';
 import { checkDuplicate } from '../../services/auth/signup';
 import { uploadImage } from '@/services/auth/image';
+import { requestEmailVerification, verifyEmail } from '@/services/auth/email';
 import { SignupError } from '@/types/auth';
 
 import Modal from '../atoms/Modal';
@@ -69,6 +70,11 @@ const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [showVerificationCode, setShowVerificationCode] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
 
   // react hook form setup
   const {
@@ -235,6 +241,52 @@ const SignupForm = () => {
     []
   );
 
+  const handleEmailVerificationRequest = useCallback(async () => {
+    const email = getValues('email');
+    setIsCheckingEmail(true);
+    clearErrors('email');
+
+    try {
+      const isDuplicate = await checkDuplicate('email', email);
+      if (isDuplicate) {
+        showModal('알림', '사용중인 이메일 입니다. 다른 이메일을 입력해 주세요.');
+        setError('email', { type: 'duplicate', message: '이미 사용중인 이메일입니다.' });
+      } else {
+        try {
+          await requestEmailVerification(email);
+          showModal('알림', '인증 코드가 이메일로 전송되었습니다.');
+          setShowVerificationCode(true);
+        } catch (error) {
+          const signupError = error as SignupError;
+          showModal('오류', signupError.message || '이메일 인증 요청 중 오류가 발생했습니다.');
+        }
+      }
+    } catch (error) {
+      const signupError = error as SignupError;
+      showModal('오류', signupError.message || '이메일 중복 확인 중 오류가 발생했습니다.');
+      setError('email', { type: 'apiError', message: signupError.message });
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  }, [getValues, setError, clearErrors, showModal]);
+
+  const handleEmailVerification = useCallback(async () => {
+    const email = getValues('email');
+    setIsVerifyingEmail(true);
+
+    try {
+      await verifyEmail(email, verificationCode);
+      showModal('알림', '이메일 인증이 완료되었습니다.');
+      setIsEmailVerified(true);
+      setShowVerificationCode(false);
+    } catch (error) {
+      const signupError = error as SignupError;
+      showModal('오류', signupError.message || '이메일 인증 중 오류가 발생했습니다.');
+    } finally {
+      setIsVerifyingEmail(false);
+    }
+  }, [getValues, verificationCode, showModal]);
+
   // Form Submit
   const onSubmit = (data: SignupFormData) => {
     console.log('Form data before submit:', data);
@@ -271,7 +323,8 @@ const SignupForm = () => {
     !watchedNickname ||
     watchedNickname.length < NICKNAME_MIN_LENGTH ||
     !!errors.nickname;
-  const isSubmitDisabled = isSubmitting || !isValid || !watchedAgreeService || !watchedAgreePrivacy;
+  const isSubmitDisabled =
+    isSubmitting || !isValid || !watchedAgreeService || !watchedAgreePrivacy || !isEmailVerified;
 
   return (
     <>
@@ -376,7 +429,43 @@ const SignupForm = () => {
             pattern: { value: EMAIL_REGEX, message: '올바른 이메일 형식이 아닙니다' },
           })}
           error={errors.email}
+          button={
+            <Button
+              type="button"
+              onClick={handleEmailVerificationRequest}
+              disabled={isCheckingEmail || !watch('email') || !!errors.email || isEmailVerified}
+              isLoading={isCheckingEmail}
+              variant="primary"
+              className="whitespace-nowrap"
+            >
+              {isEmailVerified ? '인증완료' : '인증요청'}
+            </Button>
+          }
         />
+
+        {showVerificationCode && (
+          <div className="flex space-x-2">
+            <InputField
+              label="인증코드"
+              id="verificationCode"
+              type="text"
+              placeholder="인증코드 입력"
+              value={verificationCode}
+              onChange={e => setVerificationCode(e.target.value)}
+              error={undefined}
+            />
+            <Button
+              type="button"
+              onClick={handleEmailVerification}
+              disabled={isVerifyingEmail || !verificationCode}
+              isLoading={isVerifyingEmail}
+              variant="primary"
+              className="mt-6 whitespace-nowrap"
+            >
+              인증하기
+            </Button>
+          </div>
+        )}
 
         <InputField
           label="닉네임"

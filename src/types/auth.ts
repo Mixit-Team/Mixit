@@ -56,6 +56,7 @@ export interface LoginResponse {
     birth: string;
     email: string;
     nickname: string;
+    imageSrc: string;
   };
 }
 

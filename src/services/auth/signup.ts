@@ -24,18 +24,19 @@ interface DuplicateCheckErrorResponse {
   data: {
     loginId?: string;
     nickname?: string;
+    email?: string;
   };
 }
 
 export const checkDuplicate = async (
-  field: 'loginId' | 'nickname',
+  field: 'loginId' | 'nickname' | 'email',
   value: string
 ): Promise<boolean> => {
   try {
     const payload: DuplicateCheckPayload = {
       loginId: field === 'loginId' ? value : null,
       nickname: field === 'nickname' ? value : null,
-      email: null,
+      email: field === 'email' ? value : null,
     };
 
     const response = await apiClient.post<DuplicateCheckResponse>('/accounts/duplicate', payload);

@@ -11,7 +11,7 @@ import { toast } from 'react-hot-toast';
 const MyPageContent: React.FC = () => {
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const { userProfile, clearUserProfile } = useUserStore();
+  const { userProfile, logout } = useUserStore();
 
   const handleLogout = useCallback(() => {
     setIsLoggingOut(true);
@@ -21,7 +21,7 @@ const MyPageContent: React.FC = () => {
     localStorage.removeItem('tokenExpiresIn');
 
     // 프로필 정보 삭제
-    clearUserProfile();
+    logout();
 
     // 로그아웃 성공 메시지 표시
     toast.success('로그아웃 되었습니다.', {
@@ -35,13 +35,11 @@ const MyPageContent: React.FC = () => {
 
     // 로그인 페이지로 이동
     router.push('/login');
-  }, [router, clearUserProfile]);
+  }, [router, logout]);
 
   if (!userProfile) {
     return null;
   }
-
-  console.log(userProfile);
 
   return (
     <div className="flex flex-col space-y-6 p-4">

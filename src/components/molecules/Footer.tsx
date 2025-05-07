@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 const Footer: React.FC = () => {
   return (
@@ -7,13 +8,13 @@ const Footer: React.FC = () => {
         <p className="mb-2 text-lg font-bold text-gray-400">Mixit</p>
         <p className="text-xs">문의, 비즈니스 제안: aaaaaaa@aaaaa.com</p>
         <div className="mt-2 text-xs">
-          <a href="#" className="hover:underline">
+          <Link href="/terms/service" className="hover:underline">
             이용약관
-          </a>
+          </Link>
           <span className="mx-2">|</span>
-          <a href="#" className="hover:underline">
+          <Link href="/terms/privacy" className="hover:underline">
             개인정보처리방침
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

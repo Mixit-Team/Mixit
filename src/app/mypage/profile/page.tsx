@@ -5,7 +5,7 @@ import ProfileInfoForm from '@/components/molecules/ProfileInfoForm';
 import ProfileAuthForm from '@/components/molecules/ProfileAuthForm';
 import Modal from '@/components/atoms/Modal';
 import ProfileMainLayout from '@/components/templates/ProfileMainLayout';
-import { useUserProfile } from '@/store/user';
+import { useUserStore } from '@/store/userStore';
 
 interface ProfileFormData {
   userId: string;
@@ -16,7 +16,7 @@ interface ProfileFormData {
 }
 
 export default function ProfilePage() {
-  const userProfile = useUserProfile();
+  const { userProfile } = useUserStore();
   const [authenticated, setAuthenticated] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({
@@ -65,7 +65,7 @@ export default function ProfilePage() {
               birthdate: userProfile.birth,
               email: userProfile.email,
               nickname: userProfile.nickname,
-              // imageId: userProfile.imageSrc,
+              imageSrc: userProfile.imageSrc,
             }}
             onSave={handleSaveProfile}
           />

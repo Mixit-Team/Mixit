@@ -5,7 +5,7 @@ export const useAuth = () => {
   const { setUserProfile } = useUserStore();
 
   const handleLoginSuccess = (response: LoginResponse) => {
-    const { token, expiresIn, loginId, name, birth, email, nickname } = response.data;
+    const { token, expiresIn, loginId, name, birth, email, nickname, imageSrc } = response.data;
 
     // 토큰 저장
     localStorage.setItem('token', token);
@@ -13,11 +13,12 @@ export const useAuth = () => {
 
     // 프로필 정보 저장
     setUserProfile({
-      id: 0, // API에서 제공하지 않는 경우 임시값
-      loginId,
-      name,
+      id: 0, // 임시 ID 값
       birth,
       email,
+      imageSrc,
+      loginId,
+      name,
       nickname,
     });
   };

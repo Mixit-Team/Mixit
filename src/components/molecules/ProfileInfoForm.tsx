@@ -10,10 +10,11 @@ import { checkDuplicate } from '@/services/auth/signup';
 import { changePassword } from '@/services/auth/password';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/services/auth/image';
+import NextImage from 'next/image';
 
 // Validation constants
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
-const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i; // 이메일 인증 기능 추후 추가 예정
 const NICKNAME_MIN_LENGTH = 2;
 const NICKNAME_MAX_LENGTH = 10;
 const MAX_FILE_SIZE_MB = 10;
@@ -49,8 +50,8 @@ interface ProfileInfoFormProps {
 const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }) => {
   const [isCheckingNickname, setIsCheckingNickname] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [kakaoToken, setKakaoToken] = useState('');
-  const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
+  // const [kakaoToken, setKakaoToken] = useState(''); // SNS 계정 연동 기능 추후 추가 예정
+  // const [isVerifyingEmail, setIsVerifyingEmail] = useState(false); // 이메일 인증 기능 추후 추가 예정
   const [profileImage, setProfileImage] = useState<string | null>(initialData.imageSrc || null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({
@@ -65,7 +66,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
     watch,
     setError,
     clearErrors,
-    formState: { errors, isValid, isDirty },
+    formState: { errors, isDirty, isValid },
     setValue,
   } = useForm<ProfileInfoFormData>({
     mode: 'onChange',
@@ -95,7 +96,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
   const watchedUserId = watch('userId');
   const watchedNickname = watch('nickname');
   const watchedOldPwd = watch('oldPwd');
-  const watchedEmail = watch('email');
+  // const watchedEmail = watch('email'); // 이메일 인증 기능 추후 추가 예정
 
   const handleCheckDuplicate = useCallback(
     async (field: 'userId' | 'nickname') => {
@@ -141,43 +142,44 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
     [watchedUserId, watchedNickname, setError, clearErrors]
   );
 
-  const handleConnectionToggle = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 800));
+  // SNS 계정 연동 기능 추후 추가 예정
+  // const handleConnectionToggle = useCallback(async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     await new Promise(resolve => setTimeout(resolve, 800));
 
-      if (kakaoToken) {
-        setKakaoToken('');
-      } else {
-        setKakaoToken('sample-token-' + Math.random().toString(36).substring(2, 10));
-      }
-    } catch (error) {
-      console.error('Error connecting SNS:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [kakaoToken]);
+  //     if (kakaoToken) {
+  //       setKakaoToken('');
+  //     } else {
+  //       setKakaoToken('sample-token-' + Math.random().toString(36).substring(2, 10));
+  //     }
+  //   } catch (error) {
+  //     console.error('Error connecting SNS:', error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }, [kakaoToken]);
 
-  const handleEmailVerification = useCallback(async () => {
-    const email = watch('email');
-    if (!email) return;
+  // const handleEmailVerification = useCallback(async () => { // 이메일 인증 기능 추후 추가 예정
+  //   const email = watch('email');
+  //   if (!email) return;
 
-    setIsVerifyingEmail(true);
-    clearErrors('email');
+  //   setIsVerifyingEmail(true);
+  //   clearErrors('email');
 
-    try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      console.log('Email verification sent to:', email);
-    } catch (error) {
-      console.error('Error verifying email:', error);
-      setError('email', {
-        type: 'validate',
-        message: '이메일 인증 중 오류가 발생했습니다.',
-      });
-    } finally {
-      setIsVerifyingEmail(false);
-    }
-  }, [watch, setError, clearErrors]);
+  //   try {
+  //     await new Promise(resolve => setTimeout(resolve, 800));
+  //     console.log('Email verification sent to:', email);
+  //   } catch (error) {
+  //     console.error('Error verifying email:', error);
+  //     setError('email', {
+  //       type: 'validate',
+  //       message: '이메일 인증 중 오류가 발생했습니다.',
+  //     });
+  //   } finally {
+  //     setIsVerifyingEmail(false);
+  //   }
+  // }, [watch, setError, clearErrors]);
 
   const handleProfileImageClick = () => {
     fileInputRef.current?.click();
@@ -253,6 +255,15 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
     setIsModalOpen(false);
   }, []);
 
+  const isOldPwdFilled = !!watch('oldPwd');
+  const isNewPwdFilled = !!watch('newPwd');
+  const hasFieldError =
+    !!errors.oldPwd ||
+    !!errors.newPwd ||
+    !!errors.nickname ||
+    !!errors.imageId ||
+    (isOldPwdFilled && !isNewPwdFilled);
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-4 flex flex-col space-y-5 pb-4">
@@ -271,13 +282,19 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
           type="password"
           placeholder="현재 비밀번호 확인"
           registration={register('oldPwd', {
-            required: '현재 비밀번호를 입력해주세요',
-            pattern: {
-              value: PASSWORD_REGEX,
-              message: '영문/숫자 조합 8-12자로 입력해주세요.',
+            validate: value => {
+              if (value === '') return true;
+              if (!PASSWORD_REGEX.test(value)) return '영문/숫자 조합 8-12자로 입력해주세요.';
+              return true;
             },
           })}
           error={errors.oldPwd}
+          onChange={e => {
+            register('oldPwd').onChange(e);
+            if (e.target.value === '') {
+              clearErrors('oldPwd');
+            }
+          }}
         />
 
         {/* New password field */}
@@ -334,6 +351,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
           id="email"
           type="email"
           placeholder="이메일 입력"
+          readOnly
           registration={register('email', {
             required: '이메일을 입력해주세요',
             pattern: {
@@ -341,19 +359,19 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
               message: '올바른 이메일 형식이 아닙니다',
             },
           })}
-          error={errors.email}
-          button={
-            <Button
-              type="button"
-              onClick={handleEmailVerification}
-              disabled={isVerifyingEmail || !watchedEmail || !EMAIL_REGEX.test(watchedEmail)}
-              isLoading={isVerifyingEmail}
-              variant="primary"
-              className="whitespace-nowrap"
-            >
-              인증하기
-            </Button>
-          }
+          // error={errors.email}
+          // button={
+          //   <Button
+          //     type="button"
+          //     onClick={handleEmailVerification}
+          //     disabled={isVerifyingEmail || !watchedEmail || !EMAIL_REGEX.test(watchedEmail)}
+          //     isLoading={isVerifyingEmail}
+          //     variant="primary"
+          //     className="whitespace-nowrap"
+          //   >
+          //     인증하기
+          //   </Button>
+          // }
         />
 
         {/* Nickname with duplicate check */}
@@ -405,18 +423,21 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
             />
             <button
               type="button"
-              className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-gray-200 transition-colors hover:bg-gray-300"
+              className="relative flex h-24 w-24 items-center justify-center overflow-hidden bg-gray-200 transition-colors hover:bg-gray-300"
               onClick={handleProfileImageClick}
               disabled={isLoading}
             >
               {profileImage ? (
-                <img
+                <NextImage
                   src={profileImage}
                   alt="프로필 이미지"
-                  className="absolute inset-0 h-full w-full object-cover"
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+                  priority
                 />
               ) : (
-                <ImageIcon size={20} className="text-gray-400" />
+                <ImageIcon size={32} className="text-gray-400" />
               )}
               {isLoading && (
                 <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black">
@@ -427,8 +448,8 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
           </div>
         </div>
 
-        {/* SNS Account Connection */}
-        <div className="pt-4">
+        {/* SNS 계정 연동 기능 추후 추가 예정 */}
+        {/* <div className="pt-4">
           <h3 className="mb-3 text-sm font-medium text-gray-700">SNS 계정 연결 관리</h3>
           <div className="flex w-full items-center">
             <input
@@ -447,7 +468,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
               {kakaoToken ? '해제/연결' : '연결하기'}
             </Button>
           </div>
-        </div>
+        </div> */}
 
         {/* 약관 알림 */}
         <div className="space-y-3 pt-4">
@@ -512,7 +533,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
             variant="primary"
             fullWidth
             isLoading={isLoading}
-            disabled={!isDirty || !isValid || isLoading}
+            disabled={hasFieldError || !isDirty || !isValid || isLoading}
           >
             등록
           </Button>

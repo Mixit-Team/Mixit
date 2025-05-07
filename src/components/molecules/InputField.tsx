@@ -1,14 +1,16 @@
 import React from 'react';
 import { UseFormRegisterReturn, FieldError } from 'react-hook-form';
 
-interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   label: string;
   id: string;
-  registration: UseFormRegisterReturn;
+  registration?: UseFormRegisterReturn;
   error?: FieldError;
   button?: React.ReactNode;
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -21,6 +23,8 @@ const InputField: React.FC<InputFieldProps> = ({
   button,
   icon,
   iconPosition = 'right',
+  onChange,
+  value,
   ...rest
 }) => {
   const paddingClass = icon ? (iconPosition === 'right' ? 'pr-10' : 'pl-10') : '';
@@ -38,8 +42,9 @@ const InputField: React.FC<InputFieldProps> = ({
             id={id}
             type={type}
             placeholder={placeholder}
-            className={`w-full rounded-md border px-3 py-2 placeholder-gray-400 focus:border-orange-500 focus:outline-none ${error ? 'border-red-500' : 'border-gray-300'} ${paddingClass}`} // Apply padding class
-            {...registration}
+            className={`w-full rounded-md border px-3 py-2 placeholder-gray-400 focus:border-orange-500 focus:outline-none ${error ? 'border-red-500' : 'border-gray-300'} ${paddingClass}`}
+            {...(registration || {})}
+            {...(onChange ? { onChange, value } : {})}
             {...rest}
           />
           {icon && (
