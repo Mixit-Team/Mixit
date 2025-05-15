@@ -1,9 +1,14 @@
+import { COLOR_ATOMIC_ORANGE_80 } from '@/config/color.config';
 import type { Config } from 'tailwindcss';
 
-export default {
-  content: [],
+const config: Config = {
+  content: ['./src/app/**/*.{ts,tsx,js,jsx}', './src/components/**/*.{ts,tsx,js,jsx}'],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'atomic-orange-80': COLOR_ATOMIC_ORANGE_80,
+      },
+    },
     screens: {
       mobile: '767px',
       tablet: '1024px',
@@ -14,4 +19,6 @@ export default {
     },
   },
   plugins: [],
-} satisfies Config;
+};
+
+export default config;
