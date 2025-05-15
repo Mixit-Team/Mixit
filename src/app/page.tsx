@@ -18,6 +18,9 @@ export default function HomePage() {
         <Link href="/dashboard " className="text-blue-500 hover:underline">
           대시보드
         </Link>
+        <Link href="/home " className="text-blue-500 hover:underline">
+          홈
+        </Link>
       </div>
     </main>
   );
