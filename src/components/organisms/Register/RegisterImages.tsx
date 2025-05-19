@@ -24,6 +24,13 @@ const RegisterImages: React.FC<RegisterImagesProps> = ({ images, onChange, maxIm
 
   const handleAddImages = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
+
+    const validTypes = ['image/jpeg', 'image/png'];
+    if (!validTypes.includes(e.target.files?.[0].type)) {
+      alert('JPG 또는 PNG 파일만 업로드 가능합니다!');
+      e.target.value = '';
+      return;
+    }
     const selected = Array.from(e.target.files);
     const combined = [...images, ...selected].slice(0, maxImages);
     onChange(combined);
@@ -39,7 +46,6 @@ const RegisterImages: React.FC<RegisterImagesProps> = ({ images, onChange, maxIm
     <div className="flex flex-col gap-2 rounded-lg bg-white p-4">
       <h2 className="text-lg font-semibold">사진 (선택)</h2>
       <div className="flex flex-wrap gap-2">
-        {/* 업로드 버튼 */}
         {images.length < maxImages && (
           <label className="relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200">
             <ImageIcon className="h-6 w-6 text-gray-500" />
@@ -48,7 +54,7 @@ const RegisterImages: React.FC<RegisterImagesProps> = ({ images, onChange, maxIm
             </span>
             <input
               type="file"
-              accept="image/*"
+              accept=".jpg,.jpeg,.png"
               multiple
               className="absolute inset-0 cursor-pointer opacity-0"
               onChange={handleAddImages}
@@ -56,10 +62,8 @@ const RegisterImages: React.FC<RegisterImagesProps> = ({ images, onChange, maxIm
           </label>
         )}
 
-        {/* 미리보기 박스 */}
         {previews.map((src, idx) => (
           <div key={idx} className="relative h-20 w-20 overflow-hidden rounded-lg">
-            {/* next/image를 fill 모드로 사용 */}
             <Image src={src} alt={`preview-${idx}`} fill className="object-cover" />
             <button
               type="button"

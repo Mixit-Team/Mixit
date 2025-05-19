@@ -77,13 +77,9 @@ export default function RegisterTemplate() {
   return (
     <form onSubmit={handleSubmit} className="mx-auto w-full space-y-6 rounded-lg bg-white p-6">
       <RegisterHeader />
-
       <RegisterCategory category={params.category} onChange={handleChange('category')} />
-
       <RegisterTitle title={params.title} onChange={handleChange('title')} />
-
       <RegisterImages images={params.images} onChange={handleChange('images')} maxImages={10} />
-
       <RegisterTags
         tags={params.tags}
         onChange={handleChange('tags')}

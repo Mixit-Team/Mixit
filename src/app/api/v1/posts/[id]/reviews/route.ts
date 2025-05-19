@@ -23,18 +23,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { content, imageIds } = await request.json();
+  const { content, images } = await request.json();
 
   const BACKEND = process.env.BACKEND_URL!;
   const url = `${BACKEND}/api/v1/posts/${id}/reviews`;
   console.log('POST /api/v1/posts/[id]/reviews id:', id);
   console.log('POST /api/v1/posts/[id]/reviews url:', url);
   console.log('POST /api/v1/posts/[id]/reviews content:', content);
-  console.log('POST /api/v1/posts/[id]/reviews imageIds:', imageIds);
+  console.log('POST /api/v1/posts/[id]/reviews images:', images);
 
   const res = await axios.post(
     url,
-    { content, imageIds, rate: 1 },
+    { content, images, rate: 1 },
     {
       headers: {
         Authorization: `Bearer ${process.env.AUTH_HEADER}`,
@@ -49,9 +49,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
+  const { reviewId } = await request.json();
 
   const BACKEND = process.env.BACKEND_URL!;
-  const url = `${BACKEND}/api/v1/posts/${id}/reviews`;
+  const url = `${BACKEND}/api/v1/posts/${id}/reviews/${reviewId}`;
 
   const res = await axios.delete(url, {
     headers: {
@@ -61,4 +62,30 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
   });
 
   return NextResponse.json({ data: res.data.data || [] });
+}
+
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const { content, images } = await request.json();
+
+  const BACKEND = process.env.BACKEND_URL!;
+  const url = `${BACKEND}/api/v1/posts/${id}/reviews`;
+  console.log('Patch /api/v1/posts/[id]/reviews id:', id);
+  console.log('Patch /api/v1/posts/[id]/reviews url:', url);
+  console.log('Patch /api/v1/posts/[id]/reviews content:', content);
+  console.log('Patch /api/v1/posts/[id]/reviews images:', images);
+
+  const res = await axios.put(
+    url,
+    { content, images, rate: 1 },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+      },
+    }
+  );
+
+  console.log('POST /api/v1/posts/[id]/reviews response:', res.data);
+
+  return NextResponse.json({ success: true });
 }
