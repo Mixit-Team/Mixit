@@ -21,11 +21,11 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const debounced = useDebounce(inputValue, 1000);
-  const { data: suggestions = [], isFetching } = useApiQuery<string[]>(
+  const { data } = useApiQuery<{ data?: string[] }>(
     ['autocomplete', debounced] as QueryKey,
     '/api/v1/tags/autocomplete',
     { prefix: debounced },
@@ -36,6 +36,7 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
     } as Omit<UseQueryOptions<string[]>, 'queryKey' | 'queryFn'>
   );
 
+  const suggestions = data?.data || [];
   const addTag = (value: string) => {
     const trimmed = value.trim();
     console.log('addTag:', trimmed);
@@ -102,14 +103,15 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
       </h2>
       {tags.length < maxTags && (
         <div className="flex flex-col gap-1">
-          <div className="flex h-[48px] items-center gap-2">
+          <div className="relative flex h-[48px] items-center gap-2">
             <input
               type="text"
               value={inputValue}
+              onFocus={() => setShowSuggestions(true)}
               onChange={handleChange}
               onKeyDown={handleKeyDown}
               placeholder={`태그를 입력해주세요 (${maxTagLength}자 이내)`}
-              className="h-full min-w-[100px] flex-1 rounded-lg border border-gray-200 px-3 placeholder-gray-400 focus:outline-none"
+              className="h-full flex-1 rounded-lg border border-gray-200 px-3 placeholder-gray-400 focus:outline-none"
             />
             <button
               type="button"
@@ -120,24 +122,17 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
               추가
             </button>
           </div>
-
-          {/* 자동완성 드롭다운 */}
-          {showSuggestions && (isFetching || suggestions.length > 0) && (
-            <ul className="absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded-b-lg border border-gray-200 bg-white shadow-md">
-              {isFetching && <li className="px-3 py-2 text-gray-500">로딩 중…</li>}
-              {!isFetching &&
-                suggestions.map(s => (
-                  <li
-                    key={s}
-                    onClick={() => addTag(s)}
-                    className="cursor-pointer px-3 py-2 hover:bg-gray-100"
-                  >
-                    {s}
-                  </li>
-                ))}
-              {!isFetching && suggestions.length === 0 && (
-                <li className="px-3 py-2 text-gray-400">추천 태그가 없습니다</li>
-              )}
+          {showSuggestions && suggestions.length > 0 && (
+            <ul className="top-full left-0 z-999 max-h-40 w-full rounded-b-lg border border-gray-200 bg-white shadow-md">
+              {suggestions.map(s => (
+                <li
+                  key={s}
+                  onClick={() => addTag(s)}
+                  className="cursor-pointer px-3 py-2 hover:bg-gray-100"
+                >
+                  {s}
+                </li>
+              ))}
             </ul>
           )}
         </div>

@@ -1,11 +1,7 @@
 import RegisterTemplate from '@/components/templates/RegisterTemplate';
 
 const ResigerPage = () => {
-  return (
-    <div>
-      <RegisterTemplate />
-    </div>
-  );
+  return <RegisterTemplate />;
 };
 
 export default ResigerPage;

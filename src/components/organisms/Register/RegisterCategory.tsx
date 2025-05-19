@@ -1,6 +1,6 @@
 'use client';
 
-import { COLOR_ATOMIC_ORANGE_95, COLOR_SEMANTIC_PRIMARY_NORMAL } from '@/config/color.config';
+import { COLOR_SEMANTIC_PRIMARY_NORMAL } from '@/config/color.config';
 import { categories, Category } from '@/types/Home.type';
 import React from 'react';
 
@@ -19,9 +19,9 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ category, onChange 
             key={cat}
             type="button"
             onClick={() => onChange(cat)}
-            className={`rounded-lg px-4 py-2 ${
+            className={`cursor-pointer rounded-lg px-4 py-2 hover:bg-[#FFD1B3] hover:text-[#FD7A19] ${
               category === cat
-                ? `bg-[${COLOR_ATOMIC_ORANGE_95}] text-[${COLOR_SEMANTIC_PRIMARY_NORMAL}]`
+                ? `bg-[#FFE4D1] text-[${COLOR_SEMANTIC_PRIMARY_NORMAL}]`
                 : 'bg-gray-200 text-gray-700'
             } `}
           >
