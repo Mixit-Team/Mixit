@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import BottomNavigation from '../molecules/BottomNavigation';
 import BackButton from '../atoms/BackButton';
+import NavBar from '../organisms/NavBar';
 
 interface ProfileMainLayoutProps {
   children: React.ReactNode;
@@ -30,7 +30,7 @@ const ProfileMainLayout: React.FC<ProfileMainLayoutProps> = ({
         )}
         <main className="flex-grow overflow-y-auto">{children}</main>
         <div className="flex-shrink-0">
-          <BottomNavigation />
+          <NavBar />
         </div>
       </div>
     </div>
