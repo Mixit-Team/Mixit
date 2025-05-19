@@ -4,10 +4,10 @@ import React, { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { X } from 'lucide-react';
-
 import CommentInput from '@/components/molecules/CommentInput';
 import { useApiMutation } from '@/hooks/useApi';
 import CommentList from '@/components/molecules/CommentList';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface CommentInputWrapperProps {
   postId: number;
@@ -16,10 +16,11 @@ interface CommentInputWrapperProps {
 const MAX_IMAGES = 10;
 
 type UploadResponse = { success: boolean; id: string };
-type CommentVariables = { content: string; imageIds: number[] };
+type CommentVariables = { content: string; images: number[] };
 
 export default function CommentInputWrapper({ postId }: CommentInputWrapperProps) {
   const router = useRouter();
+  const queryClient = useQueryClient(); // ← QueryClient 인스턴스
 
   /** 텍스트, 파일, 미리보기 상태 */
   const [content, setContent] = useState('');
@@ -40,39 +41,37 @@ export default function CommentInputWrapper({ postId }: CommentInputWrapperProps
       onSuccess: () => {
         setContent('');
         setFiles([]);
+        console.log('refresh 한다');
+        queryClient.invalidateQueries(['comments', postId]);
+
         router.refresh(); // 댓글 목록 새로고침
       },
     }
   );
 
-  /* ─────────────────  files → previews 동기화  ───────────────── */
   useEffect(() => {
     const urls = files.map(file => URL.createObjectURL(file));
     setPreviews(urls);
     return () => urls.forEach(URL.revokeObjectURL);
   }, [files]);
 
-  /* ─────────────────────  핸들러  ───────────────────── */
-  /** 파일 추가 */
   const handleAddImages = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files) return;
       const selected = Array.from(e.target.files).slice(0, MAX_IMAGES - files.length);
       setFiles(prev => [...prev, ...selected]);
-      e.target.value = ''; // 같은 파일 다시 선택 가능하게 초기화
+      e.target.value = '';
     },
     [files.length]
   );
 
-  /** 파일 제거 */
   const handleRemove = useCallback((idx: number) => {
     setFiles(prev => prev.filter((_, i) => i !== idx));
   }, []);
 
-  /** 폼 제출 */
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
-      e.preventDefault(); // 🔑 기본 form submit 방지
+      e.preventDefault();
 
       try {
         const imageIds = await Promise.all(
@@ -86,7 +85,7 @@ export default function CommentInputWrapper({ postId }: CommentInputWrapperProps
 
         await postComment.mutateAsync({
           content,
-          imageIds,
+          images: imageIds,
         });
       } catch (err) {
         console.error('댓글 등록 실패:', err);
@@ -95,7 +94,6 @@ export default function CommentInputWrapper({ postId }: CommentInputWrapperProps
     [content, files, uploadImage, postComment]
   );
 
-  /* ─────────────────────  UI  ───────────────────── */
   return (
     <div className="space-y-4">
       <CommentList postId={+postId} />
@@ -105,8 +103,8 @@ export default function CommentInputWrapper({ postId }: CommentInputWrapperProps
         onChange={setContent}
         onSubmit={handleSubmit}
         onAddImages={handleAddImages}
-        placeholder="댓글을 입력해주세요 (최대 100자)"
-        maxLength={100}
+        placeholder="댓글을 입력해주세요 (최대 1000자)"
+        maxLength={1000}
       />
 
       {previews.length > 0 && (

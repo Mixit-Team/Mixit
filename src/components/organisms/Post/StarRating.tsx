@@ -18,7 +18,7 @@ interface PopularRateResponse {
   rating: number;
 }
 
-const StarRating: React.FC<StarRatingProps> = ({ postId, maxStars = 5, size = 24, rating }) => {
+const StarRating: React.FC<StarRatingProps> = ({ postId, maxStars = 5, size = 32, rating }) => {
   const [current, setCurrent] = useState<number>(0);
   const [hovered, setHovered] = useState<number>(0);
 
@@ -61,11 +61,11 @@ const StarRating: React.FC<StarRatingProps> = ({ postId, maxStars = 5, size = 24
   }, [isSuccess, data]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="text-black-600 ml-2 flex items-center">
-        <StarIcon size={size} fill="currentColor" stroke="none" className="text-green-400" />
-        <span className="text-black-600 text-lg">{rating.averageRating}</span>
-        <span className="ml-2 text-sm text-gray-500">{rating.ratingCount}명 참여</span>
+    <div className="box-border flex flex-col gap-4 border-y border-gray-200 p-4 py-6">
+      <div className="text-black-600 flex items-center">
+        <StarIcon size={size} fill="#DAF14E" stroke="none" className="text-green-400" />
+        <span className="text-black-600 ml-2 text-2xl">{rating.averageRating}</span>
+        <span className="ml-2 text-xl text-gray-500">{rating.ratingCount}명 참여</span>
       </div>
 
       <div className="flex flex-col items-center gap-4">

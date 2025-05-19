@@ -1,4 +1,4 @@
-import { COLOR_ATOMIC_ORANGE_80 } from '@/config/color.config';
+import { COLOR_ATOMIC_ORANGE_80, COLOR_SEMANTIC_PRIMARY_NORMAL } from '@/config/color.config';
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
@@ -6,7 +6,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'atomic-orange-80': COLOR_ATOMIC_ORANGE_80,
+        semantic: {
+          'atomic-orange-80': COLOR_ATOMIC_ORANGE_80,
+          primary: COLOR_SEMANTIC_PRIMARY_NORMAL,
+        },
       },
     },
     screens: {

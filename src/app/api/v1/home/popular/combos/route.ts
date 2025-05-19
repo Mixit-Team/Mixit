@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   });
 
   console.log('GET /api/v1/home/popular/combos response:', res.data);
-  const data = res.data.data.content || [];
+  const content = res.data.data.content || [];
 
-  return NextResponse.json({ data });
+  return NextResponse.json({ content });
 }

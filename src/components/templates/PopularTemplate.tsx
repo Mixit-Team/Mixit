@@ -8,6 +8,7 @@ import { useRoute } from '@/hooks/useRoute';
 import type { QueryKey } from '@tanstack/react-query';
 import TabNav from '../molecules/TabNav';
 import { Card } from '@/types/Home.type';
+import DefaultHeader from '../organisms/DefaultHeader';
 
 const PopularTemplate = () => {
   const { routerPush } = useRoute();
@@ -41,9 +42,11 @@ const PopularTemplate = () => {
     obs.observe(sentinelRef.current);
     return () => obs.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+  console.log('items ', items);
 
   return (
-    <div className="relative w-full rounded-lg bg-white p-8">
+    <div className="relative flex w-full flex-col gap-6 rounded-lg bg-white p-8">
+      <DefaultHeader />
       <TabNav />
       <div className="mt-4 grid w-full grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] gap-4">
         {items.map(item => (
