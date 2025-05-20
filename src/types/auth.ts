@@ -44,20 +44,14 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  status: {
-    code: string;
-    message: string;
-  };
-  data: {
-    token: string;
-    expiresIn: number;
-    loginId: string;
-    name: string;
-    birth: string;
-    email: string;
-    nickname: string;
-    imageSrc: string;
-  };
+  token: string;
+  expiresIn: number;
+  loginId: string;
+  name: string;
+  birth: string;
+  email: string;
+  nickname: string;
+  imageSrc: string;
 }
 
 export interface LoginError {

@@ -47,7 +47,13 @@ export const authOptions: NextAuthOptions = {
         // };
 
         return {
-          ...response,
+          id: response.loginId, // NextAuth 필수
+          name: response.nickname, // NextAuth가 session.user.name으로 뿌려줌
+          email: response.email, // 선택이지만 있으면 편합니다
+          image: response.imageSrc, // 선택
+          accessToken: response.token, // 내가 추가로 쓸 필드
+          expiresIn: response.expiresIn,
+          birth: response.birth, // 원하시면 더 추가
         };
       },
     }),
@@ -58,6 +64,10 @@ export const authOptions: NextAuthOptions = {
         return {
           ...token,
           id: user.id,
+          name: user.name,
+          email: user.email,
+          accessToken: user.accessToken,
+          expiresIn: user.expiresIn,
         };
       }
       return token;
