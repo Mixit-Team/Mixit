@@ -20,20 +20,17 @@ type CommentVariables = { content: string; images: number[] };
 
 export default function CommentInputWrapper({ postId }: CommentInputWrapperProps) {
   const router = useRouter();
-  const queryClient = useQueryClient(); // ← QueryClient 인스턴스
+  const queryClient = useQueryClient();
 
-  /** 텍스트, 파일, 미리보기 상태 */
   const [content, setContent] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
 
-  /* ────────────────────  이미지 업로드  ──────────────────── */
   const { mutateAsync: uploadImage } = useApiMutation<UploadResponse, FormData>(
     '/api/v1/images',
     'post'
   );
 
-  /* ────────────────────  댓글 등록  ──────────────────── */
   const postComment = useApiMutation<{ success: boolean }, CommentVariables>(
     `/api/v1/posts/${postId}/reviews`,
     'post',
@@ -103,7 +100,7 @@ export default function CommentInputWrapper({ postId }: CommentInputWrapperProps
         onChange={setContent}
         onSubmit={handleSubmit}
         onAddImages={handleAddImages}
-        placeholder="댓글을 입력해주세요 (최대 1000자)"
+        placeholder="댓글을 남겨주세요."
         maxLength={1000}
       />
 

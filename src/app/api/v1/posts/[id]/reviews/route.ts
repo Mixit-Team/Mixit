@@ -66,18 +66,17 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { content, images } = await request.json();
+  const { reviewId, content } = await request.json();
 
   const BACKEND = process.env.BACKEND_URL!;
-  const url = `${BACKEND}/api/v1/posts/${id}/reviews`;
+  const url = `${BACKEND}/api/v1/posts/${id}/reviews/${reviewId}`;
   console.log('Patch /api/v1/posts/[id]/reviews id:', id);
   console.log('Patch /api/v1/posts/[id]/reviews url:', url);
   console.log('Patch /api/v1/posts/[id]/reviews content:', content);
-  console.log('Patch /api/v1/posts/[id]/reviews images:', images);
 
   const res = await axios.put(
     url,
-    { content, images, rate: 1 },
+    { content },
     {
       headers: {
         Authorization: `Bearer ${process.env.AUTH_HEADER}`,

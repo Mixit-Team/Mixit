@@ -49,7 +49,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
         <button
           type="submit"
           disabled={!value.trim()}
-          className="absolute right-2 bottom-2 cursor-pointer rounded bg-blue-600 px-4 py-1 text-sm text-white disabled:opacity-50"
+          className="absolute right-2 bottom-2 cursor-pointer rounded bg-transparent px-4 py-1 text-[#FD7A19] disabled:text-gray-400 disabled:opacity-50"
         >
           댓글 등록
         </button>

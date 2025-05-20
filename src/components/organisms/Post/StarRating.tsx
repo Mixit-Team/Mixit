@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Star as StarIcon, StarHalf as StarHalfIcon } from 'lucide-react';
 import { useApiMutation, useApiQuery } from '@/hooks/useApi';
 import type { QueryKey } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 interface StarRatingProps {
   postId: number;
@@ -19,10 +20,10 @@ interface PopularRateResponse {
 }
 
 const StarRating: React.FC<StarRatingProps> = ({ postId, maxStars = 5, size = 32, rating }) => {
+  const router = useRouter();
   const [current, setCurrent] = useState<number>(0);
   const [hovered, setHovered] = useState<number>(0);
 
-  // 1) 초기 평점 조회 (반드시 { data } 구조분해)
   const { data, isSuccess } = useApiQuery<PopularRateResponse>(
     ['postRate', postId] as QueryKey,
     `/api/v1/posts/${postId}/rate`,
@@ -39,7 +40,7 @@ const StarRating: React.FC<StarRatingProps> = ({ postId, maxStars = 5, size = 32
     'post',
     {
       onSuccess: () => {
-        // 필요하다면 리패치하거나 UI 처리
+        router.refresh();
       },
     }
   );
