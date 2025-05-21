@@ -179,7 +179,7 @@ export default function TermsPrivacyPage() {
               <tbody>
                 <tr>
                   <td className="border px-2 py-1">이메일</td>
-                  <td className="border px-2 py-1">mixitofficalmit@gmail.com</td>
+                  <td className="border px-2 py-1">mixitofficialmixit@gmail.com</td>
                 </tr>
               </tbody>
             </table>

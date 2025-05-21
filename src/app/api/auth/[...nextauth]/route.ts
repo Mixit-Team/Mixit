@@ -2,6 +2,13 @@ import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { login } from '@/services/auth/login';
 
+declare module 'next-auth' {
+  interface User {
+    accessToken?: string;
+    expiresIn?: number;
+  }
+}
+
 const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_SSO_COOKIE_DOMAIN;
 const useSecureCookie = COOKIE_DOMAIN !== 'localhost';
 const COOKIE_NAME = process.env.NEXTAUTH_COOKIE_NAME!;

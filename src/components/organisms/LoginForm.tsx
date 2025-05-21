@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { getProviders, signIn } from 'next-auth/react';
+import { getProviders, signIn, ClientSafeProvider } from 'next-auth/react';
 
 const loginSchema = z.object({
   loginId: z.string().min(1, '아이디를 입력해주세요'),
@@ -19,7 +19,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginForm: React.FC = () => {
   const router = useRouter();
-  const [providers, setProviders] = useState(null);
+  const [providers, setProviders] = useState<Record<string, ClientSafeProvider> | null>(null);
 
   useEffect(() => {
     getProviders().then(prov => {
@@ -60,6 +60,9 @@ export const LoginForm: React.FC = () => {
           localStorage.setItem('savedId', loginData.loginId);
         } else {
           localStorage.removeItem('savedId');
+        }
+        if (!providers) {
+          throw new Error('Authentication providers not available');
         }
         console.log('login...providers', providers);
         localStorage.setItem('providers', JSON.stringify(providers));
