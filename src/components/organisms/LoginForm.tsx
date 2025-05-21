@@ -4,10 +4,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { login } from '@/services/auth/login';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { getProviders, signIn, ClientSafeProvider } from 'next-auth/react';
 
 const loginSchema = z.object({
   loginId: z.string().min(1, '아이디를 입력해주세요'),
@@ -19,6 +19,13 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginForm: React.FC = () => {
   const router = useRouter();
+  const [providers, setProviders] = useState<Record<string, ClientSafeProvider> | null>(null);
+
+  useEffect(() => {
+    getProviders().then(prov => {
+      setProviders(prov);
+    });
+  }, []);
   const { handleLoginSuccess } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -54,8 +61,16 @@ export const LoginForm: React.FC = () => {
         } else {
           localStorage.removeItem('savedId');
         }
-
-        const response = await login(loginData);
+        if (!providers) {
+          throw new Error('Authentication providers not available');
+        }
+        console.log('login...providers', providers);
+        const response = await signIn(providers.credentialProvider.id, {
+          redirect: true,
+          id: loginData.loginId, // credentials.id
+          password: loginData.password, // credentials.password
+          callbackUrl: '/home',
+        });
         handleLoginSuccess(response);
         toast.success('로그인에 성공했습니다!');
         router.push('/');
@@ -66,7 +81,7 @@ export const LoginForm: React.FC = () => {
         setIsLoading(false);
       }
     },
-    [router, handleLoginSuccess]
+    [providers, handleLoginSuccess, router]
   );
 
   return (
