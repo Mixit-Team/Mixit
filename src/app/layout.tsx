@@ -12,7 +12,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <main className="bg-[#F4F4F5]">{children}</main>
+        </Providers>
       </body>
     </html>
   );

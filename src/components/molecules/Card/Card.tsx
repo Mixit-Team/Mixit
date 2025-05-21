@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Bookmark, Heart, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Category, ImageType } from '@/types/Home.type';
+import { useApiMutation } from '@/hooks/useApi';
 
 interface CardProps {
   id: number;
@@ -41,6 +42,7 @@ const CardItem = ({
   defaultImage,
   likeCount,
   bookmarkCount,
+  hasBookmarked,
   isDetail = false,
 }: CardProps) => {
   const thumbnail = defaultImage ?? '/images/default_thumbnail.png';
@@ -50,11 +52,51 @@ const CardItem = ({
     router.push(`/post/${id}`);
   };
 
+  const postBookmarkMutate = useApiMutation<{ success: boolean }, void>(
+    `/api/v1/posts/${id}/bookmark`,
+    'post',
+    {
+      onSuccess: () => {
+        console.log('북마크 성공');
+        router.refresh();
+      },
+    }
+  );
+
+  const postBookmarkDeleteMutate = useApiMutation<{ success: boolean }, void>(
+    `/api/v1/posts/${id}/bookmark`,
+    'delete',
+    {
+      onSuccess: () => {
+        console.log('북마크 취소 성공');
+        router.refresh();
+      },
+    }
+  );
+
+  const handleClickBookmark = async () => {
+    if (hasBookmarked) {
+      await postBookmarkDeleteMutate.mutateAsync();
+    } else {
+      await postBookmarkMutate.mutateAsync();
+    }
+  };
+
   return (
-    <div className="border- mt-1 mb-2 w-full max-w-[200px] rounded-md bg-white" onClick={onClick}>
+    <div
+      className="mt-1 mb-2 w-full max-w-[200px] cursor-pointer rounded-md bg-white"
+      onClick={onClick}
+    >
       <div className="relative h-[160px] w-full rounded-xl shadow">
         <Image src={thumbnail} alt={title || 'Card'} fill className="rounded-md object-cover" />
-        <Bookmark className="absolute top-2 right-2 h-4 w-4 cursor-pointer" color="#6366F1" />
+        <Bookmark
+          onClick={async e => {
+            e.stopPropagation();
+            await handleClickBookmark();
+          }}
+          className="absolute top-2 right-2 h-4 w-4 cursor-pointer"
+          color={hasBookmarked ? '#FD7A19' : 'white'}
+        />
       </div>
 
       <h3 className="text-black-700 mt-2 line-clamp-2">{title}</h3>

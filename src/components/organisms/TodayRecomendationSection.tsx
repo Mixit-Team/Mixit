@@ -28,8 +28,8 @@ const TodayRecomendationSection = ({ title }: TodayRecomendationSectionProps) =>
   return (
     <div className="mt-4 mb-4 flex flex-col gap-4">
       <div className="flex justify-between">
-        <div className="text-[18px] font-[800] text-[#6366F1]">{title}</div>
-        <div className="align-center cursor-pointer text-[14px] text-[#6366F1]">더보기</div>
+        <div className="text-[18px] font-[800] text-[#292A2D]">{title}</div>
+        <div className="align-center cursor-pointer text-[14px] text-[#292A2D]">더보기</div>
       </div>
       <div className="grid grid-cols-[repeat(auto-fill,_minmax(100px,_1fr))] justify-center gap-4">
         {items.map((item: Card) => {
