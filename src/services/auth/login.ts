@@ -9,13 +9,7 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
         'Content-Type': 'application/json',
       },
     });
-    console.log('response.data!!! ', response.data);
-
-    // // 토큰을 localStorage에 저장
-    // if (response.data.data.token) {
-    //   localStorage.setItem('token', response.data.data.token);
-    //   localStorage.setItem('tokenExpiresIn', String(Date.now() + response.data.data.expiresIn));
-    // }
+    console.log('response.data!!! ', response.data.data);
 
     return response.data.data;
   } catch (error) {

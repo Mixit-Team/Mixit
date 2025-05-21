@@ -16,23 +16,7 @@ interface VerifyError {
 
 export const verifyUser = async (password: string): Promise<VerifyResponse> => {
   try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw {
-        status: 401,
-        message: '로그인이 필요합니다.',
-      } as VerifyError;
-    }
-
-    const response = await apiClient.post<VerifyResponse>(
-      '/users/my-page',
-      { password },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiClient.post<VerifyResponse>('/users/my-page', { password });
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError<{ status: number; message: string }>;

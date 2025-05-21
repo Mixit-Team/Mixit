@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getSession } from 'next-auth/react';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://54.180.33.96:8080/api/v1';
 
@@ -13,8 +14,12 @@ export const apiClient = axios.create({
 
 // 요청 인터셉터
 apiClient.interceptors.request.use(
-  config => {
-    // 요청 전에 수행할 작업
+  async config => {
+    const session = await getSession();
+    const accessToken = session?.accessToken;
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
     return config;
   },
   error => {

@@ -7,11 +7,18 @@ import UserInfoSection from '../molecules/UserInfoSection';
 import ActionLinks from '../molecules/ActionLinks';
 import Button from '../atoms/Button';
 import { toast } from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
 
 const MyPageContent: React.FC = () => {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const { userProfile, logout } = useUserStore();
+  const { logout } = useUserStore();
+
+  // 인증 상태 확인
+  console.log('Auth status:', status);
+  console.log('Session:', session);
+  console.log('Is authenticated:', status === 'authenticated');
 
   const handleLogout = useCallback(() => {
     setIsLoggingOut(true);
@@ -37,13 +44,13 @@ const MyPageContent: React.FC = () => {
     router.push('/login');
   }, [router, logout]);
 
-  if (!userProfile) {
+  if (status !== 'authenticated') {
     return null;
   }
 
   return (
     <div className="flex flex-col space-y-6 p-4">
-      <UserInfoSection nickname={userProfile.nickname} />
+      <UserInfoSection nickname={session.user.name || 'User'} />
       <ActionLinks />
       <Button
         onClick={handleLogout}

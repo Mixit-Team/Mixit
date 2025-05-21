@@ -62,12 +62,15 @@ export const LoginForm: React.FC = () => {
           localStorage.removeItem('savedId');
         }
         console.log('login...providers', providers);
+        localStorage.setItem('providers', JSON.stringify(providers));
         const response = await signIn(providers.credentialProvider.id, {
           redirect: true,
           id: loginData.loginId, // credentials.id
           password: loginData.password, // credentials.password
           callbackUrl: '/home',
         });
+        localStorage.setItem('providers', JSON.stringify(providers.credentialProvider.id)); // "crenedtialProvider"
+        localStorage.setItem('response', response);
         handleLoginSuccess(response);
         toast.success('로그인에 성공했습니다!');
         router.push('/');

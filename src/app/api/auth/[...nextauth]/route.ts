@@ -35,24 +35,15 @@ export const authOptions: NextAuthOptions = {
         console.log('credentials', credentialsData);
         const response = await login(credentialsData);
         console.log('credentials response', response);
-        // if (!data.user) return null;
-        //
-        // return {
-        //   id: data.user.id,
-        //   name: data.user.name,
-        //   email: data.user.email,
-        //   role: data.user.role,
-        //   key: data.user.key,
-        //   provider: "credentials",
-        // };
 
         return {
           id: response.loginId, // NextAuth 필수
-          name: response.nickname, // NextAuth가 session.user.name으로 뿌려줌
+          name: response.name, // NextAuth가 session.user.name으로 뿌려줌
           email: response.email, // 선택이지만 있으면 편합니다
           image: response.imageSrc, // 선택
           accessToken: response.token, // 내가 추가로 쓸 필드
           expiresIn: response.expiresIn,
+          nickname: response.nickname,
           birth: response.birth, // 원하시면 더 추가
         };
       },
@@ -60,14 +51,17 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
+      console.log('jwt user', user);
       if (user) {
         return {
           ...token,
           id: user.id,
           name: user.name,
           email: user.email,
+          birth: user.birth,
           accessToken: user.accessToken,
           expiresIn: user.expiresIn,
+          nickname: user.nickname,
         };
       }
       return token;
@@ -75,12 +69,16 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       return {
         ...session,
+        accessToken: token.accessToken,
         user: {
           ...session.user!,
           id: token.id as string,
           role: token.role as string,
           provider: token.provider as string,
           key: token.key as string,
+          birth: token.birth as string,
+          name: token.name as string,
+          nickname: token.nickname as string,
         },
       };
     },

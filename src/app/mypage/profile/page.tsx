@@ -5,7 +5,7 @@ import ProfileInfoForm from '@/components/molecules/ProfileInfoForm';
 import ProfileAuthForm from '@/components/molecules/ProfileAuthForm';
 import Modal from '@/components/atoms/Modal';
 import ProfileMainLayout from '@/components/templates/ProfileMainLayout';
-import { useUserStore } from '@/store/userStore';
+import { useSession } from 'next-auth/react';
 
 interface ProfileFormData {
   userId: string;
@@ -16,7 +16,8 @@ interface ProfileFormData {
 }
 
 export default function ProfilePage() {
-  const { userProfile } = useUserStore();
+  const { data: session, status } = useSession();
+  const { id, name, birth, email, image, nickname } = session?.user || {};
   const [authenticated, setAuthenticated] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({
@@ -42,7 +43,7 @@ export default function ProfilePage() {
     setIsModalOpen(false);
   }, []);
 
-  if (!userProfile) {
+  if (status !== 'authenticated') {
     return (
       <ProfileMainLayout title="회원정보" showBackButton>
         <div className="flex h-60 items-center justify-center">
@@ -56,16 +57,16 @@ export default function ProfilePage() {
     <ProfileMainLayout title="회원정보 인증" showBackButton>
       <div className="p-4">
         {!authenticated ? (
-          <ProfileAuthForm onAuthenticated={handleAuthentication} userId={userProfile.loginId} />
+          <ProfileAuthForm onAuthenticated={handleAuthentication} userId={id} />
         ) : (
           <ProfileInfoForm
             initialData={{
-              userId: userProfile.loginId,
-              name: userProfile.name,
-              birthdate: userProfile.birth,
-              email: userProfile.email,
-              nickname: userProfile.nickname,
-              imageSrc: userProfile.imageSrc,
+              userId: id,
+              name,
+              birthdate: birth,
+              email,
+              nickname,
+              imageSrc: image,
             }}
             onSave={handleSaveProfile}
           />
