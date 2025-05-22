@@ -73,8 +73,8 @@ export const LoginForm: React.FC = () => {
         // localStorage.setItem('providers', JSON.stringify(providers.credentialProvider.id)); // "crenedtialProvider"
         // localStorage.setItem('response', response);
         // handleLoginSuccess(response ??);
-        toast.success('로그인에 성공했습니다!');
-        router.push('/');
+        // toast.success('로그인에 성공했습니다!');
+        // router.push('/');
       } catch (error) {
         const err = error as { message: string };
         toast.error(err.message || '로그인에 실패했습니다.');
@@ -82,7 +82,7 @@ export const LoginForm: React.FC = () => {
         setIsLoading(false);
       }
     },
-    [providers, router]
+    [providers]
   );
 
   return (
