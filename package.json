@@ -10,9 +10,9 @@
   "scripts": {
     "dev": "next dev ",
     "build": "next build",
-    "start": "next start",
-    "build:live": "cross-env NODE_ENV=live next build",
-    "start:live": "cross-env NODE_ENV=live next start",
+    "start": "next start", 
+    "build:live": "NODE_ENV=production APP_ENV=live next build",
+    "start:live": "NODE_ENV=production APP_ENV=live next start",
     "lint": "next lint",
     "format": "prettier --write .",
     "test:unit:jest": "jest",
