@@ -5,6 +5,7 @@ import CardItem from '../molecules/Card/Card';
 import { useApiQuery } from '@/hooks/useApi';
 import { Card } from '@/types/Home.type';
 import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 interface FavoriteSectionProps {
   title: string;
@@ -14,20 +15,47 @@ interface ApiResponse {
   content: Card[];
 }
 
+export interface FetchParams {
+  size: number;
+  page: number;
+}
+
 const FavoriteSection = ({ title }: FavoriteSectionProps) => {
-  // const { data } = useApiQuery<any>(
-  //   ['homePopularCombos'],
-  //   '/api/v1/home/popular/combos',
-  //   { page: 1, size: 3 },
-  //   {
-  //     refetchOnWindowFocus: false,
-  //     refetchOnReconnect: false,
-  //   }
-  // );
+  const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+
+  const [visibleCount, setVisibleCount] = useState(1);
+
+  const [params, setParams] = useState<FetchParams>({
+    page: 0,
+    size: visibleCount,
+  });
+
+    useEffect(() => {
+      function updateVisibleCount() {
+        const containerWidth = containerRef.current
+          ? containerRef.current.clientWidth
+          : window.innerWidth;
+        const CARD_MIN_WIDTH = 120;
+        const GAP = 16;             
+        const total = CARD_MIN_WIDTH + GAP;
+        const count = Math.floor(containerWidth / total) || 1;
+        setVisibleCount(count);
+      }
+
+      updateVisibleCount();
+      window.addEventListener('resize', updateVisibleCount);
+      return () => window.removeEventListener('resize', updateVisibleCount);
+    }, []);
+
+  
+  useEffect(() => {
+    setParams(prev => ({...prev, size:visibleCount}))
+  },[visibleCount])
 
   const { data } = useApiQuery<ApiResponse>(
-    ['homePopularCombos'],
-    '/api/v1/home/views',
+    ['homePopularCombos', params],
+    '/api/v1/home/popular/combos',
     {},
     {
       refetchOnWindowFocus: false,
@@ -35,18 +63,17 @@ const FavoriteSection = ({ title }: FavoriteSectionProps) => {
     }
   );
 
-  console.log('FavoriteSection data:', data);
 
-  const router = useRouter();
 
   const handleClickCard = (id: number) => {
     router.push(`/post/${id}`);
   };
 
   const items = data?.content ?? [];
+  console.log('fav ',items)
 
   return (
-    <div>
+    <div ref={containerRef}>
       <div className="flex justify-between">
         <Title label={title} />
         <div
@@ -56,7 +83,7 @@ const FavoriteSection = ({ title }: FavoriteSectionProps) => {
           더보기
         </div>
       </div>
-      <div className="mt-2 grid grid-cols-[repeat(auto-fill,_minmax(100px,_1fr))] justify-center gap-4">
+      <div className="mt-2 grid grid-cols-[repeat(auto-fill,_minmax(120px,_1fr))] justify-center gap-4">
         {items.map((item: Card, index: number) => (
           <div key={item.id}>
             <div className="text-xl text-[#F86885]">{index + 1}</div>

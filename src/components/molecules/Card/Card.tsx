@@ -5,6 +5,7 @@ import { Bookmark, Heart, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Category, ImageType } from '@/types/Home.type';
 import { useApiMutation } from '@/hooks/useApi';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface CardProps {
   id: number;
@@ -47,6 +48,7 @@ const CardItem = ({
 }: CardProps) => {
   const thumbnail = defaultImage ?? '/images/default_thumbnail.png';
   const router = useRouter();
+  const queryClient = useQueryClient();   
   const onClick = () => {
     console.log('Card clicked:', id);
     router.push(`/post/${id}`);
@@ -58,6 +60,9 @@ const CardItem = ({
     {
       onSuccess: () => {
         console.log('북마크 성공');
+        queryClient.invalidateQueries({ queryKey: ['homeCategory'] });
+        queryClient.invalidateQueries({ queryKey: ['homePopularCombos'] });
+        queryClient.invalidateQueries({ queryKey: ['homeTodayRecomendation'] });
         router.refresh();
       },
     }
@@ -69,6 +74,9 @@ const CardItem = ({
     {
       onSuccess: () => {
         console.log('북마크 취소 성공');
+        queryClient.invalidateQueries({ queryKey: ['homeCategory'] });
+        queryClient.invalidateQueries({ queryKey: ['homePopularCombos'] });
+        queryClient.invalidateQueries({ queryKey: ['homeTodayRecomendation'] });
         router.refresh();
       },
     }
@@ -87,8 +95,18 @@ const CardItem = ({
       className="mt-1 mb-2 w-full max-w-[200px] cursor-pointer rounded-md bg-white"
       onClick={onClick}
     >
-      <div className="relative h-[160px] w-full rounded-xl shadow">
-        <Image src={thumbnail} alt={title || 'Card'} fill className="rounded-md object-cover" />
+      <div className="relative h-[160px] w-full rounded-md shadow overflow-hidden">
+        <Image src={thumbnail} alt={title || 'Card'} fill className="object-cover" />
+          <div
+            className="
+              absolute inset-0         
+              bg-gradient-to-b          
+              from-black/20             
+              to-transparent           
+              pointer-events-none       
+            "
+          />
+
         <Bookmark
           onClick={async e => {
             e.stopPropagation();

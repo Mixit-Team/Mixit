@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import { useApiQuery } from '@/hooks/useApi';
 import CardItem from '../molecules/Card/Card';
 import { Card } from '@/types/Home.type';
@@ -12,33 +13,68 @@ interface ApiResponse {
   content: Card[];
 }
 
+const CARD_MIN_WIDTH = 120; // grid min-width 정의와 동일하게
+const GAP = 16;            // grid gap(px)
+const MAX_ITEMS = 5;       // 최대 5개
+
 const TodayRecomendationSection = ({ title }: TodayRecomendationSectionProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // 한 줄에 보여줄 카드 개수 (최대 MAX_ITEMS)
+  const [visibleCount, setVisibleCount] = useState(MAX_ITEMS);
+
+  // container 또는 window 너비에 따라 visibleCount 재계산
+  useEffect(() => {
+    function updateCount() {
+      const width = containerRef.current
+        ? containerRef.current.clientWidth
+        : window.innerWidth;
+
+      // 한 칸당 필요한 너비 = 카드 최소 너비 + gap
+      const slot = CARD_MIN_WIDTH + GAP;
+      const count = Math.floor(width / slot) || 1;
+
+      // 최대 MAX_ITEMS로 제한
+      setVisibleCount(Math.min(count, MAX_ITEMS));
+    }
+
+    updateCount();
+    window.addEventListener('resize', updateCount);
+    return () => window.removeEventListener('resize', updateCount);
+  }, []);
+
+  // API 호출: visibleCount가 바뀔 때마다 size도 바뀜
   const { data } = useApiQuery<ApiResponse>(
-    ['homeTodayRecomendation'],
+    ['homeTodayRecomendation', visibleCount],
     '/api/v1/home/recommendations/today',
-    { page: 0, size: 3 },
+    { page: 0, size: visibleCount },
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
     }
   );
+
   const items = data?.content ?? [];
-  console.log('TodayRecomendationSection data:', data?.content, items);
 
   return (
-    <div className="mt-4 mb-4 flex flex-col gap-4">
+    <div ref={containerRef} className="mt-4 mb-4 flex flex-col gap-4">
       <div className="flex justify-between">
         <div className="text-[18px] font-[800] text-[#292A2D]">{title}</div>
-        <div className="align-center cursor-pointer text-[14px] text-[#292A2D]">더보기</div>
+        <div className="align-center cursor-pointer text-[14px] text-[#292A2D]">
+          더보기
+        </div>
       </div>
-      <div className="grid grid-cols-[repeat(auto-fill,_minmax(100px,_1fr))] justify-center gap-4">
-        {items.map((item: Card) => {
-          return (
-            <div key={item.id}>
-              <CardItem {...item} />
-            </div>
-          );
-        })}
+      <div
+        className="grid justify-center gap-4"
+        style={{
+          gridTemplateColumns: `repeat(${items.length}, minmax(${CARD_MIN_WIDTH}px, 1fr))`,
+        }}
+      >
+        {items.map(item => (
+          <div key={item.id}>
+            <CardItem {...item} />
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -71,7 +71,7 @@ const BookmarkTemplate = () => {
       />
 
       {items.length > 0 ? (
-        <div className="mt-4 grid grid-cols-[repeat(auto-fill,_minmax(100px,_1fr))] justify-center gap-4">
+        <div className="mt-4 grid grid-cols-[repeat(auto-fill,_minmax(120px,_1fr))] justify-center gap-4">
           {items.map(item => (
             <CardItem {...item} key={item.id} onClick={() => router.push(`/post/${item.id}`)} />
           ))}
