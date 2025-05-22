@@ -9,6 +9,7 @@ import { useApiMutation } from '@/hooks/useApi';
 import CommentInputWrapper from '../organisms/Post/CommetInputWrapper';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/types/Home.type';
+import { withAuth } from '../withAuth';
 
 const PostTemplate = ({ data }: { data: Card }) => {
   console.log('PostTemplate data:', data);
@@ -108,4 +109,4 @@ const PostTemplate = ({ data }: { data: Card }) => {
   );
 };
 
-export default PostTemplate;
+export default withAuth(PostTemplate);

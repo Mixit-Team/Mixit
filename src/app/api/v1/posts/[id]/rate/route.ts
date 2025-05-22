@@ -1,8 +1,11 @@
+import { authOptions } from '@/services/auth/authOptions';
 import axios from 'axios';
+import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const session = await getServerSession(authOptions)
 
   const BACKEND = process.env.BACKEND_URL!;
   const url = `${BACKEND}/api/v1/posts/${id}/rate`;
@@ -10,7 +13,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const res = await axios.get(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+      Authorization: `Bearer ${session?.accessToken}`,
     },
   });
 
@@ -22,6 +25,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { rate } = await request.json();
+  const session = await getServerSession(authOptions)
+
 
   console.log('POST /api/v1/posts/[id]/rate request body:', { rate });
   const BACKEND = process.env.BACKEND_URL!;
@@ -32,7 +37,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     { rate },
     {
       headers: {
-        Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+        Authorization: `Bearer ${session?.accessToken}`,
       },
     }
   );

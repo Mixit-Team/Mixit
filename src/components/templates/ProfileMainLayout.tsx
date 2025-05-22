@@ -3,6 +3,7 @@
 import React from 'react';
 import BackButton from '../atoms/BackButton';
 import NavBar from '../organisms/NavBar';
+import { withAuth } from '../withAuth';
 
 interface ProfileMainLayoutProps {
   children: React.ReactNode;
@@ -37,4 +38,4 @@ const ProfileMainLayout: React.FC<ProfileMainLayoutProps> = ({
   );
 };
 
-export default ProfileMainLayout;
+export default withAuth(ProfileMainLayout);

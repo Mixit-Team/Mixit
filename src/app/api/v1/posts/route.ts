@@ -1,10 +1,12 @@
-// src/app/api/v1/posts/route.ts
-
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/services/auth/authOptions';
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions)
+    
     // 1) formData 로 파싱
     const form = await request.formData();
 
@@ -32,7 +34,7 @@ export async function POST(request: NextRequest) {
     const response = await axios.post(url, body, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+        Authorization: `Bearer ${session?.accessToken}`,
       },
     });
 

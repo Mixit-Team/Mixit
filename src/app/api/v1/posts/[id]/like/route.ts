@@ -1,8 +1,12 @@
+import { authOptions } from '@/services/auth/authOptions';
 import axios from 'axios';
+import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const session = await getServerSession(authOptions)
+  
   console.log('POST /api/v1/posts/[id]/like id:', id);
   const BACKEND = process.env.BACKEND_URL!;
   const url = `${BACKEND}/api/v1/posts/${id}/like`;
@@ -16,7 +20,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     {},
     {
       headers: {
-        Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+        Authorization: `Bearer ${session?.accessToken}`,
       },
     }
   );
@@ -30,6 +34,8 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await getServerSession(authOptions)
+
   const { id } = await params;
   console.log('DELETE /api/v1/posts/[id]/like id:', id);
   const BACKEND = process.env.BACKEND_URL!;
@@ -41,7 +47,7 @@ export async function DELETE(
 
   const response = await axios.delete(url, {
     headers: {
-      Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+      Authorization: `Bearer ${session?.accessToken}`,
     },
   });
 

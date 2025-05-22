@@ -9,6 +9,7 @@ import { useApiInfinite } from '@/hooks/useApi';
 import { Card } from '@/types/Home.type';
 import { Sort, SORT_TYPE } from '../organisms/CategorySection';
 import { useRouter } from 'next/navigation';
+import { withAuth } from '../withAuth';
 
 interface FetchParams {
   size: number;
@@ -100,4 +101,4 @@ const BookmarkTemplate = () => {
   );
 };
 
-export default BookmarkTemplate;
+export default withAuth(BookmarkTemplate);

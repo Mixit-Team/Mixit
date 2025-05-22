@@ -1,4 +1,6 @@
 import PostTemplate from '@/components/templates/PostTemplate';
+import { authOptions } from '@/services/auth/authOptions';
+import { getServerSession } from 'next-auth';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -6,13 +8,14 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
-  console.log('Page params:', id);
+  const session = await getServerSession(authOptions)
+  
   const res = await fetch(`${process.env.BACKEND_URL}/api/v1/posts/${id}`, {
     method: 'GET',
     cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+      Authorization: `Bearer ${session?.accessToken}`,
     },
   });
   console.log(`GET /api/v1/posts/${id} response:`, res);

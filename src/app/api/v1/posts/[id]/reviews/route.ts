@@ -1,8 +1,11 @@
+import { authOptions } from '@/services/auth/authOptions';
 import axios from 'axios';
+import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const session = await getServerSession(authOptions)
 
   const BACKEND = process.env.BACKEND_URL!;
   const url = `${BACKEND}/api/v1/posts/${id}/reviews`;
@@ -12,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const res = await axios.get(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+      Authorization: `Bearer ${session?.accessToken}`,
     },
   });
 
@@ -24,6 +27,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { content, images } = await request.json();
+  const session = await getServerSession(authOptions)
+
 
   const BACKEND = process.env.BACKEND_URL!;
   const url = `${BACKEND}/api/v1/posts/${id}/reviews`;
@@ -37,7 +42,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     { content, images, rate: 1 },
     {
       headers: {
-        Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+        Authorization: `Bearer ${session?.accessToken}`,
       },
     }
   );
@@ -50,6 +55,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   const { reviewId } = await request.json();
+  const session = await getServerSession(authOptions)
 
   const BACKEND = process.env.BACKEND_URL!;
   const url = `${BACKEND}/api/v1/posts/${id}/reviews/${reviewId}`;
@@ -57,7 +63,7 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
   const res = await axios.delete(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+      Authorization: `Bearer ${session?.accessToken}`,
     },
   });
 
@@ -67,6 +73,7 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { reviewId, content } = await request.json();
+  const session = await getServerSession(authOptions)
 
   const BACKEND = process.env.BACKEND_URL!;
   const url = `${BACKEND}/api/v1/posts/${id}/reviews/${reviewId}`;
@@ -79,7 +86,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     { content },
     {
       headers: {
-        Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+        Authorization: `Bearer ${session?.accessToken}`,
       },
     }
   );

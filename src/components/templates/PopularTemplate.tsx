@@ -9,6 +9,7 @@ import TabNav from '../molecules/TabNav';
 import { Card } from '@/types/Home.type';
 import DefaultHeader from '../organisms/DefaultHeader';
 import { useRouter } from 'next/navigation';
+import { withAuth } from '../withAuth';
 
 const PopularTemplate = () => {
   const router = useRouter();
@@ -64,4 +65,4 @@ const PopularTemplate = () => {
   );
 };
 
-export default PopularTemplate;
+export default withAuth(PopularTemplate);

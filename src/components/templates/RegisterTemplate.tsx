@@ -10,6 +10,7 @@ import RegisterImages from '../organisms/Register/RegisterImages';
 import RegisterTags from '../organisms/Register/RegisterTags';
 import RegisterDescriptions from '../organisms/Register/RegisterDescriptions';
 import { useApiMutation } from '@/hooks/useApi';
+import { withAuth } from '../withAuth';
 
 interface Params {
   category: Category;
@@ -21,7 +22,7 @@ interface Params {
 
 const DEFAULT_CATEGORY: Category = 'CAFE';
 
-export default function RegisterTemplate() {
+const RegisterTemplate = () => {
   const router = useRouter();
   const [params, setParams] = useState<Params>({
     category: DEFAULT_CATEGORY,
@@ -109,3 +110,5 @@ export default function RegisterTemplate() {
     </form>
   );
 }
+
+export default withAuth(RegisterTemplate)

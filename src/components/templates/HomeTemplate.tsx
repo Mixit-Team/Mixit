@@ -11,6 +11,7 @@ import { SearchBar } from '../molecules/SearchBar/SearchBar';
 import NavBar from '../organisms/NavBar';
 import { useSession } from 'next-auth/react';
 import RegisterButton from '../molecules/RegisterButton';
+import { withAuth } from '../withAuth';
 const HomeTemplate: React.FC = () => {
   const { data: session } = useSession();
   console.log('session', session);
@@ -34,4 +35,4 @@ const HomeTemplate: React.FC = () => {
   );
 };
 
-export default HomeTemplate;
+export default withAuth(HomeTemplate);

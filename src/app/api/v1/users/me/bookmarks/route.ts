@@ -1,4 +1,6 @@
+import { authOptions } from '@/services/auth/authOptions';
 import axios from 'axios';
+import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 /** 백엔드가 실제로 내려주는 “한 페이지” 구조 */
@@ -13,6 +15,8 @@ export interface BookmarkApiPage<T> {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+  const session = await getServerSession(authOptions)
+  
   const page = searchParams.get('page') || '0';
   const size = searchParams.get('size') || '10';
   const sort = searchParams.get('sort') || 'latest';
@@ -21,7 +25,7 @@ export async function GET(request: NextRequest) {
   try {
     const res = await axios.get(url, {
       headers: {
-        Authorization: `Bearer ${process.env.AUTH_HEADER}`,
+        Authorization: `Bearer ${session?.accessToken}`,
         'Content-Type': 'application/json',
       },
     });

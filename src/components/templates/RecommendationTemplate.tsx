@@ -9,6 +9,7 @@ import TabNav from '../molecules/TabNav';
 import DefaultHeader from '../organisms/DefaultHeader';
 import { Card } from '@/types/Home.type';
 import { useRouter } from 'next/navigation';
+import { withAuth } from '../withAuth';
 
 const RecommendationTemplate = () => {
   const router = useRouter();
@@ -73,4 +74,4 @@ const RecommendationTemplate = () => {
   );
 };
 
-export default RecommendationTemplate;
+export default withAuth(RecommendationTemplate);
