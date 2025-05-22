@@ -44,6 +44,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
+  data: LoginResponse | PromiseLike<LoginResponse>;
   token: string;
   expiresIn: number;
   loginId: string;

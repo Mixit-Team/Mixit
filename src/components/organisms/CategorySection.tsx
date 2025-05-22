@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Card, Category } from '@/types/Home.type';
 import { useApiQuery } from '@/hooks/useApi';
 import CardItem from '../molecules/Card/Card';
-import { useRoute } from '@/hooks/useRoute';
+import { useRouter } from 'next/navigation';
 
 export type Sort = 'latest' | 'createdAt' | 'popular';
 
@@ -35,7 +35,7 @@ const CategorySection = () => {
     size: 8,
     sort: 'createdAt',
   });
-  const { routerPush } = useRoute();
+  const router = useRouter();
 
   const handleChange =
     <K extends keyof FetchParams>(key: K) =>
@@ -101,7 +101,7 @@ const CategorySection = () => {
 
       <div className="mt-4 grid grid-cols-[repeat(auto-fill,_minmax(100px,_1fr))] justify-center gap-4">
         {items.map((item: Card) => (
-          <CardItem key={item.id} {...item} onClick={() => routerPush(`/post/${item.id}`)} />
+          <CardItem key={item.id} {...item} onClick={() => router.push(`/post/${item.id}`)} />
         ))}
       </div>
 

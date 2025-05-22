@@ -5,10 +5,12 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 }
 
 const Image: React.FC<ImageProps> = React.memo(
-  ({ src, alt, fallbackSrc = '/default-image.png', ...props }) => (
-    <img
+  ({ src, alt, fallbackSrc = '/default-image.png',width=64,height=64, ...props }) => (
+    <Image
       src={src && src.trim() !== '' ? src : fallbackSrc}
       alt={alt}
+      width={width}
+      height={height}
       onError={e => {
         const target = e.target as HTMLImageElement;
         if (target.src !== fallbackSrc && !target.src.endsWith(fallbackSrc)) {

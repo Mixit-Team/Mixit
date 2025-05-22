@@ -4,15 +4,14 @@ import React, { useEffect, useRef } from 'react';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import CardItem from '@/components/molecules/Card/Card';
 import { useApiInfinite } from '@/hooks/useApi';
-import { useRoute } from '@/hooks/useRoute';
 import type { QueryKey } from '@tanstack/react-query';
 import TabNav from '../molecules/TabNav';
 import { Card } from '@/types/Home.type';
 import DefaultHeader from '../organisms/DefaultHeader';
+import { useRouter } from 'next/navigation';
 
 const PopularTemplate = () => {
-  const { routerPush } = useRoute();
-
+  const router = useRouter();
   const params = {
     page: 0,
     size: 10,
@@ -27,7 +26,7 @@ const PopularTemplate = () => {
   const items: Card[] = data?.pages.flatMap(p => p.content) ?? [];
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const handleClickCard = (id: number) => routerPush(`/post/${id}`);
+  const handleClickCard = (id: number) => router.push(`/post/${id}`);
 
   useEffect(() => {
     if (!sentinelRef.current) return;

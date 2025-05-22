@@ -9,7 +9,6 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
         'Content-Type': 'application/json',
       },
     });
-    console.log('response.data!!! ', response.data.data);
 
     return response.data.data;
   } catch (error) {

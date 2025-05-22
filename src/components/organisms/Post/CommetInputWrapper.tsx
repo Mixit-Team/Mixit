@@ -39,9 +39,11 @@ export default function CommentInputWrapper({ postId }: CommentInputWrapperProps
         setContent('');
         setFiles([]);
         console.log('refresh 한다');
-        queryClient.invalidateQueries(['comments', postId]);
+        queryClient.invalidateQueries({
+          queryKey: ['comments', postId],
+        });
 
-        router.refresh(); // 댓글 목록 새로고침
+        router.refresh(); 
       },
     }
   );

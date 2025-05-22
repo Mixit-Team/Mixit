@@ -12,6 +12,7 @@ declare module 'next-auth' {
     birth?: string;
     accessToken?: string;
     expiresIn?: number;
+    nickname?: string;
   }
 
   interface Session {
@@ -26,6 +27,7 @@ declare module 'next-auth' {
       birth?: string;
       accessToken?: string;
       expiresIn?: number;
+      nickname?: string;
     };
   }
 }

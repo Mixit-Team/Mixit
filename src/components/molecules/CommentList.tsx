@@ -29,7 +29,9 @@ export default function CommentList({ postId }: { postId: number }) {
     'delete',
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['comments', postId]);
+        queryClient.invalidateQueries({
+          queryKey: ['comments', postId],
+        });
         confirmDialog.current?.close();
       },
     }
@@ -40,21 +42,21 @@ export default function CommentList({ postId }: { postId: number }) {
     'patch',
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['comments', postId]);
+        queryClient.invalidateQueries({
+          queryKey: ['comments', postId],
+        });
         setEditingId(null);
         menuDialog.current?.close();
       },
     }
   );
 
-  // ⋮ 버튼 눌렀을 때 메뉴 다이얼로그 열기
   const openMenu = (id: number, existing: string) => {
     setMenuTargetId(id);
     setEditText(existing);
     menuDialog.current?.showModal();
   };
 
-  // 메뉴에서 “삭제하기” 선택
   const onChooseDelete = () => {
     menuDialog.current?.close();
     setDeleteTargetId(menuTargetId);
@@ -80,14 +82,13 @@ export default function CommentList({ postId }: { postId: number }) {
         {data.comments.length > 0 &&
           data.comments.map(c => (
             <div key={c.id} className="relative flex flex-col rounded-lg bg-gray-50 p-4">
-              {/* 상단 정보 */}
               <div className="mb-2 flex items-center gap-2">
                 <Image
                   className="rounded"
                   alt="profile"
                   width={24}
                   height={24}
-                  src={c.images[0] || '/images/default_thumbnail.png'}
+                  src={c.images[0]?.src ?? '/images/default_thumbnail.png'}
                 />
                 <span className="font-medium text-gray-800">{c.userNickname}</span>
                 {c.createdAt && (
@@ -105,7 +106,6 @@ export default function CommentList({ postId }: { postId: number }) {
                 )}
               </div>
 
-              {/* 내용 or 편집폼 */}
               {editingId === c.id ? (
                 <div className="flex flex-col gap-2">
                   <textarea

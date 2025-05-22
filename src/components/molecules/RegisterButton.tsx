@@ -1,15 +1,15 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import Button from '../atoms/Button';
-import { useRoute } from '@/hooks/useRoute';
 
 const RegisterButton = () => {
-  const { routerPush } = useRoute();
+  const router = useRouter();
 
   return (
     <div className="flex justify-end px-4 py-2">
       <Button
         className="cursor-pointer rounded-xl px-4 py-2 text-2xl font-bold text-white"
-        onClick={() => routerPush('/register')}
+        onClick={() => router.push('/register')}
         variant="primary"
         size="lg"
       >

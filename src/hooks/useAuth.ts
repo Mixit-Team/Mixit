@@ -4,7 +4,7 @@ import { useUserStore } from '@/store/userStore';
 export const useAuth = () => {
   const { setUserProfile } = useUserStore();
 
-  const handleLoginSuccess = (response: LoginResponse) => {
+  const handleLoginSuccess = (response: { data: LoginResponse }) => {
     const { token, expiresIn, loginId, name, birth, email, nickname, imageSrc } = response.data;
 
     // 토큰 저장

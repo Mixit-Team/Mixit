@@ -3,7 +3,7 @@
 import React, { useState, KeyboardEvent, ChangeEvent, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { useApiQuery } from '@/hooks/useApi';
-import { QueryKey, UseQueryOptions } from '@tanstack/react-query';
+import { QueryKey,  } from '@tanstack/react-query';
 import { useDebounce } from '@/hooks/useDebounce';
 
 interface RegisterTagsProps {
@@ -25,18 +25,17 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const debounced = useDebounce(inputValue, 1000);
-  const { data } = useApiQuery<{ data?: string[] }>(
+  const { data } = useApiQuery<{ data?: { data?: string[] } }>(
     ['autocomplete', debounced] as QueryKey,
     '/api/v1/tags/autocomplete',
     { prefix: debounced },
     {
       enabled: debounced.length > 0,
-      keepPreviousData: true,
       staleTime: 60_000,
-    } as Omit<UseQueryOptions<string[]>, 'queryKey' | 'queryFn'>
+    }
   );
 
-  const suggestions = data?.data || [];
+  const suggestions: string[] = data?.data?.data ?? [];
   const addTag = (value: string) => {
     const trimmed = value.trim();
     console.log('addTag:', trimmed);

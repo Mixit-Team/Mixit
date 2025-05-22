@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
-import { useAuth } from '@/hooks/useAuth';
 import { getProviders, signIn, ClientSafeProvider } from 'next-auth/react';
 
 const loginSchema = z.object({
@@ -26,7 +25,6 @@ export const LoginForm: React.FC = () => {
       setProviders(prov);
     });
   }, []);
-  const { handleLoginSuccess } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const {
     register,
@@ -66,15 +64,15 @@ export const LoginForm: React.FC = () => {
         }
         console.log('login...providers', providers);
         localStorage.setItem('providers', JSON.stringify(providers));
-        const response = await signIn(providers.credentialProvider.id, {
+        await signIn(providers.credentialProvider.id, {
           redirect: true,
           id: loginData.loginId, // credentials.id
           password: loginData.password, // credentials.password
           callbackUrl: '/home',
         });
-        localStorage.setItem('providers', JSON.stringify(providers.credentialProvider.id)); // "crenedtialProvider"
-        localStorage.setItem('response', response);
-        handleLoginSuccess(response);
+        // localStorage.setItem('providers', JSON.stringify(providers.credentialProvider.id)); // "crenedtialProvider"
+        // localStorage.setItem('response', response);
+        // handleLoginSuccess(response ??);
         toast.success('로그인에 성공했습니다!');
         router.push('/');
       } catch (error) {
@@ -84,7 +82,7 @@ export const LoginForm: React.FC = () => {
         setIsLoading(false);
       }
     },
-    [providers, handleLoginSuccess, router]
+    [providers, router]
   );
 
   return (

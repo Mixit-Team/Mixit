@@ -1,10 +1,10 @@
 'use client';
 
-import { useRoute } from '@/hooks/useRoute';
 import Title from '../atoms/Title';
 import CardItem from '../molecules/Card/Card';
 import { useApiQuery } from '@/hooks/useApi';
 import { Card } from '@/types/Home.type';
+import { useRouter } from 'next/navigation';
 
 interface FavoriteSectionProps {
   title: string;
@@ -37,10 +37,10 @@ const FavoriteSection = ({ title }: FavoriteSectionProps) => {
 
   console.log('FavoriteSection data:', data);
 
-  const { routerPush } = useRoute();
+  const router = useRouter();
 
   const handleClickCard = (id: number) => {
-    routerPush(`/post/${id}`);
+    router.push(`/post/${id}`);
   };
 
   const items = data?.content ?? [];
@@ -51,7 +51,7 @@ const FavoriteSection = ({ title }: FavoriteSectionProps) => {
         <Title label={title} />
         <div
           className="cursor-pointer text-[14px] leading-[26px]"
-          onClick={() => routerPush('/combinations/popular')}
+          onClick={() => router.push('/combinations/popular')}
         >
           더보기
         </div>

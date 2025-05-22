@@ -6,9 +6,9 @@ import SortToggle from '../molecules/SortToggle';
 import CardItem from '../molecules/Card/Card';
 import LoadingSpinner from '../atoms/LoadingSpinner';
 import { useApiInfinite } from '@/hooks/useApi';
-import { useRoute } from '@/hooks/useRoute';
 import { Card } from '@/types/Home.type';
 import { Sort, SORT_TYPE } from '../organisms/CategorySection';
+import { useRouter } from 'next/navigation';
 
 interface FetchParams {
   size: number;
@@ -23,8 +23,7 @@ const BookmarkTemplate = () => {
     sort: 'latest',
   });
 
-  const { routerPush } = useRoute();
-
+  const router = useRouter();
   const handleChange =
     <K extends keyof FetchParams>(key: K) =>
     (value: FetchParams[K]) =>
@@ -73,7 +72,7 @@ const BookmarkTemplate = () => {
       {items.length > 0 ? (
         <div className="mt-4 grid grid-cols-[repeat(auto-fill,_minmax(100px,_1fr))] justify-center gap-4">
           {items.map(item => (
-            <CardItem {...item} key={item.id} onClick={() => routerPush(`/post/${item.id}`)} />
+            <CardItem {...item} key={item.id} onClick={() => router.push(`/post/${item.id}`)} />
           ))}
         </div>
       ) : (

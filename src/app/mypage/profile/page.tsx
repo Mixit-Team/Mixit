@@ -62,11 +62,11 @@ export default function ProfilePage() {
           <ProfileInfoForm
             initialData={{
               userId: id,
-              name,
+              name: name ?? undefined,
               birthdate: birth,
-              email,
+              email: email ?? undefined,
               nickname,
-              imageSrc: image,
+              imageSrc: image ?? undefined,
             }}
             onSave={handleSaveProfile}
           />
