@@ -9,7 +9,8 @@ export function withAuth<P extends object>(
   WrappedComponent: ComponentType<P>
 ) {
   return function ProtectedComponent(props: P) {
-    const { status } = useSession();
+    const { data, status } = useSession();
+    console.log('withAuth status ', status, ' user',data)
     const router = useRouter();
 
     useEffect(() => {
@@ -18,9 +19,6 @@ export function withAuth<P extends object>(
       }
     }, [status, router]);
 
-    if (status !== 'authenticated') {
-      return null;
-    }
 
     return <WrappedComponent {...props} />;
   };
