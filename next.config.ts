@@ -2,13 +2,18 @@ import type { NextConfig } from 'next'
 import { config as loadDotenvFlow } from 'dotenv-flow'
 
 loadDotenvFlow({
-  node_env: process.env.NODE_ENV || 'development',
+  node_env: process.env.NODE_ENV || 'production',
 })
 
 const nextConfig: NextConfig = {
   images: {
-    domains: [
-      'mixit-local.s3.ap-northeast-2.amazonaws.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'mixit-local.s3.ap-northeast-2.amazonaws.com',
+        port: '',        
+        pathname: '/**',  
+      },
     ],
   },
 }
