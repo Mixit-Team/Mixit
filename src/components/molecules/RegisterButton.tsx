@@ -6,9 +6,9 @@ const RegisterButton = () => {
   const router = useRouter();
 
   return (
-    <div className="flex justify-end px-4 py-2">
+    <div className="flex justify-end mb-3 mr-3">
       <Button
-        className="cursor-pointer rounded-xl px-4 py-2 text-2xl font-bold text-white"
+        className="inline-flex rounded-xl px-4 w-[140px] text-2xl font-bold text-white"
         onClick={() => router.push('/register')}
         variant="primary"
         size="lg"
