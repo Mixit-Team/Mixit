@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import CardItem from '@/components/molecules/Card/Card';
 import { useApiInfinite } from '@/hooks/useApi';
@@ -10,22 +10,17 @@ import DefaultHeader from '../organisms/DefaultHeader';
 import { Card } from '@/types/Home.type';
 import { useRouter } from 'next/navigation';
 import { withAuth } from '../withAuth';
-import { Sort } from '../organisms/CategorySection';
 
-interface FetchParams {
-  size: number;
-  page: number;
-  sort: Sort;
-}
+
 
 const RecommendationTemplate = () => {
   const router = useRouter();
 
-  const [params, setParams] = useState<FetchParams>({
+  const params = {
     page: 0,
     size: 10,
     sort: 'latest',
-  });
+  };
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useApiInfinite<Card>(
     ['popularCombos', params] as QueryKey,
