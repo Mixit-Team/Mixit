@@ -10,8 +10,8 @@ declare module 'next-auth' {
   }
 }
 
-const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_SSO_COOKIE_DOMAIN || 'localhost';
-const useSecureCookie = COOKIE_DOMAIN !== 'localhost';
+// const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_SSO_COOKIE_DOMAIN || 'localhost';
+// const useSecureCookie = COOKIE_DOMAIN !== 'localhost';
 const COOKIE_NAME = process.env.NEXTAUTH_COOKIE_NAME || 'next-auth.session-token';
 
 export const authOptions: NextAuthOptions = {
@@ -108,7 +108,7 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: useSecureCookie,
+        secure: false,  // 임시 지금현재 도메인없어서
       },
     },
     pkceCodeVerifier: {

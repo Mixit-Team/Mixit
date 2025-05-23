@@ -9,7 +9,7 @@ const CategoryTemplate = () => {
   return (
     <div className="mx-auto flex h-screen w-full max-w-[767px] flex-col bg-white">
       <div className="flex-1 overflow-auto">
-        <div className="relative box-border w-full rounded-lg bg-white p-5">
+        <div className="relative box-border w-full rounded-lg bg-white">
           <Title label="카테고리" />
           <Banner imagePath="/images/banner.png" />
           <CategorySection />
