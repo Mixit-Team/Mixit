@@ -1,27 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
+import NextImage, { ImageProps as NextImageProps } from 'next/image';
 
-interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface CustomImageProps extends Omit<NextImageProps, 'src'> {
+  src?: string;
   fallbackSrc?: string;
+  width?: number;
+  height?: number;
 }
 
-const Image: React.FC<ImageProps> = React.memo(
-  ({ src, alt, fallbackSrc = '/default-image.png',width=64,height=64, ...props }) => (
-    <Image
-      src={src && src.trim() !== '' ? src : fallbackSrc}
-      alt={alt}
-      width={width}
-      height={height}
-      onError={e => {
-        const target = e.target as HTMLImageElement;
-        if (target.src !== fallbackSrc && !target.src.endsWith(fallbackSrc)) {
-          target.src = fallbackSrc;
-        }
-      }}
-      {...props}
-    />
-  )
+const CustomImage: React.FC<CustomImageProps> = React.memo(
+  ({ src, alt, fallbackSrc = '/default-image.png', width = 64, height = 64, ...props }) => {
+    const [imgSrc, setImgSrc] = useState(src && src.trim() !== '' ? src : fallbackSrc);
+
+    return (
+      <NextImage
+        src={imgSrc || fallbackSrc}
+        alt={alt || ''}
+        width={width}
+        height={height}
+        onError={() => setImgSrc(fallbackSrc)}
+        {...props}
+      />
+    );
+  }
 );
 
-Image.displayName = 'Image';
+CustomImage.displayName = 'CustomImage';
 
-export default Image;
+export default CustomImage;

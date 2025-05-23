@@ -2,7 +2,6 @@
 
 import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '@/store/userStore';
 import UserInfoSection from '../molecules/UserInfoSection';
 import ActionLinks from '../molecules/ActionLinks';
 import Button from '../atoms/Button';
@@ -13,7 +12,6 @@ const MyPageContent: React.FC = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const { logout } = useUserStore();
 
   // 인증 상태 확인
   console.log('Auth status:', status);
@@ -25,8 +23,6 @@ const MyPageContent: React.FC = () => {
 
     try {
       await signOut({ redirect: false });
-      logout();
-
       toast.success('로그아웃 되었습니다.', {
         duration: 2000,
         position: 'top-center',
@@ -43,7 +39,7 @@ const MyPageContent: React.FC = () => {
     } finally {
       setIsLoggingOut(false);
     }
-  }, [router, logout]);
+  }, [router]);
 
   if (status !== 'authenticated') {
     return null;
