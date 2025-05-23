@@ -16,7 +16,8 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async config => {
     const session = await getSession();
-    const accessToken = session?.user?.accessToken;
+    const accessToken = session?.accessToken;
+    console.log('accessToken', accessToken);
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

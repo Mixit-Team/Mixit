@@ -24,24 +24,14 @@ export const changePassword = async (
   data: ChangePasswordRequest
 ): Promise<ChangePasswordResponse> => {
   try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('로그인이 필요합니다.');
-    }
-
-    const response = await apiClient.put<ChangePasswordResponse>('/accounts/password', data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
+    const response = await apiClient.put<ChangePasswordResponse>('/accounts/password', data);
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError<{ status: number; message: string; field?: string }>;
     if (axiosError.response) {
       throw {
         status: axiosError.response.status,
-        message: axiosError.response.data.message || '알 수 없는 오류가 발생했습니다.',
+        message: axiosError.response.data.message || '비밀번호 변경에 실패했습니다.',
         field: axiosError.response.data.field,
       } as ChangePasswordError;
     }
