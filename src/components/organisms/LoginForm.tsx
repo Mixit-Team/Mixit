@@ -60,19 +60,13 @@ export const LoginForm: React.FC = () => {
         if (!providers) {
           throw new Error('Authentication providers not available');
         }
-        console.log('login...providers', providers);
-        localStorage.setItem('providers', JSON.stringify(providers));
         await signIn(providers.credentialProvider.id, {
           redirect: true,
           id: loginData.loginId, // credentials.id
           password: loginData.password, // credentials.password
           callbackUrl: '/home',
         });
-        // localStorage.setItem('providers', JSON.stringify(providers.credentialProvider.id)); // "crenedtialProvider"
-        // localStorage.setItem('response', response);
-        // handleLoginSuccess(response ??);
-        // toast.success('로그인에 성공했습니다!');
-        // router.push('/');
+        toast.success('로그인에 성공했습니다!');
       } catch (error) {
         const err = error as { message: string };
         toast.error(err.message || '로그인에 실패했습니다.');

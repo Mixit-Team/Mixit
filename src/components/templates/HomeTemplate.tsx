@@ -12,9 +12,11 @@ import NavBar from '../organisms/NavBar';
 import { useSession } from 'next-auth/react';
 import RegisterButton from '../molecules/RegisterButton';
 import { withAuth } from '../withAuth';
+
 const HomeTemplate: React.FC = () => {
   const { data: session } = useSession();
-  console.log('session', session);
+
+  console.log('HomeTemplate session:', session);
 
   return (
     <div className="mx-auto flex h-screen w-full max-w-[767px] flex-col bg-white">

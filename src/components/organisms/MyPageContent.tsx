@@ -7,7 +7,7 @@ import UserInfoSection from '../molecules/UserInfoSection';
 import ActionLinks from '../molecules/ActionLinks';
 import Button from '../atoms/Button';
 import { toast } from 'react-hot-toast';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 const MyPageContent: React.FC = () => {
   const router = useRouter();
@@ -20,28 +20,29 @@ const MyPageContent: React.FC = () => {
   console.log('Session:', session);
   console.log('Is authenticated:', status === 'authenticated');
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
 
-    // 토큰 관련 데이터 삭제
-    localStorage.removeItem('token');
-    localStorage.removeItem('tokenExpiresIn');
+    try {
+      await signOut({ redirect: false });
+      logout();
 
-    // 프로필 정보 삭제
-    logout();
+      toast.success('로그아웃 되었습니다.', {
+        duration: 2000,
+        position: 'top-center',
+        style: {
+          background: '#333',
+          color: '#fff',
+        },
+      });
 
-    // 로그아웃 성공 메시지 표시
-    toast.success('로그아웃 되었습니다.', {
-      duration: 2000,
-      position: 'top-center',
-      style: {
-        background: '#333',
-        color: '#fff',
-      },
-    });
-
-    // 로그인 페이지로 이동
-    router.push('/login');
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('로그아웃 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoggingOut(false);
+    }
   }, [router, logout]);
 
   if (status !== 'authenticated') {

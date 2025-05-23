@@ -21,7 +21,11 @@ interface ProvidersProps {
 
 export default function Providers({ children }: ProvidersProps) {
   return (
-    <SessionProvider>
+    <SessionProvider
+      refetchInterval={5 * 60} // 5분마다 세션 갱신
+      refetchOnWindowFocus={true}
+      refetchWhenOffline={false}
+    >
       <QueryClientProvider client={queryClient}>
         {children}
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}

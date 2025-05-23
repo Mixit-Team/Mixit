@@ -2,7 +2,6 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { login } from '@/services/auth/login';
 
-
 declare module 'next-auth' {
   interface User {
     accessToken?: string;
@@ -11,9 +10,9 @@ declare module 'next-auth' {
   }
 }
 
-const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_SSO_COOKIE_DOMAIN;
+const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_SSO_COOKIE_DOMAIN || 'localhost';
 const useSecureCookie = COOKIE_DOMAIN !== 'localhost';
-const COOKIE_NAME = process.env.NEXTAUTH_COOKIE_NAME!;
+const COOKIE_NAME = process.env.NEXTAUTH_COOKIE_NAME || 'next-auth.session-token';
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -47,7 +46,7 @@ export const authOptions: NextAuthOptions = {
 
         return {
           id: response.loginId, // NextAuth 필수
-          name: response.name, // NextAuth가 session.user.name으로 뿌려줌
+          name: response.name,
           email: response.email, // 선택이지만 있으면 편합니다
           image: response.imageSrc, // 선택
           accessToken: response.token, // 내가 추가로 쓸 필드
@@ -93,13 +92,22 @@ export const authOptions: NextAuthOptions = {
     },
   },
   cookies: {
+    // sessionToken: {
+    //   name: `${useSecureCookie ? `__Secure-` : ''}${COOKIE_NAME}`,
+    //   options: {
+    //     httpOnly: true,
+    //     sameSite: 'lax',
+    //     path: '/',
+    //     domain: COOKIE_DOMAIN,
+    //     secure: useSecureCookie,
+    //   },
+    // }, 기존 코드, session-token이 나오지 않아서 수정
     sessionToken: {
-      name: `${useSecureCookie ? `__Secure-` : ''}${COOKIE_NAME}`,
+      name: COOKIE_NAME,
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        domain: COOKIE_DOMAIN,
         secure: useSecureCookie,
       },
     },
