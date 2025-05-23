@@ -36,7 +36,9 @@ const PostCard: React.FC<{ post: PostCardProps }> = React.memo(({ post }) => {
           <Image
             src={post.profileImage}
             alt="프로필"
-            className="h-5 w-5 rounded-full bg-gray-200 object-cover"
+            width={64}
+            height={64}
+            className="h-full w-full object-cover"
           />
           <span className="rounded-full bg-gray-100 px-2 py-0.5">{post.nickname}</span>
         </div>
