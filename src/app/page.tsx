@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: '홈 | 내 Next.js 앱',
-  description: '환영합니다! 내 Next.js 앱의 홈페이지입니다.',
+  title: '홈 | Mixit',
+  description: '환영합니다! Mixit의 홈페이지입니다.',
 };
 
 export default function HomePage() {

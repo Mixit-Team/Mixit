@@ -4,24 +4,30 @@ import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const session = await getServerSession(authOptions)
+  try {
+    const session = await getServerSession(authOptions)
   
-  const { searchParams } = new URL(request.url);
-  const page = searchParams.get('page') || '1';
-  const size = searchParams.get('size') || '10';
+    const { searchParams } = new URL(request.url);
+    const page = searchParams.get('page') || '0';
+    const size = searchParams.get('size') || '10';
 
-  const BACKEND = process.env.BACKEND_URL!;
-  const url = `${BACKEND}/api/v1/home/recommendations/today?page=${page}&size=${size}`;
-  console.log('GET /api/v1/home/recommendations/today url:', url);
-  const res = await axios.get(url, {
-    headers: {
-      Authorization: `Bearer ${session?.accessToken}`,
-      'Content-Type': 'application/json',
-    },
-  });
+    const BACKEND = process.env.BACKEND_URL!;
+    const url = `${BACKEND}/api/v1/home/recommendations/today?page=${page}&size=${size}`;
+    console.log('GET /api/v1/home/recommendations/today url:', url);
+    const res = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${session?.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const nextPage = +page + 1 < +res.data.data.totalPages ? +page + 1 : undefined;
 
-  console.log('GET /api/v1/home/recommendations/today  response:', res?.data);
-  const content = res?.data.data?.posts?.content || [];
+    console.log('GET /api/v1/home/recommendations/today  response:', res?.data);
+    console.log('GET /api/v1/home/recommendations/today  response:', res?.data?.data?.posts);
 
-  return NextResponse.json({ content });
+    return NextResponse.json({ ...res?.data?.data?.posts, nextPage });
+  } catch (error) {
+    console.error('GET /api/v1/users/me/bookmarks error:', error);
+    return NextResponse.json({ error: 'Failed to fetch bookmarks' }, { status: 500 });
+  }
 }

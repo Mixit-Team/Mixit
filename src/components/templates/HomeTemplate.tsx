@@ -12,6 +12,7 @@ import NavBar from '../organisms/NavBar';
 import { useSession } from 'next-auth/react';
 import RegisterButton from '../molecules/RegisterButton';
 import { withAuth } from '../withAuth';
+import Footer from '../organisms/Footer';
 
 const HomeTemplate: React.FC = () => {
   const { data: session } = useSession();
@@ -29,6 +30,7 @@ const HomeTemplate: React.FC = () => {
           <FavoriteSection title="지금 인기있는 조합" />
           <TodayRecomendationSection title="오늘의 추천" />
           <TagSection />
+          <Footer />
         </div>
       </div>
       <RegisterButton />

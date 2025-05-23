@@ -3,7 +3,6 @@ import axios from 'axios';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-/** 백엔드가 실제로 내려주는 “한 페이지” 구조 */
 export interface BookmarkApiPage<T> {
   page: number;
   size: number;

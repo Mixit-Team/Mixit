@@ -3,8 +3,8 @@ import Providers from './providers';
 import '../styles/globals.css';
 
 export const metadata: Metadata = {
-  title: '내 Next.js 앱',
-  description: 'Next.js App Router로 만든 애플리케이션',
+  title: 'Mixit',
+  description: 'Mixit Application',
   keywords: ['Next.js', 'React', 'App Router'],
 };
 

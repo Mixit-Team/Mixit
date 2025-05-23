@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '대시보드 | 내 Next.js 앱',
+  title: '대시보드 | Mixit',
   description: '대시보드 페이지입니다',
 };
 

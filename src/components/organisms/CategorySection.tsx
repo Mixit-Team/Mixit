@@ -4,13 +4,14 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { CategoryList } from '@/config/home.config';
 import CategoryTabs from '../molecules/CategoryTabs';
-import CardItem from '../molecules/Card/Card';
 import { useApiQuery } from '@/hooks/useApi';
 import { Card, Category } from '@/types/Home.type';
+import CardList from '../molecules/Card/CardList';
 
 export type Sort = 'latest' | 'createdAt' | 'popular';
 
 export interface FetchParams {
+  [key: string]: unknown;  
   category: Category;
   size: number;
   page: number;
@@ -37,7 +38,7 @@ const CategorySection = () => {
     size: visibleCount,
     sort: 'createdAt',
   });
-
+console.log('visibleCount ',visibleCount)
   useEffect(() => {
     function updateVisibleCount() {
       const containerWidth = containerRef.current
@@ -62,7 +63,7 @@ const CategorySection = () => {
   const { data } = useApiQuery<ApiResponse>(
     ['homeCategory', params],
     '/api/v1/home/category',
-    {},  
+    params,  
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -73,8 +74,9 @@ const CategorySection = () => {
   const items = data?.content ?? [];
   const router = useRouter();
 
+  console.log('category ',items)
   return (
-    <div ref={containerRef} className="px-4">
+    <div ref={containerRef}>
       <CategoryTabs
         active={params.category}
         onChange={value => setParams(prev => ({ ...prev, category: value, page: 0 }))}
@@ -83,18 +85,40 @@ const CategorySection = () => {
       <div
         className="mt-4 grid"
         style={{
-          gridTemplateColumns: `repeat(${items.length}, minmax(100px, 1fr))`,
+          gridTemplateColumns: `repeat(${visibleCount}, minmax(100px, 1fr))`,
           gap: '16px',
         }}
       >
         {items.map(item => (
-          <CardItem
+          <CardList
             key={item.id}
             {...item}
             onClick={() => router.push(`/post/${item.id}`)}
           />
         ))}
       </div>
+
+      <div
+        className="
+          mt-10
+          cursor-pointer
+          text-[#292A2D] font-bold
+          flex justify-center items-center
+          box-border h-[40px] rounded-sm
+          px-20 w-full
+          border border-[#DBDCDF]
+          transition-colors duration-200 ease-in-out  
+          hover:bg-[#F7F7F8]                        
+          hover:border-[#C2C4C8]                   
+          hover:text-[#1F2023]                      
+          hover:shadow-sm                          
+        "
+        onClick={() => router.push('/category')}
+      >
+        더보기
+      </div>
+
+
     </div>
   );
 };

@@ -9,7 +9,8 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const page = searchParams.get('page') || '0';
   const size = searchParams.get('size') || '10';
-  const category = searchParams.get('category') || 'all';
+  const category = searchParams.get('category') || 'CAFE';
+  console.log('api/v1/home/category page', page, ' size', size, ' category', category)
 
   const BACKEND = process.env.BACKEND_URL!;
   const url = `${BACKEND}/api/v1/home/category/${category}?page=${page}&size=${size}`;
@@ -21,9 +22,10 @@ export async function GET(request: Request) {
     },
   });
 
+  const nextPage = +page + 1 < +res.data.data.totalPages ? +page + 1 : undefined;
+
   console.log('GET /api/v1/home/category response:', res.data);
 
-  const content = res?.data?.data?.content || [];
 
-  return NextResponse.json({ content });
+  return NextResponse.json({ ...res?.data?.data, nextPage });
 }

@@ -25,17 +25,15 @@ const TagSection: React.FC = () => {
     }
   );
 
-  // 3) 로딩/에러 처리
   if (isLoading) return <div>태그를 불러오는 중...</div>;
   if (error) return <div>태그 로드 중 오류가 발생했습니다</div>;
 
-  // 4) 안전하게 꺼내기
   const tags: TagItem[] = data?.data || [];
 
   return (
     <section>
       <Title label="인기 태그" />
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="mt-8 flex flex-wrap gap-2">
         {tags.map(({ tag }) => (
           <Tag key={tag} tag={tag} />
         ))}

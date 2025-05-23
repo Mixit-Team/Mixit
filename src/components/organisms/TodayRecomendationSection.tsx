@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useApiQuery } from '@/hooks/useApi';
 import CardItem from '../molecules/Card/Card';
 import { Card } from '@/types/Home.type';
+import { useRouter } from 'next/navigation';
 
 interface TodayRecomendationSectionProps {
   title: string;
@@ -19,8 +20,8 @@ const MAX_ITEMS = 5;       // 최대 5개
 
 const TodayRecomendationSection = ({ title }: TodayRecomendationSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
-  // 한 줄에 보여줄 카드 개수 (최대 MAX_ITEMS)
   const [visibleCount, setVisibleCount] = useState(MAX_ITEMS);
 
   // container 또는 window 너비에 따라 visibleCount 재계산
@@ -43,7 +44,6 @@ const TodayRecomendationSection = ({ title }: TodayRecomendationSectionProps) =>
     return () => window.removeEventListener('resize', updateCount);
   }, []);
 
-  // API 호출: visibleCount가 바뀔 때마다 size도 바뀜
   const { data } = useApiQuery<ApiResponse>(
     ['homeTodayRecomendation', visibleCount],
     '/api/v1/home/recommendations/today',
@@ -60,9 +60,19 @@ const TodayRecomendationSection = ({ title }: TodayRecomendationSectionProps) =>
     <div ref={containerRef} className="mt-4 mb-4 flex flex-col gap-4">
       <div className="flex justify-between">
         <div className="text-[18px] font-[800] text-[#292A2D]">{title}</div>
-        <div className="align-center cursor-pointer text-[14px] text-[#292A2D]">
+        <div
+          className="
+            cursor-pointer 
+            text-[14px] leading-[26px]
+            transition-colors duration-200 ease-in-out  
+            hover:text-[#FD7A19]                       
+            hover:underline                            
+          "
+          onClick={() => router.push('/combinations/recommendation')}
+        >
           더보기
-        </div>
+</div>
+
       </div>
       <div
         className="grid justify-center gap-4"

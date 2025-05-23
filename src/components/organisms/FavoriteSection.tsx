@@ -16,6 +16,8 @@ interface ApiResponse {
 }
 
 export interface FetchParams {
+    [key: string]: unknown;  
+
   size: number;
   page: number;
 }
@@ -56,7 +58,7 @@ const FavoriteSection = ({ title }: FavoriteSectionProps) => {
   const { data } = useApiQuery<ApiResponse>(
     ['homePopularCombos', params],
     '/api/v1/home/popular/combos',
-    {},
+    params,
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -73,15 +75,22 @@ const FavoriteSection = ({ title }: FavoriteSectionProps) => {
   console.log('fav ',items)
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className='mt-10'>
       <div className="flex justify-between">
         <Title label={title} />
         <div
-          className="cursor-pointer text-[14px] leading-[26px]"
+          className="
+            cursor-pointer 
+            text-[14px] leading-[26px]
+            transition-colors duration-200 ease-in-out 
+            hover:text-[#FD7A19]                      
+            hover:underline                        
+          "
           onClick={() => router.push('/combinations/popular')}
         >
           더보기
         </div>
+
       </div>
       <div className="mt-2 grid grid-cols-[repeat(auto-fill,_minmax(120px,_1fr))] justify-center gap-4">
         {items.map((item: Card, index: number) => (

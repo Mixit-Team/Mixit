@@ -5,7 +5,6 @@ import { Bookmark, Heart, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Category, ImageType } from '@/types/Home.type';
 import { useApiMutation } from '@/hooks/useApi';
-import { useQueryClient } from '@tanstack/react-query';
 
 interface CardProps {
   id: number;
@@ -36,7 +35,7 @@ interface CardProps {
   isDetail?: boolean;
 }
 
-const CardItem = ({
+const CardList = ({
   id,
   title,
   userId,
@@ -46,10 +45,8 @@ const CardItem = ({
   hasBookmarked,
   isDetail = false,
 }: CardProps) => {
-  console.log('defaultImage',defaultImage)
   const thumbnail = defaultImage ?? '/images/default_thumbnail.png';
   const router = useRouter();
-  const queryClient = useQueryClient();   
   const onClick = () => {
     console.log('Card clicked:', id);
     router.push(`/post/${id}`);
@@ -61,9 +58,6 @@ const CardItem = ({
     {
       onSuccess: () => {
         console.log('북마크 성공');
-        queryClient.invalidateQueries({ queryKey: ['homeCategory'] });
-        queryClient.invalidateQueries({ queryKey: ['homePopularCombos'] });
-        queryClient.invalidateQueries({ queryKey: ['homeTodayRecomendation'] });
         router.refresh();
       },
     }
@@ -75,9 +69,6 @@ const CardItem = ({
     {
       onSuccess: () => {
         console.log('북마크 취소 성공');
-        queryClient.invalidateQueries({ queryKey: ['homeCategory'] });
-        queryClient.invalidateQueries({ queryKey: ['homePopularCombos'] });
-        queryClient.invalidateQueries({ queryKey: ['homeTodayRecomendation'] });
         router.refresh();
       },
     }
@@ -96,18 +87,8 @@ const CardItem = ({
       className="mt-1 mb-2 w-full max-w-[200px] cursor-pointer rounded-md bg-white"
       onClick={onClick}
     >
-      <div className="relative h-[160px] w-full rounded-md shadow overflow-hidden">
-        <Image src={thumbnail} alt={title || 'Card'} fill className="object-cover" />
-          <div
-            className="
-              absolute inset-0         
-              bg-gradient-to-b          
-              from-black/20             
-              to-transparent           
-              pointer-events-none       
-            "
-          />
-
+      <div className="relative h-[160px] w-full rounded-xl shadow">
+        <Image src={thumbnail} alt={title || 'Card'} fill className="rounded-md object-cover" />
         <Bookmark
           onClick={async e => {
             e.stopPropagation();
@@ -115,7 +96,6 @@ const CardItem = ({
           }}
           className="absolute top-2 right-2 h-4 w-4 cursor-pointer"
           color={hasBookmarked ? '#FD7A19' : 'white'}
-          fill={hasBookmarked ? '#FD7A19' : 'none'}   
         />
       </div>
 
@@ -125,7 +105,6 @@ const CardItem = ({
       >
         {title}
       </h3>
-
       {isDetail && (
         <div className="flex flex-col">
           <div className="flex h-[30px] items-center px-3"></div>
@@ -146,4 +125,4 @@ const CardItem = ({
   );
 };
 
-export default CardItem;
+export default CardList;

@@ -37,10 +37,8 @@ const BookmarkTemplate = () => {
   );
 
   console.log('북마크 데이터:', data);
-  /** 모든 페이지를 한 배열로 펼침 */
   const items: Card[] = data?.pages.flatMap(p => p.content) ?? [];
 
-  /* ------------------ Intersection Observer 트리거 ------------------ */
   const sentinelRef = useRef<HTMLDivElement>(null);
   console.log('hasNextPage', hasNextPage);
   useEffect(() => {

@@ -11,18 +11,20 @@ interface CategoryTabsProps {
 
 const CategoryTabs = ({ active, onChange }: CategoryTabsProps) => {
   return (
-    <div className="flex justify-around">
-      {CategoryList.map(({ label, value, logo }) => (
-        <button
+    <div className="flex justify-center">
+      <div className="flex justify-around max-w-[300px] w-100 mx-auto">
+        {CategoryList.map(({ label, value, logo }) => (
+          <button
           key={label}
           onClick={() => onChange(value)}
           className="flex w-[48px] cursor-pointer flex-col items-center focus:outline-none"
-        >
-          <div>
-            <CategoryItem label={label} logo={logo} active={active === value} />
-          </div>
-        </button>
-      ))}
+          >
+            <div>
+              <CategoryItem label={label} logo={logo} active={active === value} />
+            </div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
