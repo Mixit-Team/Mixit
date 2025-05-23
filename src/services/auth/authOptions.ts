@@ -108,7 +108,7 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: useSecureCookie,
+        secure: false,  // 임시 지금현재 도메인없어서
       },
     },
     pkceCodeVerifier: {
