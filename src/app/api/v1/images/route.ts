@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import FormData from 'form-data';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/services/auth/authOptions';
 
 export const config = { api: { bodyParser: false } };
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions)
+  
   // 1) Web FormData 파싱
   const formData = await req.formData();
   const file = formData.get('image');
@@ -35,7 +39,7 @@ export async function POST(req: NextRequest) {
   const backendRes = await axios.post(url, proxyForm, {
     headers: {
       ...proxyForm.getHeaders(),
-      Authorization: req.headers.get('authorization') ?? '',
+        Authorization: `Bearer ${session?.accessToken}`,
     },
     maxBodyLength: Infinity,
   });
