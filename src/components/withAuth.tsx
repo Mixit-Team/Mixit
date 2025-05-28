@@ -1,8 +1,8 @@
 'use client';
 
-import {  ComponentType } from 'react';
+import {  ComponentType, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-// import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 
 export function withAuth<P extends object>(
@@ -11,13 +11,13 @@ export function withAuth<P extends object>(
   return function ProtectedComponent(props: P) {
     const { data, status } = useSession();
     console.log('withAuth status ', status, ' user',data)
-    // const router = useRouter();
+    const router = useRouter();
 
-    // useEffect(() => {
-    //   if (status === 'unauthenticated') {
-    //     router.replace('/login');
-    //   }
-    // }, [status, router]);
+    useEffect(() => {
+      if (status === 'unauthenticated') {
+        router.replace('/login');
+      }
+    }, [status, router]);
 
 
     return <WrappedComponent {...props} />;
