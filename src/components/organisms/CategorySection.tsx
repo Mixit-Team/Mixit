@@ -93,6 +93,7 @@ console.log('visibleCount ',visibleCount)
           <CardList
             key={item.id}
             {...item}
+            content={item.content ?? ''}
             onClick={() => router.push(`/post/${item.id}`)}
           />
         ))}
