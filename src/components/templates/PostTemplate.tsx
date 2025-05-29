@@ -4,7 +4,6 @@ import PostHeader from '../organisms/Post/PostHeader';
 import TagContainer from '../organisms/Post/TagContainer';
 import ImageSlider from '../organisms/Post/ImageSlider';
 import StarRating from '../organisms/Post/StarRating';
-// import CommentList from "../molecules/CommentList";
 import { useApiMutation } from '@/hooks/useApi';
 import CommentInputWrapper from '../organisms/Post/CommetInputWrapper';
 import { useRouter } from 'next/navigation';
@@ -81,9 +80,8 @@ const PostTemplate = ({ data }: { data: Card }) => {
       <ImageSlider images={data.images} />
 
       <h1 className="text-2xl font-bold">{data.title}</h1>
-      <h2 className="text-lg text-gray-600">{data.bookmarkCount}</h2>
-      <h2 className="text-lg text-gray-600">{data.likeCount}</h2>
-      <p className="whitespace-pre-wrap text-gray-700">{data.description}</p>
+
+      <p className="whitespace-pre-wrap text-gray-700">{data.content}</p>
 
       <TagContainer tags={data.tags} />
       <div className="flex space-x-6 text-gray-600">

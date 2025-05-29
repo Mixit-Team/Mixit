@@ -11,7 +11,8 @@ export interface Card {
   title: string;
   userId: string;
   category: Category;
-  description: string;
+  description?: string;
+  content?: string;
   images: ImageType[];
   rating: {
     averageRating: number;
