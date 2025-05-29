@@ -5,8 +5,7 @@ import { Buffer } from 'node:buffer';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/services/auth/authOptions';
 
-export const runtime = 'nodejs';   // Node 런타임 유지
-
+export const runtime = 'nodejs';   
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions)
   
@@ -20,10 +19,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'PNG 또는 JPEG만 가능합니다.' }, { status: 415 });
   }
 
-  // 2) File → Buffer
   const buffer = Buffer.from(await image.arrayBuffer());
 
-  // 3) 백엔드로 프록시 업로드
   const outForm = new NodeFormData();
   outForm.append('image', buffer, { filename: image.name, contentType: image.type });
 

@@ -39,8 +39,11 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(response.data, { status: response.status });
-  } catch (err: unknown) {
+  } catch (err) {
     console.error('POST /api/v1/posts error!!:', err);
+    if (axios.isAxiosError(err) && err.response?.status === 400) {
+      return NextResponse.json({ error: '욕설' }, { status: 400 });
+    }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

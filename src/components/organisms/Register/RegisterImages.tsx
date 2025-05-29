@@ -4,6 +4,7 @@ import React, { useEffect, useState, ChangeEvent } from 'react';
 import { X, Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
+const MAX_SIZE = 10 * 1024 * 1024; 
 interface RegisterImagesProps {
   images: File[];
   onChange: (files: File[]) => void;
@@ -22,20 +23,35 @@ const RegisterImages: React.FC<RegisterImagesProps> = ({ images, onChange, maxIm
     };
   }, [images]);
 
-  const handleAddImages = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
 
-    const validTypes = ['image/jpeg', 'image/png'];
-    if (!validTypes.includes(e.target.files?.[0].type)) {
+const handleAddImages = (e: ChangeEvent<HTMLInputElement>) => {
+  if (!e.target.files) return;
+
+  const validTypes = ['image/jpeg', 'image/png'];
+  const selected = Array.from(e.target.files);
+
+  // 타입·크기 검증
+  const accepted = selected.filter(f => {
+    if (!validTypes.includes(f.type)) {
       alert('JPG 또는 PNG 파일만 업로드 가능합니다!');
-      e.target.value = '';
-      return;
+      return false;
     }
-    const selected = Array.from(e.target.files);
-    const combined = [...images, ...selected].slice(0, maxImages);
-    onChange(combined);
-    e.target.value = '';
-  };
+    if (f.size > MAX_SIZE) {
+      alert('10 MB 이하 이미지만 업로드 가능합니다!');
+      return false;
+    }
+    return true;
+  });
+
+  if (accepted.length === 0) {
+    e.target.value = '';     // 폼 초기화
+    return;
+  }
+
+  const combined = [...images, ...accepted].slice(0, maxImages);
+  onChange(combined);
+  e.target.value = '';
+};
 
   const handleRemove = (index: number) => {
     const filtered = images.filter((_, i) => i !== index);
@@ -45,7 +61,7 @@ const RegisterImages: React.FC<RegisterImagesProps> = ({ images, onChange, maxIm
   return (
     <div className="flex flex-col gap-2 rounded-lg bg-white p-4">
       <h2 className="text-lg font-semibold">사진 (선택)</h2>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 cursor-pointer">
         {images.length < maxImages && (
           <label className="relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200">
             <ImageIcon className="h-6 w-6 text-gray-500" />

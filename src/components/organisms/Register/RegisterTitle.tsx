@@ -17,6 +17,7 @@ const RegisterTitle: React.FC<RegisterTitleProps> = ({ title, onChange }) => {
         id="title"
         type="text"
         value={title}
+        maxLength={20}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           onChange(e.target.value);
         }}
