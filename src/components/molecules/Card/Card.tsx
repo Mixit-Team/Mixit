@@ -12,7 +12,7 @@ interface CardProps {
   title: string;
   userId: string | number;
   category: Category;
-  description: string;
+  content?: string;
   images: ImageType[];
   rating: {
     averageRating: number;

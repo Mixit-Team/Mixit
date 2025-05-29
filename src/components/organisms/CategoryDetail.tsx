@@ -97,7 +97,11 @@ const CategoryDetail = () => {
 
       <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-4">
         {items.map((card) => (
-          <CardItem key={card.id + card.title} {...card} onClick={() => router.push(`/post/${card.id}`)} />
+          <CardItem
+            key={card.id + card.title}
+            {...card}
+            onClick={() => router.push(`/post/${card.id}`)}
+          />
         ))}
       </div>
 
