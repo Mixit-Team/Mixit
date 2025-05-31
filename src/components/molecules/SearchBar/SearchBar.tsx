@@ -12,7 +12,7 @@ export function SearchBar() {
 
   const handleSearch = () => {
     if (keyword.trim() === '') return;
-    router.push(`/search?query=${encodeURIComponent(keyword.trim())}`);
+    router.push(`/search?keyword=${encodeURIComponent(keyword.trim())}`);
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
