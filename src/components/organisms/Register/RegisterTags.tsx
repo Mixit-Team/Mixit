@@ -25,7 +25,7 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const debounced = useDebounce(inputValue, 1000);
-  const { data } = useApiQuery<{ data?: { data?: string[] } }>(
+  const { data, isFetched } = useApiQuery<{ data?: string[]  }>(
     ['autocomplete', debounced] as QueryKey,
     '/api/v1/tags/autocomplete',
     { prefix: debounced },
@@ -35,7 +35,8 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
     }
   );
 
-  const suggestions: string[] = data?.data?.data ?? [];
+  const suggestions: string[] = data?.data ?? [];
+  console.log('RegisterTags suggestions:', suggestions, data);
   const addTag = (value: string) => {
     const trimmed = value.trim();
     console.log('addTag:', trimmed);
@@ -132,6 +133,16 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
                   {s}
                 </li>
               ))}
+            </ul>
+          )}
+          {showSuggestions && suggestions.length === 0 && isFetched && (
+            <ul className="top-full left-0 z-999 max-h-40 w-full rounded-b-lg border border-gray-200 bg-white shadow-md">
+                <li
+                  key={'No suggestions'}
+                  className="cursor-pointer px-3 py-2 hover:bg-gray-100"
+                >
+                  추천 태그가 없습니다.
+                </li>
             </ul>
           )}
         </div>

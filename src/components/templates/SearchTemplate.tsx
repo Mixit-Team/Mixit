@@ -17,7 +17,6 @@ interface SearchResponse {
   content: Card[];
   totalPages: number;
   totalElements: number;
-  // (필요하다면 추가 필드들)
 }
 
 const SearchTemplate: React.FC = () => {
@@ -78,7 +77,7 @@ const SearchTemplate: React.FC = () => {
     {
       enabled:         debouncedKeyword.length > 0,
       keepPreviousData:true,
-      staleTime:       60_000,
+      staleTime: 60_000,
       onError: (error: unknown) => {
         console.error('검색 API 오류:', error);
         setErrorMsg('검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
@@ -108,7 +107,7 @@ const SearchTemplate: React.FC = () => {
           <div className="flex w-full max-w-[500px] items-center rounded-xl bg-gray-100 px-4 py-2">
             <button
               onClick={() => keyword.trim() && pushSearch(keyword.trim())}
-              className="text-gray-500"
+              className="cursor-pointer text-gray-500"
               aria-label="검색"
             >
               <Search className="h-5 w-5" />

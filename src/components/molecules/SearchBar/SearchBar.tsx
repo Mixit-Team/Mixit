@@ -27,7 +27,7 @@ export function SearchBar() {
       <button
         onClick={handleSearch}
         aria-label="검색"
-        className="flex h-5 w-5 items-center justify-center text-gray-500"
+        className="cursor-pointer flex h-5 w-5 items-center justify-center text-gray-500"
       >
         <Search className="h-5 w-5" />
       </button>

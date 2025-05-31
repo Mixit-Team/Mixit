@@ -1,11 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { Bookmark, Heart, Star } from 'lucide-react';
+import { Bookmark, Star, Heart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Category, ImageType } from '@/types/Home.type';
 import { useApiMutation } from '@/hooks/useApi';
 import { useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 
 interface CardProps {
   id: number;
@@ -25,7 +26,7 @@ interface CardProps {
   viewCount: number;
   likeCount: number;
   hasLiked: boolean;
-  hasBookmarked?: boolean;
+  hasBookmarked?: boolean; // 서버에서 내려주는 초기 상태
   isAuthor: boolean;
   authorProfileImage: string | null;
   comments: {
@@ -43,16 +44,18 @@ const CardItem = ({
   defaultImage,
   likeCount,
   bookmarkCount,
-  hasBookmarked,
+  hasBookmarked = false, 
   isDetail = false,
 }: CardProps) => {
   const thumbnail = defaultImage ?? '/images/default_thumbnail.png';
   const router = useRouter();
-  const queryClient = useQueryClient();   
-  const onClick = () => {
-    console.log('Card clicked:', id);
-    router.push(`/post/${id}`);
-  };
+  const queryClient = useQueryClient();
+
+  const [localBookmarked, setLocalBookmarked] = useState<boolean>(hasBookmarked);
+
+  useEffect(() => {
+    setLocalBookmarked(hasBookmarked);
+  }, [hasBookmarked]);
 
   const postBookmarkMutate = useApiMutation<{ success: boolean }, void>(
     `/api/v1/posts/${id}/bookmark`,
@@ -66,8 +69,11 @@ const CardItem = ({
         queryClient.invalidateQueries({ queryKey: ['category'] });
         queryClient.invalidateQueries({ queryKey: ['popularCombos'] });
 
-
         router.refresh();
+      },
+      onError: () => {
+        console.error('북마크 요청 실패');
+        setLocalBookmarked(prev => !prev);
       },
     }
   );
@@ -86,15 +92,25 @@ const CardItem = ({
 
         router.refresh();
       },
+      onError: () => {
+        console.error('북마크 취소 요청 실패');
+        setLocalBookmarked(prev => !prev);
+      },
     }
   );
 
   const handleClickBookmark = async () => {
-    if (hasBookmarked) {
+    setLocalBookmarked(prev => !prev);
+
+    if (localBookmarked) {
       await postBookmarkDeleteMutate.mutateAsync();
     } else {
       await postBookmarkMutate.mutateAsync();
     }
+  };
+
+  const onCardClick = () => {
+    router.push(`/post/${id}`);
   };
 
   return (
@@ -102,19 +118,19 @@ const CardItem = ({
       className="mt-1 mb-2 w-full max-w-[200px] cursor-pointer rounded-md bg-white
          transform transition-transform duration-200 ease-out
          hover:scale-[1.02]"
-      onClick={onClick}
+      onClick={onCardClick}
     >
       <div className="relative h-[160px] w-full rounded-md shadow overflow-hidden">
         <Image src={thumbnail} alt={title || 'Card'} fill className="object-cover" />
-          <div
-            className="
-              absolute inset-0         
-              bg-gradient-to-b          
-              from-black/20             
-              to-transparent           
-              pointer-events-none       
-            "
-          />
+        <div
+          className="
+            absolute inset-0         
+            bg-gradient-to-b          
+            from-black/20             
+            to-transparent           
+            pointer-events-none       
+          "
+        />
 
         <Bookmark
           onClick={async e => {
@@ -122,8 +138,8 @@ const CardItem = ({
             await handleClickBookmark();
           }}
           className="absolute top-2 right-2 h-4 w-4 cursor-pointer"
-          color={hasBookmarked ? '#FD7A19' : 'white'}
-          fill={hasBookmarked ? '#FD7A19' : 'none'}   
+          color={localBookmarked ? '#FD7A19' : 'white'}
+          fill={localBookmarked ? '#FD7A19' : 'none'}
         />
       </div>
 
