@@ -12,9 +12,8 @@ const CategoryTemplate = () => {
         <div className="relative box-border w-full rounded-lg bg-white p-4">
           <Title label="카테고리" />
         </div>
-                  <Banner imagePath="/images/banner.png" />
+          <Banner imagePath="/images/banner.png" />
         <div className="relative box-border w-full rounded-lg bg-white p-4">
-          
           <CategoryDetail />
         </div>
       </div>
