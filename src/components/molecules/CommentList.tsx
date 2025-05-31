@@ -76,7 +76,7 @@ export default function CommentList({ postId }: { postId: number }) {
     'post',
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['comments', postId]);
+        queryClient.invalidateQueries({ queryKey: ['comments', postId] });
       },
     }
   );
@@ -87,7 +87,7 @@ export default function CommentList({ postId }: { postId: number }) {
     'delete',
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['comments', postId]);
+        queryClient.invalidateQueries({ queryKey: ['comments', postId] });
       },
     }
   );
