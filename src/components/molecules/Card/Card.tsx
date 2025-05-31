@@ -7,6 +7,7 @@ import { Category, ImageType } from '@/types/Home.type';
 import { useApiMutation } from '@/hooks/useApi';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 interface CardProps {
   id: number;
@@ -50,7 +51,7 @@ const CardItem = ({
   const thumbnail = defaultImage ?? '/images/default_thumbnail.png';
   const router = useRouter();
   const queryClient = useQueryClient();
-
+  const { status } = useSession();
   const [localBookmarked, setLocalBookmarked] = useState<boolean>(hasBookmarked);
 
   useEffect(() => {
@@ -135,6 +136,11 @@ const CardItem = ({
         <Bookmark
           onClick={async e => {
             e.stopPropagation();
+            if (status !== 'authenticated') {
+              alert('로그인이 필요합니다.');
+              return;
+            }
+
             await handleClickBookmark();
           }}
           className="absolute top-2 right-2 h-4 w-4 cursor-pointer"

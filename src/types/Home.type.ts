@@ -44,4 +44,6 @@ export interface Comment {
   images: ImageType[];
   isAuthor: boolean;
   userProfileImage?: string | null;
+  hasLiked: boolean;
+  likeCount: number;
 }

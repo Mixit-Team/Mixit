@@ -5,6 +5,7 @@ import { Bookmark, Heart, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Category, ImageType } from '@/types/Home.type';
 import { useApiMutation } from '@/hooks/useApi';
+import { useSession } from 'next-auth/react';
 
 interface CardProps {
   id: number;
@@ -51,6 +52,7 @@ const CardList = ({
     console.log('Card clicked:', id);
     router.push(`/post/${id}`);
   };
+  const { status } = useSession();  
 
   const postBookmarkMutate = useApiMutation<{ success: boolean }, void>(
     `/api/v1/posts/${id}/bookmark`,
@@ -93,6 +95,10 @@ const CardList = ({
         <Bookmark
           onClick={async e => {
             e.stopPropagation();
+            if (status !== 'authenticated') {
+              alert('로그인이 필요합니다.');
+              return;
+            } 
             await handleClickBookmark();
           }}
           className="absolute top-2 right-2 h-4 w-4 cursor-pointer"

@@ -9,9 +9,12 @@ import { SessionProvider } from 'next-auth/react';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000, // 1분
+      staleTime: 60 * 1000, 
       retry: 1,
     },
+    mutations: {
+      retry: 1, 
+    }
   },
 });
 

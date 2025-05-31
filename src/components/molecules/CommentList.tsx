@@ -6,12 +6,14 @@ import { Comment } from '@/types/Home.type';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { EllipsisVertical, ImageIcon, X } from 'lucide-react';
-import { useQueryClient } from '@tanstack/react-query';
+import {  useQueryClient } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 
 const MAX_EDIT_IMAGES = 10;
 
 export default function CommentList({ postId }: { postId: number }) {
   const queryClient = useQueryClient();
+  const { status } = useSession();  
 
   // 댓글 목록 가져오기
   const { data } = useApiQuery<{ comments: Comment[] }>(
@@ -69,6 +71,26 @@ export default function CommentList({ postId }: { postId: number }) {
     'post'
   );
 
+  const likeMutation = useApiMutation<void, { reviewId: number }>(
+    `/api/v1/posts/${postId}/reviews/like`,
+    'post',
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['comments', postId]);
+      },
+    }
+  );
+
+  // unlike: DELETE /api/v1/posts/{postId}/reviews/like?reviewId={reviewId}
+  const unlikeMutation = useApiMutation<void, { reviewId: number }>(
+    `/api/v1/posts/${postId}/reviews/like`,
+    'delete',
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['comments', postId]);
+      },
+    }
+  );
   const openMenu = (id: number, existingContent: string, existingImgs: { id: number; src: string }[]) => {
     setMenuTargetId(id);
     setEditText(existingContent);
@@ -127,6 +149,17 @@ export default function CommentList({ postId }: { postId: number }) {
     };
   }, [newFiles]);
 
+
+  //  const handleClickLike = async () => {
+  //   if (status === 'unauthenticated') {
+  //     alert('로그인이 필요합니다.');
+  //     return;
+  //   }
+
+
+   
+
+
   // 수정 완료 버튼: 이미지 업로드 → editMutation 호출
   const submitEdit = async (reviewId: number) => {
     try {
@@ -160,6 +193,9 @@ export default function CommentList({ postId }: { postId: number }) {
   };
 
   if (!data?.comments) return null;
+
+  console.log('댓글 목록:', data.comments);
+
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -199,6 +235,7 @@ export default function CommentList({ postId }: { postId: number }) {
                       <EllipsisVertical size={16} />
                     </button>
                   )}
+          
                 </div>
 
                 {/* 수정 모드인지 일반 모드인지 분기 */}
@@ -283,7 +320,7 @@ export default function CommentList({ postId }: { postId: number }) {
                     </div>
                   </div>
                 ) : (
-                  <div>
+                  <div className='flex flex-col gap-2'>
                     <p className="mt-2 whitespace-pre-wrap text-gray-700">{c.content}</p>
                     <div className="mt-2 flex flex-wrap gap-2">
                     </div>
@@ -301,7 +338,24 @@ export default function CommentList({ postId }: { postId: number }) {
                           </div>
                         ))}
                       </div>
-                    )}
+                      )}
+                    <div className='ml-auto  flex items-center gap-1 text-sm text-gray-500'>
+                        <span onClick={async () => {
+                          if (status === 'unauthenticated') {
+                            alert('로그인이 필요합니다.');
+                            return;
+                          }
+                          
+                          if (c.hasLiked) {
+                            unlikeMutation.mutateAsync({ reviewId: c.id });
+                          } else {
+                            likeMutation.mutateAsync({ reviewId: c.id });
+                          }
+                        }} className='text-xs text-gray-400 cursor-pointer'>
+                          {c.hasLiked ? '❤️' : '🤍'} 좋아요
+                        </span>
+                        {c.likeCount}
+                    </div>
                   </div>
                 )}
               </div>
