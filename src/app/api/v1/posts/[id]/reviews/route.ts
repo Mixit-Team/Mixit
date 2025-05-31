@@ -37,7 +37,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   console.log('POST /api/v1/posts/[id]/reviews content:', content);
   console.log('POST /api/v1/posts/[id]/reviews images:', images);
 
-const body = { content, imageIds: images};
+  const body = { content, imageIds: images};
   console.log('POST /api/v1/posts/[id]/reviews body:', body);
   const res = await axios.post(
     url,
@@ -74,7 +74,8 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { reviewId, content } = await request.json();
+  const { reviewId, content, images } = await request.json();
+
   const session = await getServerSession(authOptions)
 
   const BACKEND = process.env.BACKEND_URL!;
@@ -82,10 +83,11 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   console.log('Patch /api/v1/posts/[id]/reviews id:', id);
   console.log('Patch /api/v1/posts/[id]/reviews url:', url);
   console.log('Patch /api/v1/posts/[id]/reviews content:', content);
+  const body = { content, imageIds: images};
 
   const res = await axios.put(
     url,
-    { content },
+    body,
     {
       headers: {
         Authorization: `Bearer ${session?.accessToken}`,

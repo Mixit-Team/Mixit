@@ -139,7 +139,7 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
             <ul className="top-full left-0 z-999 max-h-40 w-full rounded-b-lg border border-gray-200 bg-white shadow-md">
                 <li
                   key={'No suggestions'}
-                  className="cursor-pointer px-3 py-2 hover:bg-gray-100"
+                  className="px-3 py-2 hover:bg-gray-100"
                 >
                   추천 태그가 없습니다.
                 </li>
