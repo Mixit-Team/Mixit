@@ -8,6 +8,7 @@ import CommentInput from '@/components/molecules/CommentInput';
 import { useApiMutation } from '@/hooks/useApi';
 import CommentList from '@/components/molecules/CommentList';
 import { useQueryClient } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 
 interface CommentInputWrapperProps {
   postId: number;
@@ -21,6 +22,7 @@ type CommentVariables = { content: string; images: number[] };
 export default function CommentInputWrapper({ postId }: CommentInputWrapperProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { status } = useSession();
 
   const [content, setContent] = useState('');
   const [files, setFiles] = useState<File[]>([]);
@@ -72,6 +74,11 @@ export default function CommentInputWrapper({ postId }: CommentInputWrapperProps
     async (e: FormEvent) => {
       e.preventDefault();
 
+      if (status !== 'authenticated') {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
       try {
         const imageIds = await Promise.all(
           files.map(async file => {
@@ -90,7 +97,7 @@ export default function CommentInputWrapper({ postId }: CommentInputWrapperProps
         console.error('댓글 등록 실패:', err);
       }
     },
-    [content, files, uploadImage, postComment]
+    [status, files, postComment, content, uploadImage]
   );
 
   return (

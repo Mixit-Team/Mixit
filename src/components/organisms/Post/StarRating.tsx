@@ -5,6 +5,7 @@ import { Star as StarIcon, StarHalf as StarHalfIcon } from 'lucide-react';
 import { useApiMutation, useApiQuery } from '@/hooks/useApi';
 import type { QueryKey } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 interface StarRatingProps {
   postId: number;
@@ -21,6 +22,8 @@ interface PopularRateResponse {
 
 const StarRating: React.FC<StarRatingProps> = ({ postId, maxStars = 5, size = 32, rating }) => {
   const router = useRouter();
+      const {  status } = useSession();
+  
   const [current, setCurrent] = useState<number>(0);
   const [hovered, setHovered] = useState<number>(0);
 
@@ -47,10 +50,16 @@ const StarRating: React.FC<StarRatingProps> = ({ postId, maxStars = 5, size = 32
 
   const handleClick = useCallback(
     (rate: number) => {
+
+      if (status !== 'authenticated') {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
       setCurrent(rate);
       postRate.mutate({ rate });
     },
-    [postRate]
+    [postRate, status]
   );
 
   const display = hovered || current;

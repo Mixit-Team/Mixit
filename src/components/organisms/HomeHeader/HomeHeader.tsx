@@ -9,7 +9,7 @@ const HomeHeader = () => {
         <span className="text-orange-500">i</span>
         <span className="text-pink-500">t</span>
       </div>
-      <div className="ml-auto">
+      <div className="ml-auto cursor-pointer">
         <Notification />
       </div>
     </div>

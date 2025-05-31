@@ -84,8 +84,9 @@ const CardList = ({
 
   return (
     <div
-      className="mt-1 mb-2 w-full max-w-[200px] cursor-pointer rounded-md bg-white"
-      onClick={onClick}
+     className="mt-1 mb-2 w-full max-w-[200px] cursor-pointer rounded-md bg-white
+         transform transition-transform duration-200 ease-out
+         hover:scale-[1.02]"      onClick={onClick}
     >
       <div className="relative h-[160px] w-full rounded-xl shadow">
         <Image src={thumbnail} alt={title || 'Card'} fill className="rounded-md object-cover" />
@@ -100,7 +101,9 @@ const CardList = ({
       </div>
 
       <h3
-        className=" mt-2 font-bold text-[14px] text-[#292A2D]"
+      className="mt-2 font-bold text-[14px] text-[#292A2D] box-border p-2
+                  overflow-hidden
+                  line-clamp-2"
         style={{ fontFamily: 'NanumSquareRoundOTF' }}
       >
         {title}

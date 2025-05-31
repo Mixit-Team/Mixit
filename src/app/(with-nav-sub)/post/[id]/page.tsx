@@ -18,7 +18,6 @@ export default async function Page({ params }: PageProps) {
       Authorization: `Bearer ${session?.accessToken}`,
     },
   });
-  console.log(`GET /api/v1/posts/${id} response:`, res);
 
   if (!res.ok) {
     console.error('게시물 로드 실패:', res.statusText, id);

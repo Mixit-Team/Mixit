@@ -4,6 +4,7 @@ import React from 'react';
 import { useApiQuery } from '@/hooks/useApi';
 import Tag from '../atoms/Tag';
 import Title from '../atoms/Title';
+import { useRouter } from 'next/navigation';
 
 interface TagItem {
   tag: string;
@@ -15,6 +16,7 @@ interface PopularTagsResponse {
 }
 
 const TagSection: React.FC = () => {
+  const router = useRouter();
   const { data, isLoading, error } = useApiQuery<PopularTagsResponse>(
     ['homeTags'],
     '/api/v1/home/tags/popular',
@@ -30,12 +32,13 @@ const TagSection: React.FC = () => {
 
   const tags: TagItem[] = data?.data || [];
 
+
   return (
     <section>
       <Title label="인기 태그" />
       <div className="mt-8 flex flex-wrap gap-2">
         {tags.map(({ tag }) => (
-          <Tag key={tag} tag={tag} />
+          <Tag key={tag} tag={tag} onClick={()=> router.push(`/search?keyword=${tag}`) } />
         ))}
       </div>
     </section>

@@ -9,8 +9,7 @@ export function withAuth<P extends object>(
   WrappedComponent: ComponentType<P>
 ) {
   return function ProtectedComponent(props: P) {
-    const { data, status } = useSession();
-    console.log('withAuth status ', status, ' user',data)
+    const {  status } = useSession();
     const router = useRouter();
 
     useEffect(() => {

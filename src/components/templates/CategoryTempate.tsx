@@ -11,7 +11,10 @@ const CategoryTemplate = () => {
     <div className="flex-1">
         <div className="relative box-border w-full rounded-lg bg-white p-4">
           <Title label="카테고리" />
-          <Banner imagePath="/images/banner.png" />
+        </div>
+                  <Banner imagePath="/images/banner.png" />
+        <div className="relative box-border w-full rounded-lg bg-white p-4">
+          
           <CategoryDetail />
         </div>
       </div>

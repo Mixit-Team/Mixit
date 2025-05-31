@@ -43,4 +43,5 @@ export interface Comment {
   modifiedAt: string;
   images: ImageType[];
   isAuthor: boolean;
+  userProfileImage?: string | null;
 }

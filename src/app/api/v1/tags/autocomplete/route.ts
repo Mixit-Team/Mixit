@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     console.log('GET /api/v1/tags/autocomplete request url:', url);
     console.log('GET /api/v1/tags/autocomplete response:', res.data);
 
-    const data = res.data.data;
+    const data = res.data.data || ['아직 태그가 없어요.'];
 
     return NextResponse.json({ data });
   } catch (err: unknown) {

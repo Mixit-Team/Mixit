@@ -8,11 +8,12 @@ import { useApiMutation } from '@/hooks/useApi';
 import CommentInputWrapper from '../organisms/Post/CommetInputWrapper';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/types/Home.type';
-import { withAuth } from '../withAuth';
+import { useSession } from 'next-auth/react';
 
 const PostTemplate = ({ data }: { data: Card }) => {
   console.log('PostTemplate data:', data);
   const router = useRouter();
+  const { status } = useSession();
 
   const postLikeMutate = useApiMutation<{ success: boolean }, void>(
     `/api/v1/posts/${data.id}/like`,
@@ -59,6 +60,12 @@ const PostTemplate = ({ data }: { data: Card }) => {
   );
 
   const handleClickLike = async () => {
+    if (status === 'unauthenticated') {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+
     if (data.hasLiked) {
       await postLikeDeleteMutate.mutateAsync();
     } else {
@@ -67,6 +74,13 @@ const PostTemplate = ({ data }: { data: Card }) => {
   };
 
   const handleClickBookmark = async () => {
+
+    if (status === 'unauthenticated') {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+
     if (data.hasBookmarked) {
       await postBookmarkDeleteMutate.mutateAsync();
     } else {
@@ -107,4 +121,4 @@ const PostTemplate = ({ data }: { data: Card }) => {
   );
 };
 
-export default withAuth(PostTemplate);
+export default PostTemplate;

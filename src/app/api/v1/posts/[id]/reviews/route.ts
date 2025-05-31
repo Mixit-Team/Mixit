@@ -37,9 +37,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   console.log('POST /api/v1/posts/[id]/reviews content:', content);
   console.log('POST /api/v1/posts/[id]/reviews images:', images);
 
+const body = { content, imageIds: images};
+  console.log('POST /api/v1/posts/[id]/reviews body:', body);
   const res = await axios.post(
     url,
-    { content, images, rate: 1 },
+    body,
     {
       headers: {
         Authorization: `Bearer ${session?.accessToken}`,

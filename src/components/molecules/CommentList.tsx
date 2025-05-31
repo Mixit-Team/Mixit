@@ -88,7 +88,7 @@ export default function CommentList({ postId }: { postId: number }) {
                   alt="profile"
                   width={24}
                   height={24}
-                  src={c.images[0]?.src ?? '/images/default_thumbnail.png'}
+                  src={c?.userProfileImage ?? '/images/default_thumbnail.png'}
                 />
                 <span className="font-medium text-gray-800">{c.userNickname}</span>
                 {c.createdAt && (
@@ -104,7 +104,9 @@ export default function CommentList({ postId }: { postId: number }) {
                     <EllipsisVertical size={16} />
                   </button>
                 )}
+  
               </div>
+          
 
               {editingId === c.id ? (
                 <div className="flex flex-col gap-2">
@@ -133,8 +135,30 @@ export default function CommentList({ postId }: { postId: number }) {
                   </div>
                 </div>
               ) : (
-                <p className="mt-2 whitespace-pre-wrap text-gray-700">{c.content}</p>
+                  <div>
+
+                    <p className="mt-2 whitespace-pre-wrap text-gray-700">{c.content}</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                {/* {data.hasLiked ? '❤️' : '🤍'} 좋아요 {data.likeCount} */}
+                    </div>
+                  </div>
               )}
+              <div>
+                {c.images && c.images.length > 0 && (
+                  <div className="mb-2 flex flex-wrap gap-2">
+                    {c.images.map((img, idx) => (
+                      <div key={idx} className="relative h-20 w-20 overflow-hidden rounded-lg">
+                        <Image
+                          src={img.src}
+                          alt={`comment-image-${idx}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           ))}
       </div>

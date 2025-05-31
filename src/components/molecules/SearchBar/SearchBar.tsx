@@ -1,43 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, KeyboardEvent } from 'react';
 import { Search } from 'lucide-react';
-import { useDebounce } from '@/hooks/useDebounce';
-import { useApiQuery } from '@/hooks/useApi';
-import { QueryKey, UseQueryOptions } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
-interface Card {
-  id: number;
-  name: string;
-  imageUrl: string;
-  description: string;
-  price: number;
-  category: string;
-}
 
 export function SearchBar() {
+  const router = useRouter();
   const [keyword, setKeyword] = useState('');
-  const debounced = useDebounce(keyword, 1000);
 
-  const { data, isFetching, isError } = useApiQuery<Card[]>(
-    ['search', debounced] as QueryKey,
-    '/search',
-    { q: debounced },
-    {
-      enabled: debounced.length > 0,
-      keepPreviousData: true,
-      staleTime: 60_000,
-    } as Omit<UseQueryOptions<Card[]>, 'queryKey' | 'queryFn'>
-  );
 
-  console.log(data, isFetching, isError);
+  const handleSearch = () => {
+    if (keyword.trim() === '') return;
+    router.push(`/search?query=${encodeURIComponent(keyword.trim())}`);
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSearch();
+    }
+  };
 
   return (
     <div className="flex items-center rounded-xl bg-gray-100 px-4 py-2">
-      <Search className="h-5 w-5 text-gray-500" />
+      <button
+        onClick={handleSearch}
+        aria-label="검색"
+        className="flex h-5 w-5 items-center justify-center text-gray-500"
+      >
+        <Search className="h-5 w-5" />
+      </button>
       <input
         value={keyword}
         onChange={e => setKeyword(e.target.value)}
+        onKeyDown={onKeyDown}
         type="text"
         placeholder="검색어를 입력해주세요"
         className="ml-2 flex-1 bg-transparent placeholder-gray-400 focus:outline-none"

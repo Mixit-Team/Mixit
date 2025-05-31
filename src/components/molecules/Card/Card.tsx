@@ -46,7 +46,6 @@ const CardItem = ({
   hasBookmarked,
   isDetail = false,
 }: CardProps) => {
-  console.log('defaultImage',defaultImage)
   const thumbnail = defaultImage ?? '/images/default_thumbnail.png';
   const router = useRouter();
   const queryClient = useQueryClient();   
@@ -64,6 +63,8 @@ const CardItem = ({
         queryClient.invalidateQueries({ queryKey: ['homeCategory'] });
         queryClient.invalidateQueries({ queryKey: ['homePopularCombos'] });
         queryClient.invalidateQueries({ queryKey: ['homeTodayRecomendation'] });
+        queryClient.invalidateQueries({ queryKey: ['category'] });
+
         router.refresh();
       },
     }
@@ -78,6 +79,8 @@ const CardItem = ({
         queryClient.invalidateQueries({ queryKey: ['homeCategory'] });
         queryClient.invalidateQueries({ queryKey: ['homePopularCombos'] });
         queryClient.invalidateQueries({ queryKey: ['homeTodayRecomendation'] });
+        queryClient.invalidateQueries({ queryKey: ['category'] });
+
         router.refresh();
       },
     }
@@ -93,7 +96,9 @@ const CardItem = ({
 
   return (
     <div
-      className="mt-1 mb-2 w-full max-w-[200px] cursor-pointer rounded-md bg-white"
+      className="mt-1 mb-2 w-full max-w-[200px] cursor-pointer rounded-md bg-white
+         transform transition-transform duration-200 ease-out
+         hover:scale-[1.02]"
       onClick={onClick}
     >
       <div className="relative h-[160px] w-full rounded-md shadow overflow-hidden">
@@ -120,7 +125,9 @@ const CardItem = ({
       </div>
 
       <h3
-        className=" mt-2 font-bold text-[14px] text-[#292A2D]"
+        className="mt-2 font-bold text-[14px] text-[#292A2D] box-border p-2
+                  overflow-hidden
+                  line-clamp-2"
         style={{ fontFamily: 'NanumSquareRoundOTF' }}
       >
         {title}
