@@ -64,6 +64,8 @@ const CardItem = ({
         queryClient.invalidateQueries({ queryKey: ['homePopularCombos'] });
         queryClient.invalidateQueries({ queryKey: ['homeTodayRecomendation'] });
         queryClient.invalidateQueries({ queryKey: ['category'] });
+        queryClient.invalidateQueries({ queryKey: ['popularCombos'] });
+
 
         router.refresh();
       },
@@ -80,6 +82,7 @@ const CardItem = ({
         queryClient.invalidateQueries({ queryKey: ['homePopularCombos'] });
         queryClient.invalidateQueries({ queryKey: ['homeTodayRecomendation'] });
         queryClient.invalidateQueries({ queryKey: ['category'] });
+        queryClient.invalidateQueries({ queryKey: ['popularCombos'] });
 
         router.refresh();
       },
