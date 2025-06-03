@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSignup } from '../../hooks/useSignup';
 import { checkDuplicate } from '../../services/auth/signup';
@@ -288,33 +288,34 @@ const SignupForm = () => {
   }, [getValues, verificationCode, showModal]);
 
   // Form Submit
-  const onSubmit = (data: SignupFormData) => {
-    console.log('Form data before submit:', data);
-    const formData = {
-      ...data,
-      agreements: [1073741824], // 임시 고정값
-    };
-    console.log('Final formData:', formData);
+  const onSubmit = useCallback(
+    (data: SignupFormData) => {
+      const formData = {
+        ...data,
+        agreements: [1073741824], // 임시 고정값
+      };
 
-    signup(formData, {
-      onSuccess: () => {
-        setModalContent({
-          title: '알림',
-          message: '회원가입에 성공했습니다.\n가입한 정보로 로그인 해주세요.',
-          isSuccess: true,
-        });
-        setIsModalOpen(true);
-      },
-      onError: error => {
-        setModalContent({
-          title: '오류',
-          message: error.message,
-          isSuccess: false,
-        });
-        setIsModalOpen(true);
-      },
-    });
-  };
+      signup(formData, {
+        onSuccess: () => {
+          setModalContent({
+            title: '알림',
+            message: '회원가입에 성공했습니다.\n가입한 정보로 로그인 해주세요.',
+            isSuccess: true,
+          });
+          setIsModalOpen(true);
+        },
+        onError: error => {
+          setModalContent({
+            title: '오류',
+            message: error.message,
+            isSuccess: false,
+          });
+          setIsModalOpen(true);
+        },
+      });
+    },
+    [signup]
+  );
 
   // --- Derived State for Disabling Buttons ---
   const isloginIdCheckDisabled = isCheckingloginId || !watchedloginId || !!errors.loginId;
@@ -501,38 +502,55 @@ const SignupForm = () => {
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">프로필 사진 (선택)</label>
           <div className="mt-1">
-            <div
-              onClick={() => document.getElementById('imageId')?.click()}
-              className={`relative h-24 w-24 cursor-pointer overflow-hidden rounded-md bg-gray-100 transition-all hover:bg-gray-200 ${
-                imageError || errors.imageId ? 'border border-red-500' : ''
-              }`}
-            >
-              {imagePreview ? (
-                <Image
-                  src={imagePreview}
-                  alt="Profile Preview"
-                  fill
-                  sizes="96px"
-                  className="object-cover"
-                  priority
-                />
-              ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center text-gray-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-8 w-8"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
+            <div className="relative inline-block">
+              <div
+                onClick={() => document.getElementById('imageId')?.click()}
+                className={`relative h-24 w-24 cursor-pointer overflow-hidden rounded-md bg-gray-100 transition-all hover:bg-gray-200 ${
+                  imageError || errors.imageId ? 'border border-red-500' : ''
+                }`}
+              >
+                {imagePreview ? (
+                  <Image
+                    src={imagePreview}
+                    alt="Profile Preview"
+                    fill
+                    sizes="96px"
+                    className="object-cover"
+                    priority
+                  />
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center text-gray-400">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-8 w-8"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              {imagePreview && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedFile(null);
+                    setImagePreview(null);
+                    setValue('imageId', undefined);
+                    setImageError(null);
+                    clearErrors('imageId');
+                  }}
+                  className="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600 focus:outline-none"
+                >
+                  <Trash2 size={16} />
+                </button>
               )}
             </div>
             <input
@@ -618,7 +636,7 @@ const SignupForm = () => {
         onClose={modalContent.isSuccess ? handleSignupSuccessConfirm : closeModal}
         title={modalContent.title}
         message={<div className="whitespace-pre-line">{modalContent.message}</div>}
-        buttonText="확인"
+        buttonText={modalContent.isSuccess ? '로그인하기' : '확인'}
       />
     </>
   );
