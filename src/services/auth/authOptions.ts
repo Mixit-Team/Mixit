@@ -30,21 +30,45 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         id: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
+        name: { label: 'Name', type: 'text' },
+        email: { label: 'Email', type: 'email' },
+        image: { label: 'Image', type: 'text' },
+        accessToken: { label: 'Access Token', type: 'text' },
+        expiresIn: { label: 'Expires In', type: 'text' },
+        nickname: { label: 'Nickname', type: 'text' },
+        birth: { label: 'Birth', type: 'text' },
       },
       async authorize(credentials) {
         try {
-          console.log('credentials2', credentials);
-          if (!credentials?.id || !credentials.password) {
-            throw new Error('아이디와 비밀번호를 입력해주세요');
+          if (!credentials?.id) {
+            throw new Error('아이디를 입력해주세요');
           }
+
+          // 카카오 로그인인 경우
+          if (credentials.password === 'kakao-login') {
+            return {
+              id: credentials.id,
+              name: credentials.name || '',
+              email: credentials.email || '',
+              image: credentials.image || '',
+              accessToken: credentials.accessToken || '',
+              expiresIn: Number(credentials.expiresIn) || 0,
+              nickname: credentials.nickname || '',
+              birth: credentials.birth || '',
+            };
+          }
+
+          // 일반 로그인인 경우
+          if (!credentials.password) {
+            throw new Error('비밀번호를 입력해주세요');
+          }
+
           const credentialsData = {
-            loginId: credentials?.id,
+            loginId: credentials.id,
             password: credentials.password,
           };
 
-          console.log('credentials', credentialsData);
           const response = await login(credentialsData);
-          console.log('credentials response', response);
 
           return {
             id: response.loginId,
