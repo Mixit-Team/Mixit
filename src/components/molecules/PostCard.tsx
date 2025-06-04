@@ -16,7 +16,7 @@ export interface PostCardProps {
 const PostCard: React.FC<{ post: PostCardProps }> = React.memo(({ post }) => {
   const router = useRouter();
   const handleClick = () => {
-    router.push(`/posts/${post.id}`);
+    router.push(`/post/${post.id}`);
   };
 
   return (
