@@ -90,7 +90,7 @@ const PostTemplate = ({ data }: { data: Card }) => {
 
   return (
     <div className="mx-auto w-full space-y-6 rounded-lg bg-white p-6">
-      <PostHeader title="게시물 상세" backHref="/home" />
+      <PostHeader title="게시물 상세" backHref="/home" id={data.id} isAuthor={data.isAuthor}/>
       <ImageSlider images={data.images} />
 
       <h1 className="text-2xl font-bold">{data.title}</h1>
