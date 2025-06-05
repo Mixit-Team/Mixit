@@ -6,65 +6,110 @@ import SortTabs from '@/components/molecules/SortTabs';
 import PostGrid from '@/components/organisms/PostGrid';
 import InfiniteScrollLoader from '@/components/organisms/InfiniteScrollLoader';
 import type { PostCardProps } from '@/components/molecules/PostCard';
+import type { PostApiPage } from '@/app/api/v1/users/my-page/posts/route';
 
-const MOCK_POSTS: PostCardProps[] = Array.from({ length: 30 }).map((_, i) => ({
-  id: String(i + 1),
-  image: '',
-  title: `조합 타이틀`,
-  nickname: '유저 닉네임',
-  rating: 4.5,
-  likes: 2,
-}));
+interface ApiPost {
+  id: string;
+  title: string;
+  authorNickname: string;
+  authorProfileImage: string;
+  images: { src: string }[];
+  likeCount: number;
+  rating: {
+    averageRating: number;
+  };
+}
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 16;
 
 const PostsPage: React.FC = () => {
   const [sort, setSort] = useState<'latest' | 'popular'>('latest');
   const [posts, setPosts] = useState<PostCardProps[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const pageRef = useRef(0);
 
-  // 무한 스크롤 핸들러
-  const loadMore = useCallback(() => {
+  console.log(posts);
+  const fetchPosts = useCallback(
+    async (page: number) => {
+      try {
+        const response = await fetch(
+          `/api/v1/users/my-page/posts?page=${page}&size=${PAGE_SIZE}&sort=${sort}`
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch posts');
+        }
+
+        const data: PostApiPage<ApiPost> & { nextPage?: number } = await response.json();
+
+        const formattedPosts: PostCardProps[] = data.content.map(post => ({
+          id: post.id,
+          image: post.images[0]?.src || '',
+          title: post.title,
+          nickname: post.authorNickname,
+          rating: post.rating.averageRating,
+          likes: post.likeCount,
+          profileImage: post.authorProfileImage,
+        }));
+
+        return {
+          posts: formattedPosts,
+          hasMore: !!data.nextPage,
+        };
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        return { posts: [], hasMore: false };
+      }
+    },
+    [sort]
+  );
+
+  const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
+
     setLoading(true);
-    setTimeout(() => {
-      // 실제 API 연동 시 fetch로 대체
-      const nextPage = pageRef.current + 1;
-      const start = (nextPage - 1) * PAGE_SIZE;
-      const end = start + PAGE_SIZE;
-      const newPosts = MOCK_POSTS.slice(start, end);
-      setPosts(prev => [...prev, ...newPosts]);
-      pageRef.current = nextPage;
-      setHasMore(end < MOCK_POSTS.length);
-      setLoading(false);
-    }, 500);
-  }, [loading, hasMore]);
+    setError(null);
 
-  // 최초 1회 로드
+    const nextPage = pageRef.current + 1;
+    const { posts: newPosts, hasMore: morePosts } = await fetchPosts(nextPage);
+
+    setPosts(prev => [...prev, ...newPosts]);
+    pageRef.current = nextPage;
+    setHasMore(morePosts);
+    setLoading(false);
+  }, [loading, hasMore, fetchPosts]);
+
   useEffect(() => {
-    setPosts([]);
-    pageRef.current = 0;
-    setHasMore(true);
-    loadMore();
-    // eslint-disable-next-line
-  }, [sort]);
+    const resetAndLoad = async () => {
+      setPosts([]);
+      pageRef.current = 0;
+      setHasMore(true);
+      setError(null);
+      setLoading(true);
 
-  // 스크롤 이벤트
+      const { posts: initialPosts, hasMore: morePosts } = await fetchPosts(0);
+      setPosts(initialPosts);
+      setHasMore(morePosts);
+      setLoading(false);
+    };
+
+    resetAndLoad();
+  }, [sort, fetchPosts]);
+
   useEffect(() => {
     if (!hasMore || loading) return;
+
     const handleScroll = () => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
         loadMore();
       }
     };
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loadMore, hasMore, loading]);
-
-  // 정렬 (실제 API 연동 시 서버에서 정렬)
-  const sortedPosts = posts; // mock에서는 정렬 의미 없음
 
   return (
     <ProfileMainLayout title="내 게시물" showBackButton>
@@ -72,8 +117,14 @@ const PostsPage: React.FC = () => {
         <div className="pt-4 pb-2">
           <SortTabs sort={sort} onChange={setSort} />
         </div>
-        <PostGrid posts={sortedPosts} />
-        {loading && <InfiniteScrollLoader />}
+        {error ? (
+          <div className="flex h-40 items-center justify-center text-red-500">{error}</div>
+        ) : (
+          <>
+            <PostGrid posts={posts} />
+            {loading && <InfiniteScrollLoader />}
+          </>
+        )}
       </div>
     </ProfileMainLayout>
   );

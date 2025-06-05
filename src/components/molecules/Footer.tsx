@@ -8,11 +8,11 @@ const Footer: React.FC = () => {
         <p className="mb-2 text-lg font-bold text-gray-400">Mixit</p>
         <p className="text-xs">문의, 비즈니스 제안: mixitofficialmixit@gmail.com</p>
         <div className="mt-2 text-xs">
-          <Link href="/terms/service" className="hover:underline">
+          <Link href="/terms/service" target="_blank" className="hover:underline">
             이용약관
           </Link>
           <span className="mx-2">|</span>
-          <Link href="/terms/privacy" className="hover:underline">
+          <Link href="/terms/privacy" target="_blank" className="hover:underline">
             개인정보처리방침
           </Link>
         </div>

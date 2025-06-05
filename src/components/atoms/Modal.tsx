@@ -27,7 +27,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, message, buttonTe
             </button>
           </div>
           {/* Message */}
-          <div className="mb-5 text-center text-sm text-gray-700">{message}</div>
+          <div className="mb-5 text-center text-sm whitespace-pre-line text-gray-700">
+            {message}
+          </div>
           {/* Button */}
           <button
             onClick={onClose}

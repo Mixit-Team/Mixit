@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import { Image as ImageIcon } from 'lucide-react';
+import { Image as ImageIcon, Trash2 } from 'lucide-react';
 import InputField from './InputField';
 import Button from '../atoms/Button';
 import Modal from '../atoms/Modal';
@@ -194,12 +194,17 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
     // 이미지 파일 타입 확인
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
       toast.error('지원하지 않는 이미지 형식입니다. (JPEG, PNG, GIF, WEBP만 가능)');
+      setError('imageId', { type: 'manual', message: '지원하지 않는 이미지 형식입니다.' });
       return;
     }
 
     // 파일 크기 제한
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
       toast.error(`파일 크기는 ${MAX_FILE_SIZE_MB}MB를 초과할 수 없습니다.`);
+      setError('imageId', {
+        type: 'manual',
+        message: `파일 크기는 ${MAX_FILE_SIZE_MB}MB를 초과할 수 없습니다.`,
+      });
       return;
     }
 
@@ -210,7 +215,8 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
       const imageId = response.data.id;
 
       // 이미지 ID 설정
-      setValue('imageId', imageId);
+      setValue('imageId', imageId, { shouldDirty: true });
+      clearErrors('imageId');
 
       // 이미지 미리보기 설정
       const reader = new FileReader();
@@ -221,9 +227,16 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
     } catch (error) {
       console.error('프로필 이미지 업로드 실패:', error);
       toast.error('프로필 이미지 업로드에 실패했습니다.');
+      setError('imageId', { type: 'manual', message: '프로필 이미지 업로드에 실패했습니다.' });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRemoveImage = () => {
+    setProfileImage(null);
+    setValue('imageId', '', { shouldDirty: true });
+    clearErrors('imageId');
   };
 
   const onSubmit = useCallback(
@@ -425,30 +438,50 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
               accept="image/*"
               className="hidden"
             />
-            <button
-              type="button"
-              className="relative flex h-24 w-24 items-center justify-center overflow-hidden bg-gray-200 transition-colors hover:bg-gray-300"
-              onClick={handleProfileImageClick}
-              disabled={isLoading}
-            >
-              {profileImage ? (
-                <NextImage
-                  src={profileImage}
-                  alt="프로필 이미지"
-                  fill
-                  sizes="96px"
-                  className="object-cover"
-                  priority
-                />
-              ) : (
-                <ImageIcon size={32} className="text-gray-400" />
+            <div className="relative inline-block">
+              <button
+                type="button"
+                className={`relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-md bg-gray-200 transition-colors hover:bg-gray-300 ${
+                  errors.imageId ? 'border border-red-500' : ''
+                }`}
+                onClick={handleProfileImageClick}
+                disabled={isLoading}
+              >
+                {profileImage ? (
+                  <NextImage
+                    src={profileImage}
+                    alt="프로필 이미지"
+                    fill
+                    sizes="96px"
+                    className="object-cover"
+                    priority
+                    style={{ cursor: 'pointer' }}
+                  />
+                ) : (
+                  <ImageIcon size={32} className="text-gray-400" />
+                )}
+                {isLoading && (
+                  <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  </div>
+                )}
+              </button>
+              {profileImage && (
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600 focus:outline-none"
+                >
+                  <Trash2 size={16} />
+                </button>
               )}
-              {isLoading && (
-                <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                </div>
-              )}
-            </button>
+            </div>
+            {errors.imageId && (
+              <p className="mt-1 text-sm text-red-600">{errors.imageId.message}</p>
+            )}
+            <p className="mt-1 text-xs text-gray-500">
+              * 사진 용량 {MAX_FILE_SIZE_MB}MB 이하 (jpg, png, gif, webp)
+            </p>
           </div>
         </div>
 

@@ -21,6 +21,7 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/login',
+    error: '/login',
   },
   providers: [
     CredentialsProvider({
@@ -29,31 +30,63 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         id: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
+        name: { label: 'Name', type: 'text' },
+        email: { label: 'Email', type: 'email' },
+        image: { label: 'Image', type: 'text' },
+        accessToken: { label: 'Access Token', type: 'text' },
+        expiresIn: { label: 'Expires In', type: 'text' },
+        nickname: { label: 'Nickname', type: 'text' },
+        birth: { label: 'Birth', type: 'text' },
       },
       async authorize(credentials) {
-        console.log('credentials2', credentials);
-        if (!credentials?.id || !credentials.password) {
-          return null;
+        try {
+          if (!credentials?.id) {
+            throw new Error('아이디를 입력해주세요');
+          }
+
+          // 카카오 로그인인 경우
+          if (credentials.password === 'kakao-login') {
+            return {
+              id: credentials.id,
+              name: credentials.name || '',
+              email: credentials.email || '',
+              image: credentials.image || '',
+              accessToken: credentials.accessToken || '',
+              expiresIn: Number(credentials.expiresIn) || 0,
+              nickname: credentials.nickname || '',
+              birth: credentials.birth || '',
+            };
+          }
+
+          // 일반 로그인인 경우
+          if (!credentials.password) {
+            throw new Error('비밀번호를 입력해주세요');
+          }
+
+          const credentialsData = {
+            loginId: credentials.id,
+            password: credentials.password,
+          };
+
+          const response = await login(credentialsData);
+
+          return {
+            id: response.loginId,
+            name: response.name,
+            email: response.email,
+            image: response.imageSrc,
+            accessToken: response.token,
+            expiresIn: response.expiresIn,
+            nickname: response.nickname,
+            birth: response.birth,
+          };
+        } catch (error) {
+          console.error('Login error:', error);
+          if (error instanceof Error) {
+            throw new Error(error.message);
+          }
+          throw new Error('일치하는 회원정보가 없습니다.');
         }
-        const credentialsData = {
-          loginId: credentials?.id,
-          password: credentials.password,
-        };
-
-        console.log('credentials', credentialsData);
-        const response = await login(credentialsData);
-        console.log('credentials response', response);
-
-        return {
-          id: response.loginId, // NextAuth 필수
-          name: response.name,
-          email: response.email, // 선택이지만 있으면 편합니다
-          image: response.imageSrc, // 선택
-          accessToken: response.token, // 내가 추가로 쓸 필드
-          expiresIn: response.expiresIn,
-          nickname: response.nickname,
-          birth: response.birth, // 원하시면 더 추가
-        };
       },
     }),
   ],
@@ -108,7 +141,7 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false,  // 임시 지금현재 도메인없어서
+        secure: false, // 임시 지금현재 도메인없어서
       },
     },
     pkceCodeVerifier: {

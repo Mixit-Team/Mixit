@@ -3,6 +3,7 @@
 import React from 'react';
 import ProfileMainLayout from '@/components/templates/ProfileMainLayout';
 import MyPageContent from '@/components/organisms/MyPageContent';
+import { withAuth } from '@/components/withAuth';
 
 const MyPage: React.FC = () => {
   return (
@@ -12,4 +13,4 @@ const MyPage: React.FC = () => {
   );
 };
 
-export default MyPage;
+export default withAuth(MyPage);
