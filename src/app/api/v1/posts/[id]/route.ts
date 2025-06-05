@@ -1,9 +1,12 @@
+import { authOptions } from '@/services/auth/authOptions';
 import axios from 'axios';
+import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function PUT(request: NextRequest) {
   try {
     // request.json() 으로 JSON 파싱
+    const session = await getServerSession(authOptions)
     const { id, category, title, content, tags, imageIds } = (await request.json()) as {
       id: number;
       category: string;
@@ -29,6 +32,7 @@ export async function PUT(request: NextRequest) {
     // 외부 백엔드에 JSON 형태로 다시 PUT
     const response = await axios.put(url, body, {
       headers: {
+        Authorization: `Bearer ${session?.accessToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -44,17 +48,17 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    // request.json() 으로 JSON 파싱
     const { id } = (await request.json()) as { id: number };
+    const session = await getServerSession(authOptions)
 
     const BACKEND = process.env.BACKEND_URL!;
     const url = `${BACKEND}/api/v1/posts/${id}`;
 
     console.log('DELETE /api/v1/posts request body:', { id });
 
-    // 외부 백엔드에 DELETE 요청
     const response = await axios.delete(url, {
       headers: {
+        Authorization: `Bearer ${session?.accessToken}`,
         'Content-Type': 'application/json',
       },
     });
