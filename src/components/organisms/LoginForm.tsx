@@ -184,7 +184,7 @@ export const LoginForm: React.FC = () => {
 
         {/* Links */}
         <div className="text-center text-sm text-gray-500">
-          <a href="#" className="hover:underline">
+          <a href="/find-account" className="hover:underline">
             아이디 / 비밀번호 찾기
           </a>
           <span className="mx-2">|</span>

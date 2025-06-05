@@ -7,9 +7,17 @@ interface ModalProps {
   title: string;
   message: React.ReactNode;
   buttonText?: string;
+  onConfirm?: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, message, buttonText = '확인' }) => {
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  message,
+  buttonText = '확인',
+  onConfirm,
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -32,7 +40,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, message, buttonTe
           </div>
           {/* Button */}
           <button
-            onClick={onClose}
+            onClick={onConfirm ? onConfirm : onClose}
             className="w-full rounded-md bg-[#FF6B00] py-3 font-normal text-white"
           >
             {buttonText}

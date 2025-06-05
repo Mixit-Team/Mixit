@@ -88,7 +88,11 @@ const CommentsPage: React.FC = () => {
           ) : comments.length > 0 ? (
             <CommentList comments={comments} />
           ) : (
-            <div className="py-10 text-center text-gray-400">댓글이 없습니다.</div>
+            <div className="py-10 text-center text-gray-400">
+              작성한 댓글이 없습니다.
+              <br />
+              댓글을 남겨보세요.
+            </div>
           )}
         </div>
         <div className="py-2">

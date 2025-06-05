@@ -6,6 +6,7 @@ import ProfileAuthForm from '@/components/molecules/ProfileAuthForm';
 import Modal from '@/components/atoms/Modal';
 import ProfileMainLayout from '@/components/templates/ProfileMainLayout';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface ProfileFormData {
   userId: string;
@@ -24,6 +25,7 @@ export default function ProfilePage() {
     title: '',
     message: '',
   });
+  const router = useRouter();
 
   const handleAuthentication = useCallback(() => {
     setAuthenticated(true);
@@ -42,6 +44,11 @@ export default function ProfilePage() {
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
   }, []);
+
+  const handleModalConfirm = useCallback(() => {
+    setIsModalOpen(false);
+    router.push('/mypage');
+  }, [router]);
 
   if (status !== 'authenticated') {
     return (
@@ -76,6 +83,7 @@ export default function ProfilePage() {
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
+          onConfirm={handleModalConfirm}
           title={modalContent.title}
           message={modalContent.message}
           buttonText="확인"

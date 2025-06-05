@@ -25,14 +25,14 @@ const Footer = () => (
 
       <div className="flex space-x-6">
         <a
-          href="/terms"
+          href="/terms/service"
           target="_blank"
           className="text-sm text-[#6D6F72] underline hover:text-[#333]"
         >
           이용약관
         </a>
         <a
-          href="/privacy"
+          href="/terms/privacy"
           target="_blank"
           className="text-sm text-[#6D6F72] underline hover:text-[#333]"
         >

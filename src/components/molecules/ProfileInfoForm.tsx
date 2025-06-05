@@ -11,7 +11,6 @@ import { changePassword } from '@/services/auth/password';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/services/auth/image';
 import NextImage from 'next/image';
-import { useRouter } from 'next/navigation';
 
 // Validation constants
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
@@ -49,7 +48,6 @@ interface ProfileInfoFormProps {
 }
 
 const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }) => {
-  const router = useRouter();
   const [isCheckingNickname, setIsCheckingNickname] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   // const [kakaoToken, setKakaoToken] = useState(''); // SNS 계정 연동 기능 추후 추가 예정
@@ -255,8 +253,6 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
         // 나머지 프로필 정보 저장
         await new Promise(resolve => setTimeout(resolve, 1000));
         await onSave(data);
-        toast.success('프로필이 성공적으로 저장되었습니다.');
-        router.push('/mypage');
       } catch (error) {
         console.error('Error saving profile:', error);
         const err = error as { message: string };
@@ -265,7 +261,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
         setIsLoading(false);
       }
     },
-    [onSave, router]
+    [onSave]
   );
 
   const closeModal = useCallback(() => {
