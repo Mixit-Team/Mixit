@@ -9,7 +9,6 @@ import TabNav from '../molecules/TabNav';
 import { Card } from '@/types/Home.type';
 import DefaultHeader from '../organisms/DefaultHeader';
 import { useRouter } from 'next/navigation';
-import { withAuth } from '../withAuth';
 
 const PopularTemplate = () => {
   const router = useRouter();
@@ -50,7 +49,13 @@ const PopularTemplate = () => {
       <TabNav />
       <div className="mt-4 grid w-full grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] gap-4">
         {items.map(item => (
-          <CardItem key={item.id} {...item} onClick={() => handleClickCard(item.id)} isDetail={true} />
+          <CardItem
+            key={item.id}
+            {...item}
+            comments={Array.isArray(item.comments) ? item.comments : item.comments ? [item.comments] : []}
+            onClick={() => handleClickCard(item.id)}
+            isDetail={true}
+          />
         ))}
       </div>
 
@@ -65,4 +70,4 @@ const PopularTemplate = () => {
   );
 };
 
-export default withAuth(PopularTemplate);
+export default PopularTemplate;

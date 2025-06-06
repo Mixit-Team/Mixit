@@ -8,7 +8,6 @@ import { useApiQuery } from '@/hooks/useApi';
 import { QueryKey, UseQueryOptions } from '@tanstack/react-query';
 import { Card } from '@/types/Home.type';
 import CardItem from '../molecules/Card/Card';
-import { withAuth } from '../withAuth';
 import { useDebounce } from '@/hooks/useDebounce';
 
 const PAGE_SIZE = 20;
@@ -137,6 +136,7 @@ const SearchTemplate: React.FC = () => {
             <CardItem
               key={card.id}
               {...card}
+              comments={Array.isArray(card.comments) ? card.comments : card.comments ? [card.comments] : []}
               onClick={() => router.push(`/post/${card.id}`)}
             />
           ))}
@@ -146,4 +146,4 @@ const SearchTemplate: React.FC = () => {
   );
 };
 
-export default withAuth(SearchTemplate);
+export default SearchTemplate;

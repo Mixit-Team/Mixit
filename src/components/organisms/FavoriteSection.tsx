@@ -96,7 +96,11 @@ const FavoriteSection = ({ title }: FavoriteSectionProps) => {
         {items.map((item: Card, index: number) => (
           <div key={item.id}>
             <div className="text-xl text-[#F86885]">{index + 1}</div>
-            <CardItem {...item} onClick={() => handleClickCard(item.id)} />
+            <CardItem
+              {...item}
+              comments={Array.isArray(item.comments) ? item.comments : [item.comments]}
+              onClick={() => handleClickCard(item.id)}
+            />
           </div>
         ))}
       </div>

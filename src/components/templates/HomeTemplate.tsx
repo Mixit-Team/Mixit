@@ -10,7 +10,6 @@ import TagSection from '../organisms/TagSection';
 import { SearchBar } from '../molecules/SearchBar/SearchBar';
 import NavBar from '../organisms/NavBar';
 import RegisterButton from '../molecules/RegisterButton';
-import { withAuth } from '../withAuth';
 import Footer from '../organisms/Footer';
 
 const HomeTemplate: React.FC = () => {
@@ -36,4 +35,4 @@ const HomeTemplate: React.FC = () => {
   );
 };
 
-export default withAuth(HomeTemplate);
+export default HomeTemplate;

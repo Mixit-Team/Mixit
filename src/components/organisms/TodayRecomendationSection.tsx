@@ -82,7 +82,10 @@ const TodayRecomendationSection = ({ title }: TodayRecomendationSectionProps) =>
       >
         {items.map(item => (
           <div key={item.id}>
-            <CardItem {...item} />
+            <CardItem
+              {...item}
+              comments={Array.isArray(item.comments) ? item.comments : [item.comments]}
+            />
           </div>
         ))}
       </div>

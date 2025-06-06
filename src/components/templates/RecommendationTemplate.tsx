@@ -9,7 +9,6 @@ import TabNav from '../molecules/TabNav';
 import DefaultHeader from '../organisms/DefaultHeader';
 import { Card } from '@/types/Home.type';
 import { useRouter } from 'next/navigation';
-import { withAuth } from '../withAuth';
 
 
 
@@ -56,7 +55,13 @@ const RecommendationTemplate = () => {
 
       <div className="mt-4 grid w-full grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] gap-4">
         {items.map((item: Card) => (
-          <CardItem key={item.id} {...item} onClick={() => handleClickCard(item.id)} isDetail={true} />
+          <CardItem
+            key={item.id}
+            {...item}
+            comments={Array.isArray(item.comments) ? item.comments : item.comments ? [item.comments] : []}
+            onClick={() => handleClickCard(item.id)}
+            isDetail={true}
+          />
         ))}
       </div>
 
@@ -71,4 +76,4 @@ const RecommendationTemplate = () => {
   );
 };
 
-export default withAuth(RecommendationTemplate);
+export default RecommendationTemplate;
