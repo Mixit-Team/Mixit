@@ -6,7 +6,7 @@ import { CategoryList } from '@/config/home.config';
 import CategoryTabs from '../molecules/CategoryTabs';
 import { useApiQuery } from '@/hooks/useApi';
 import { Card, Category } from '@/types/Home.type';
-import CardList from '../molecules/Card/CardList';
+import CardItem from '../molecules/Card/Card';
 
 export type Sort = 'latest' | 'createdAt' | 'popular';
 
@@ -89,12 +89,12 @@ console.log('visibleCount ',visibleCount)
           gap: '16px',
         }}
       >
-        {items.map(item => (
-          <CardList
-            key={item.id}
-            {...item}
-            content={item.content ?? ''}
-            onClick={() => router.push(`/post/${item.id}`)}
+        {items.map((card) => (
+          <CardItem
+            key={card.id}
+            {...card}
+            comments={Array.isArray(card.comments) ? card.comments : card.comments ? [card.comments] : []}
+            onClick={() => router.push(`/post/${card.id}`)}
           />
         ))}
       </div>
