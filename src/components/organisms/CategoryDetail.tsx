@@ -74,7 +74,7 @@ const CategoryDetail = () => {
   );
 
   const items: Card[] = data?.pages.flatMap(p => p.content) ?? [];
-
+  console.log('items', items);
   useEffect(() => {
     if (!sentinelRef.current || !hasNextPage) return;
 
@@ -98,7 +98,7 @@ const CategoryDetail = () => {
       <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-4">
         {items.map((card) => (
           <CardItem
-            key={card.id + card.title}
+            key={card.id}
             {...card}
             onClick={() => router.push(`/post/${card.id}`)}
           />

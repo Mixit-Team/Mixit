@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
   const nextPage = +page + 1 < +res.data.data.totalPages ? +page + 1 : undefined;
 
-  console.log('GET /api/v1/home/category response:', res.data);
+  // console.log('GET /api/v1/home/category response:', res.data.data.content);
 
 
   return NextResponse.json({ ...res?.data?.data, nextPage });

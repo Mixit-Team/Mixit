@@ -50,7 +50,7 @@ const PopularTemplate = () => {
       <TabNav />
       <div className="mt-4 grid w-full grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] gap-4">
         {items.map(item => (
-          <CardItem key={item.id} {...item} onClick={() => handleClickCard(item.id)} />
+          <CardItem key={item.id} {...item} onClick={() => handleClickCard(item.id)} isDetail={true} />
         ))}
       </div>
 

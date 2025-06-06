@@ -88,7 +88,8 @@ const CardList = ({
     <div
      className="mt-1 mb-2 w-full max-w-[200px] cursor-pointer rounded-md bg-white
          transform transition-transform duration-200 ease-out
-         hover:scale-[1.02]"      onClick={onClick}
+         hover:scale-[1.02]"
+      onClick={onClick}
     >
       <div className="relative h-[160px] w-full rounded-xl shadow">
         <Image src={thumbnail} alt={title || 'Card'} fill className="rounded-md object-cover" />

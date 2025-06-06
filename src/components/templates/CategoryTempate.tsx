@@ -3,7 +3,6 @@
 import Banner from '../atoms/Banner/Banner';
 import Title from '../atoms/Title';
 import CategoryDetail from '../organisms/CategoryDetail';
-import { withAuth } from '../withAuth';
 
 const CategoryTemplate = () => {
   return (
@@ -21,4 +20,4 @@ const CategoryTemplate = () => {
   );
 };
 
-export default withAuth(CategoryTemplate);
+export default CategoryTemplate;
