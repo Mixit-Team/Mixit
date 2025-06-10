@@ -13,6 +13,9 @@ interface RegisterTagsProps {
   maxTagLength?: number;
 }
 
+interface Tag{
+  tag: string;
+}
 const RegisterTags: React.FC<RegisterTagsProps> = ({
   tags,
   onChange,
@@ -25,7 +28,7 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const debounced = useDebounce(inputValue, 1000);
-  const { data, isFetched } = useApiQuery<{ data?: string[]  }>(
+  const { data, isFetched } = useApiQuery<{ data?: Tag[]  }>(
     ['autocomplete', debounced] as QueryKey,
     '/api/v1/tags/autocomplete',
     { prefix: debounced },
@@ -35,7 +38,7 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
     }
   );
 
-  const suggestions: string[] = data?.data ?? [];
+  const suggestions = data?.data ?? [];
   console.log('RegisterTags suggestions:', suggestions, data);
   const addTag = (value: string) => {
     const trimmed = value.trim();
