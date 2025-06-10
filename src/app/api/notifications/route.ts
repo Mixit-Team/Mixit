@@ -1,4 +1,3 @@
-// src/app/api/notifications/route.ts
 import { authOptions } from "@/services/auth/authOptions";
 import { getServerSession } from "next-auth";
 import axios from "axios";
@@ -13,7 +12,7 @@ export async function GET() {
 
   try {
     // 2) axios로 백엔드 알림 목록 요청
-    const backendRes = await axios.get<{ notifications: unknown[] }>(
+    const backendRes = await axios.get<{ data: unknown[] }>(
       `${process.env.BACKEND_URL}/api/v1/notifications`,
       {
         headers: {
@@ -26,7 +25,7 @@ export async function GET() {
 
     // 3) 받은 데이터를 그대로 리턴
     return new Response(
-      JSON.stringify({ notifications: backendRes.data.notifications }),
+      JSON.stringify({ notifications: backendRes.data.data }),
       {
         status: 200,
         headers: {

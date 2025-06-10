@@ -20,6 +20,7 @@ export function useNotifications() {
     axios
       .get<{ notifications: Notification[] }>('/api/notifications')
       .then((res) => {
+        console.log('과거 알림 목록 조회 성공', res.data.notifications);
         setNotifications(res.data.notifications);
       })
       .catch((err) => {

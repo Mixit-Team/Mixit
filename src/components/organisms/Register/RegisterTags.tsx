@@ -126,11 +126,11 @@ const RegisterTags: React.FC<RegisterTagsProps> = ({
             <ul className="top-full left-0 z-999 max-h-40 w-full rounded-b-lg border border-gray-200 bg-white shadow-md">
               {suggestions.map(s => (
                 <li
-                  key={s}
-                  onClick={() => addTag(s)}
+                  key={s.tag}
+                  onClick={() => addTag(s.tag)}
                   className="cursor-pointer px-3 py-2 hover:bg-gray-100"
                 >
-                  {s}
+                  {s.tag}
                 </li>
               ))}
             </ul>

@@ -4,7 +4,7 @@ import { useNotifications } from '@/hooks/useNotificationsSSE';
 import { Bell } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 export default function NotificationBell() {
-  const { notifications, error } = useNotifications();
+  const { notifications=[], error } = useNotifications();
   const router = useRouter();
 
   if (error) {

@@ -27,8 +27,9 @@ export default function NotificationsPage() {
     어제: [],
     지난: [],
   };
+  console.log('notifications', notifications);
 
-  notifications.forEach((n) => {
+  notifications?.forEach((n) => {
     const created = dayjs(n.createdAt);
     if (created.isSame(today, 'day')) {
       groups['오늘'].push(n);
