@@ -67,7 +67,7 @@ export const LoginForm: React.FC = () => {
     } finally {
       router.push('/home');
     }
-  }, []);
+  }, [router]);
 
   const onSubmit: SubmitHandler<LoginFormData> = useCallback(
     async data => {
