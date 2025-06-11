@@ -12,7 +12,8 @@ export default function NotificationBell() {
   }
 
   // notifications가 undefined라면 빈 배열로 대체
-  const list = notifications ?? [];
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
   const handleClick = () => {
     // 알림 클릭 시 원하는 페이지로 이동
     router.push('/notifications');
@@ -22,11 +23,9 @@ export default function NotificationBell() {
     <div className="relative">
       <button className="relative">
         <Bell className='cursor-pointer' onClick={handleClick}/>
-        {list.length > 0 && (
           <span className="absolute -top-1 -right-2 bg-red-500 text-white rounded-full text-xs px-1">
-            {list.length}
+            {unreadCount}
           </span>
-        )}
       </button>
 
       {/* <ul className="absolute right-0 mt-2 w-64 max-h-80 overflow-auto bg-white shadow-lg rounded-md">
