@@ -7,17 +7,18 @@ export interface SignupFormData {
   email: string;
   nickname: string;
   imageId?: string | number;
-  agreements:
-    | {
-        all: boolean;
-        service: boolean;
-        privacy: boolean;
-        marketing: {
-          email: boolean;
-          sms: boolean;
-        };
-      }
-    | number[];
+  agreements: {
+    all: boolean;
+    service: boolean;
+    privacy: boolean;
+    marketing: {
+      email: boolean;
+      sms: boolean;
+    };
+  };
+  terms: number[];
+  notifyOn: boolean;
+  pushOn: boolean;
 }
 
 export interface SignupResponse {

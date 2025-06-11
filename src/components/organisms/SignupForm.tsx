@@ -10,6 +10,7 @@ import { checkDuplicate } from '../../services/auth/signup';
 import { uploadImage } from '@/services/auth/image';
 import { requestEmailVerification, verifyEmail } from '@/services/auth/email';
 import { SignupError } from '@/types/auth';
+import Link from 'next/link';
 
 import Modal from '../atoms/Modal';
 import Button from '../atoms/Button';
@@ -43,6 +44,9 @@ interface SignupFormData {
       sms: boolean;
     };
   };
+  terms: number[];
+  notifyOn: boolean;
+  pushOn: boolean;
 }
 
 // Validation
@@ -86,7 +90,7 @@ const SignupForm = () => {
     setError,
     clearErrors,
     formState: { errors, isValid, isSubmitting },
-  } = useForm({
+  } = useForm<SignupFormData>({
     mode: 'onBlur',
     defaultValues: {
       loginId: '',
@@ -96,9 +100,20 @@ const SignupForm = () => {
       birth: '',
       email: '',
       nickname: '',
-      imageId: null,
-      agreements: [1073741824],
-    } as unknown as SignupFormData,
+      imageId: undefined,
+      agreements: {
+        all: false,
+        service: false,
+        privacy: false,
+        marketing: {
+          email: false,
+          sms: false,
+        },
+      },
+      terms: [],
+      notifyOn: false,
+      pushOn: false,
+    },
   });
 
   // --- Watched values ---
@@ -162,7 +177,19 @@ const SignupForm = () => {
     if (watchedAgreeAll !== allRequiredChecked) {
       setValue('agreements.all', allRequiredChecked, { shouldValidate: false, shouldDirty: false });
     }
-  }, [watchedAgreeService, watchedAgreePrivacy, watchedAgreeAll, setValue]);
+
+    // Update terms array based on service and privacy agreements
+    const terms: number[] = [];
+    if (watchedAgreeService) terms.push(1);
+    if (watchedAgreePrivacy) terms.push(2);
+    setValue('terms', terms, { shouldValidate: true });
+
+    // Update notification settings based on marketing agreements
+    const notifyOn = getValues('agreements.marketing.email');
+    const pushOn = getValues('agreements.marketing.sms');
+    setValue('notifyOn', notifyOn, { shouldValidate: true });
+    setValue('pushOn', pushOn, { shouldValidate: true });
+  }, [watchedAgreeService, watchedAgreePrivacy, watchedAgreeAll, setValue, getValues]);
 
   // --- Handlers ---
 
@@ -223,6 +250,11 @@ const SignupForm = () => {
       setValue('agreements.marketing.email', isChecked, { shouldValidate: false });
       setValue('agreements.marketing.sms', isChecked, { shouldValidate: false });
       setValue('agreements.all', isChecked, { shouldValidate: false });
+
+      // Update terms and notification settings
+      setValue('terms', isChecked ? [1, 2] : [], { shouldValidate: true });
+      setValue('notifyOn', isChecked, { shouldValidate: true });
+      setValue('pushOn', isChecked, { shouldValidate: true });
     },
     [setValue]
   );
@@ -290,12 +322,7 @@ const SignupForm = () => {
   // Form Submit
   const onSubmit = useCallback(
     (data: SignupFormData) => {
-      const formData = {
-        ...data,
-        agreements: [1073741824], // 임시 고정값
-      };
-
-      signup(formData, {
+      signup(data, {
         onSuccess: () => {
           setModalContent({
             title: '알림',
@@ -569,7 +596,6 @@ const SignupForm = () => {
           </p>
         </div>
 
-        {/* TODO: 나중에 다시 활성화할 agreements 부분 */}
         <div className="space-y-3 border-t border-gray-200 pt-6">
           <CheckboxField
             label="모든 약관에 동의합니다."
@@ -580,14 +606,32 @@ const SignupForm = () => {
           />
           <div className="space-y-2 pl-6">
             <CheckboxField
-              label="서비스 이용 약관 동의 (필수)"
+              label={
+                <Link
+                  href="/terms/service"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer hover:underline"
+                >
+                  서비스 이용 약관 동의 (필수)
+                </Link>
+              }
               id="agreement-service"
               registration={register('agreements.service', { required: true })}
               error={errors.agreements?.service}
               checked={watchedAgreeService}
             />
             <CheckboxField
-              label="개인정보수집 및 이용동의 (필수)"
+              label={
+                <Link
+                  href="/terms/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer hover:underline"
+                >
+                  개인정보수집 및 이용동의 (필수)
+                </Link>
+              }
               id="agreement-privacy"
               registration={register('agreements.privacy', { required: true })}
               error={errors.agreements?.privacy}

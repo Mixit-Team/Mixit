@@ -1,6 +1,6 @@
 import React, { forwardRef, ButtonHTMLAttributes } from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -35,12 +35,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const variantStyles: Record<ButtonVariant, string> = {
-      primary:
-        'border-transparent bg-[#fd7a19] text-white hover:bg-[#d36615] focus:ring-[#fd7a19] disabled:bg-orange-200 disabled:text-orange-700',
-      secondary:
-        'border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-400 disabled:bg-gray-50 disabled:text-gray-400',
-      outline:
-        'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-orange-500 disabled:bg-white disabled:text-gray-400 disabled:border-gray-200',
+      primary: 'bg-[#FF6B00] text-white hover:bg-[#E55C00] disabled:bg-[#FFB380]',
+      secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:bg-gray-100',
+      outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:bg-gray-50',
+      danger: 'bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300',
     };
 
     const combinedClassName = `

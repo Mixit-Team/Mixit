@@ -70,7 +70,9 @@ export const signup = async (formData: SignupFormData): Promise<SignupResponse> 
       email: formData.email,
       nickname: formData.nickname,
       imageId: formData.imageId || null,
-      terms: [],
+      terms: formData.terms,
+      notifyOn: formData.notifyOn,
+      pushOn: formData.pushOn,
     };
 
     const response = await apiClient.post<SignupResponse>('/accounts', requestData);

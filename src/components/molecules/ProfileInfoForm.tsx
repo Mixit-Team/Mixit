@@ -11,6 +11,8 @@ import { changePassword } from '@/services/auth/password';
 import { toast } from 'react-hot-toast';
 import { uploadImage } from '@/services/auth/image';
 import NextImage from 'next/image';
+import { useRouter } from 'next/navigation';
+import { updateProfile } from '@/services/auth/profile';
 
 // Validation constants
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
@@ -28,7 +30,7 @@ interface ProfileInfoFormData {
   birthdate: string;
   email: string;
   nickname: string;
-  imageId: string | number;
+  imageId: string | number | null;
   preferences: {
     notifications: {
       email: boolean;
@@ -48,6 +50,7 @@ interface ProfileInfoFormProps {
 }
 
 const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }) => {
+  const router = useRouter();
   const [isCheckingNickname, setIsCheckingNickname] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   // const [kakaoToken, setKakaoToken] = useState(''); // SNS 계정 연동 기능 추후 추가 예정
@@ -59,6 +62,8 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
     message: '',
   });
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [modalType, setModalType] = useState<'duplicate' | 'delete'>('duplicate');
 
   const {
     register,
@@ -66,7 +71,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
     watch,
     setError,
     clearErrors,
-    formState: { errors, isDirty, isValid },
+    formState: { errors, isValid },
     setValue,
   } = useForm<ProfileInfoFormData>({
     mode: 'onChange',
@@ -78,7 +83,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
       birthdate: initialData.birthdate || '',
       email: initialData.email || '',
       nickname: initialData.nickname || '',
-      imageId: initialData.imageSrc || '',
+      imageId: initialData.imageSrc || null,
       preferences: {
         notifications: {
           email: false,
@@ -96,7 +101,6 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
   const watchedUserId = watch('userId');
   const watchedNickname = watch('nickname');
   const watchedOldPwd = watch('oldPwd');
-  // const watchedEmail = watch('email'); // 이메일 인증 기능 추후 추가 예정
 
   const handleCheckDuplicate = useCallback(
     async (field: 'userId' | 'nickname') => {
@@ -109,6 +113,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
 
         try {
           const isDuplicate = await checkDuplicate('nickname', value);
+          setModalType('duplicate');
           if (isDuplicate) {
             setError(field, {
               type: 'duplicate',
@@ -212,8 +217,12 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
       const response = await uploadImage(file);
       const imageId = response.data.id;
 
-      // 이미지 ID 설정
-      setValue('imageId', imageId, { shouldDirty: true });
+      // 이미지 ID 설정 및 폼 상태 업데이트
+      setValue('imageId', imageId, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
       clearErrors('imageId');
 
       // 이미지 미리보기 설정
@@ -233,7 +242,11 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
 
   const handleRemoveImage = () => {
     setProfileImage(null);
-    setValue('imageId', '', { shouldDirty: true });
+    setValue('imageId', null, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
     clearErrors('imageId');
   };
 
@@ -250,8 +263,16 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
           toast.success('비밀번호가 성공적으로 변경되었습니다.');
         }
 
-        // 나머지 프로필 정보 저장
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // 프로필 정보 업데이트
+        const profileData = {
+          nickname: data.nickname,
+          imageId: data.imageId ? Number(data.imageId) : null,
+          notification: data.preferences.notifications.email,
+          alarm: data.preferences.notifications.sns,
+        };
+
+        await updateProfile(profileData);
+        toast.success('프로필이 성공적으로 업데이트되었습니다.');
         await onSave(data);
       } catch (error) {
         console.error('Error saving profile:', error);
@@ -263,6 +284,44 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
     },
     [onSave]
   );
+
+  const handleDeleteAccount = async () => {
+    setModalType('delete');
+    setModalContent({
+      title: '회원 탈퇴',
+      message: '정말로 탈퇴하시겠습니까?\n탈퇴한 계정은 복구할 수 없습니다.',
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setIsDeleting(true);
+      const res = await fetch('/api/v1/accounts', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error('회원 탈퇴에 실패했습니다.');
+      }
+
+      const data = await res.json();
+      console.log(data);
+      toast.success('회원 탈퇴가 완료되었습니다.');
+      router.push('/home');
+    } catch (error) {
+      console.error('회원 탈퇴 오류:', error);
+      toast.error(
+        error instanceof Error ? error.message : '회원 탈퇴 처리 중 오류가 발생했습니다.'
+      );
+    } finally {
+      setIsDeleting(false);
+      setIsModalOpen(false);
+    }
+  };
 
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
@@ -558,7 +617,14 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
         </div>
 
         <div className="flex justify-between space-x-4 pt-6">
-          <Button type="button" variant="outline" fullWidth onClick={() => window.history.back()}>
+          <Button
+            type="button"
+            variant="outline"
+            fullWidth
+            onClick={handleDeleteAccount}
+            isLoading={isDeleting}
+            disabled={isDeleting}
+          >
             회원탈퇴
           </Button>
           <Button
@@ -566,20 +632,23 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
             variant="primary"
             fullWidth
             isLoading={isLoading}
-            disabled={hasFieldError || !isDirty || !isValid || isLoading}
+            disabled={hasFieldError || !isValid || isLoading}
           >
             등록
           </Button>
         </div>
       </form>
 
-      {/* Duplicate Check Modal */}
+      {/* Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
         title={modalContent.title}
         message={modalContent.message}
-        buttonText="확인"
+        buttonText={modalType === 'duplicate' ? '확인' : '탈퇴하기'}
+        onConfirm={modalType === 'duplicate' ? closeModal : handleConfirmDelete}
+        cancelText={modalType === 'delete' ? '취소' : undefined}
+        isLoading={isDeleting}
       />
     </>
   );

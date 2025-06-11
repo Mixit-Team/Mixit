@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { toast } from 'react-hot-toast';
 import { getProviders, signIn, ClientSafeProvider } from 'next-auth/react';
 import Modal from '../atoms/Modal';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 const loginSchema = z.object({
   loginId: z.string().min(1, '아이디를 입력해주세요'),
   password: z.string().min(1, '비밀번호를 입력해주세요'),
@@ -17,7 +17,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginForm: React.FC = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const [providers, setProviders] = useState<Record<string, ClientSafeProvider> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -55,19 +55,19 @@ export const LoginForm: React.FC = () => {
     });
   }, []);
 
-  const handleKakaoLogin = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      window.location.href = 'http://54.180.33.96:8080/api/v1/auth/kakao';
-    } catch (error) {
-      console.error('Kakao login error:', error);
-      setErrorMessage('카카오 로그인 중 오류가 발생했습니다.');
-      setIsModalOpen(true);
-      setIsLoading(false);
-    } finally {
-      router.push('/home');
-    }
-  }, []);
+  // const handleKakaoLogin = useCallback(async () => { // 카카오 로그인 임시 비활성화
+  //   try {
+  //     setIsLoading(true);
+  //     window.location.href = 'http://54.180.33.96:8080/api/v1/auth/kakao';
+  //   } catch (error) {
+  //     console.error('Kakao login error:', error);
+  //     setErrorMessage('카카오 로그인 중 오류가 발생했습니다.');
+  //     setIsModalOpen(true);
+  //     setIsLoading(false);
+  //   } finally {
+  //     router.push('/home');
+  //   }
+  // }, []);
 
   const onSubmit: SubmitHandler<LoginFormData> = useCallback(
     async data => {
@@ -194,13 +194,13 @@ export const LoginForm: React.FC = () => {
         </div>
 
         {/* Kakao Login Button */}
-        <button
+        {/* <button  // 카카오 로그인 버튼 임시 비활성화
           type="button"
           className="mt-4 w-full cursor-pointer rounded-md border border-white bg-yellow-400 py-3.5 text-white hover:bg-yellow-500 focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2 focus:outline-none"
           onClick={handleKakaoLogin}
         >
           카카오로 로그인하기
-        </button>
+        </button> */}
       </form>
 
       <Modal
