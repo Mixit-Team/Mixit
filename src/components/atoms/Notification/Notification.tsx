@@ -7,17 +7,20 @@ export default function NotificationBell() {
   const { notifications=[], error } = useNotifications();
   const router = useRouter();
 
+  const handleClick = () => {
+    // 알림 클릭 시 원하는 페이지로 이동
+    router.push('/notifications');
+  };
+
   if (error) {
-    return <div className="p-4 text-red-500">알림 연결에 문제가 발생했습니다.</div>;
+    return   <Bell className='cursor-pointer' onClick={handleClick}/>
+;
   }
 
   // notifications가 undefined라면 빈 배열로 대체
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const handleClick = () => {
-    // 알림 클릭 시 원하는 페이지로 이동
-    router.push('/notifications');
-  };
+
 
   return (
     <div className="relative">
