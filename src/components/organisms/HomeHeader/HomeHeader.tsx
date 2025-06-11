@@ -1,5 +1,5 @@
 'use client';
-import Notification from '@/components/atoms/Notification/Notification';
+import NotificationBell from '@/components/atoms/Notification/Notification';
 
 const HomeHeader = () => {
   return (
@@ -10,7 +10,8 @@ const HomeHeader = () => {
         <span className="text-pink-500">t</span>
       </div>
       <div className="ml-auto cursor-pointer">
-        <Notification />
+        <NotificationBell />
+
       </div>
     </div>
   );
