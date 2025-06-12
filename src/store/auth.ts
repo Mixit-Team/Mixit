@@ -20,6 +20,9 @@ export const signupFormState = atom<SignupFormData>({
         sms: false,
       },
     },
+    terms: [],
+    notifyOn: false,
+    pushOn: false,
   },
 });
 
