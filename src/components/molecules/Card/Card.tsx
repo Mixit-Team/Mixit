@@ -244,8 +244,10 @@ const CardItem = ({
 
                <div className="flex items-center cursor-pointer" onClick={handleClickLike}>
               <Heart
-                className="w-[14px] h-[14px]"
-                fill={localLiked ? 'red' : 'transparent'} 
+                size={14}
+                fill={localLiked ? 'red' : 'none'} 
+                stroke={localLiked ? 'red' : '#ccc'} 
+                strokeWidth={2}                        
               />
               <span className="ml-1">{localLikeCount}</span>
             </div>
