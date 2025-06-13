@@ -13,6 +13,7 @@ import { uploadImage } from '@/services/auth/image';
 import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
 import { updateProfile } from '@/services/auth/profile';
+import { signOut, useSession } from 'next-auth/react';
 
 // Validation constants
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
@@ -31,17 +32,11 @@ interface ProfileInfoFormData {
   email: string;
   nickname: string;
   imageId: string | number | null;
-  preferences: {
-    notifications: {
-      email: boolean;
-      sns: boolean;
-    };
-    gameSettings: {
-      autoLogin: boolean;
-      friendsOnly: boolean;
-      inGameMessageAllow: boolean;
-    };
-  };
+  emailNotify: boolean;
+  smsNotify: boolean;
+  postLikeAlarm: boolean;
+  postReviewAlarm: boolean;
+  popularPostAlarm: boolean;
 }
 
 interface ProfileInfoFormProps {
@@ -51,6 +46,7 @@ interface ProfileInfoFormProps {
 
 const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }) => {
   const router = useRouter();
+  const { update } = useSession();
   const [isCheckingNickname, setIsCheckingNickname] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   // const [kakaoToken, setKakaoToken] = useState(''); // SNS 계정 연동 기능 추후 추가 예정
@@ -84,17 +80,11 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
       email: initialData.email || '',
       nickname: initialData.nickname || '',
       imageId: initialData.imageSrc || null,
-      preferences: {
-        notifications: {
-          email: false,
-          sns: false,
-        },
-        gameSettings: {
-          autoLogin: false,
-          friendsOnly: false,
-          inGameMessageAllow: false,
-        },
-      },
+      emailNotify: initialData.emailNotify || false,
+      smsNotify: initialData.smsNotify || false,
+      postLikeAlarm: initialData.postLikeAlarm || false,
+      postReviewAlarm: initialData.postReviewAlarm || false,
+      popularPostAlarm: initialData.popularPostAlarm || false,
     },
   });
 
@@ -267,12 +257,30 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
         const profileData = {
           nickname: data.nickname,
           imageId: data.imageId ? Number(data.imageId) : null,
-          notification: data.preferences.notifications.email,
-          alarm: data.preferences.notifications.sns,
+          emailNotify: data.emailNotify,
+          smsNotify: data.smsNotify,
+          postLikeAlarm: data.postLikeAlarm,
+          postReviewAlarm: data.postReviewAlarm,
+          popularPostAlarm: data.popularPostAlarm,
         };
 
-        await updateProfile(profileData);
+        const response = await updateProfile(profileData);
         toast.success('프로필이 성공적으로 업데이트되었습니다.');
+
+        // 세션 정보 갱신
+        if (update && response.data) {
+          await update({
+            user: {
+              nickname: response.data.nickname,
+              emailNotify: response.data.emailNotify,
+              smsNotify: response.data.smsNotify,
+              postLikeAlarm: response.data.postLikeAlarm,
+              postReviewAlarm: response.data.postReviewAlarm,
+              popularPostAlarm: response.data.popularPostAlarm,
+            },
+          });
+        }
+
         await onSave(data);
       } catch (error) {
         console.error('Error saving profile:', error);
@@ -282,7 +290,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
         setIsLoading(false);
       }
     },
-    [onSave]
+    [onSave, update]
   );
 
   const handleDeleteAccount = async () => {
@@ -311,6 +319,11 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
       const data = await res.json();
       console.log(data);
       toast.success('회원 탈퇴가 완료되었습니다.');
+
+      // 로그아웃 처리
+      await signOut({ redirect: false });
+
+      // 홈으로 리다이렉트
       router.push('/home');
     } catch (error) {
       console.error('회원 탈퇴 오류:', error);
@@ -570,7 +583,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
               <input
                 type="checkbox"
                 className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                {...register('preferences.notifications.email')}
+                {...register('emailNotify')}
               />
               <span className="ml-2 text-sm text-gray-700">이메일</span>
             </label>
@@ -578,7 +591,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
               <input
                 type="checkbox"
                 className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                {...register('preferences.notifications.sns')}
+                {...register('smsNotify')}
               />
               <span className="ml-2 text-sm text-gray-700">SNS</span>
             </label>
@@ -593,7 +606,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
               <input
                 type="checkbox"
                 className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                {...register('preferences.gameSettings.autoLogin')}
+                {...register('postLikeAlarm')}
               />
               <span className="ml-2 text-sm text-gray-700">좋아요</span>
             </label>
@@ -601,7 +614,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
               <input
                 type="checkbox"
                 className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                {...register('preferences.gameSettings.friendsOnly')}
+                {...register('postReviewAlarm')}
               />
               <span className="ml-2 text-sm text-gray-700">댓글</span>
             </label>
@@ -609,7 +622,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
               <input
                 type="checkbox"
                 className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                {...register('preferences.gameSettings.inGameMessageAllow')}
+                {...register('popularPostAlarm')}
               />
               <span className="ml-2 text-sm text-gray-700">인기게시물 추천</span>
             </label>

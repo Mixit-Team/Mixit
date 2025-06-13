@@ -13,6 +13,11 @@ declare module 'next-auth' {
     accessToken?: string;
     expiresIn?: number;
     nickname?: string;
+    emailNotify?: boolean;
+    smsNotify?: boolean;
+    postLikeAlarm?: boolean;
+    postReviewAlarm?: boolean;
+    popularPostAlarm?: boolean;
   }
 
   interface Session {
@@ -29,6 +34,11 @@ declare module 'next-auth' {
       accessToken?: string;
       expiresIn?: number;
       nickname?: string;
+      emailNotify?: boolean;
+      smsNotify?: boolean;
+      postLikeAlarm?: boolean;
+      postReviewAlarm?: boolean;
+      popularPostAlarm?: boolean;
     };
   }
 }

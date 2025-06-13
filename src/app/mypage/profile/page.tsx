@@ -14,11 +14,28 @@ interface ProfileFormData {
   birthdate: string;
   email: string;
   nickname: string;
+  emailNotify: boolean;
+  smsNotify: boolean;
+  postLikeAlarm: boolean;
+  postReviewAlarm: boolean;
+  popularPostAlarm: boolean;
 }
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
-  const { id, name, birth, email, image, nickname } = session?.user || {};
+  const {
+    id,
+    name,
+    birth,
+    email,
+    image,
+    nickname,
+    emailNotify,
+    smsNotify,
+    postLikeAlarm,
+    postReviewAlarm,
+    popularPostAlarm,
+  } = session?.user || {};
   const [authenticated, setAuthenticated] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({
@@ -26,6 +43,8 @@ export default function ProfilePage() {
     message: '',
   });
   const router = useRouter();
+
+  console.log('session', session);
 
   const handleAuthentication = useCallback(() => {
     setAuthenticated(true);
@@ -74,6 +93,11 @@ export default function ProfilePage() {
               email: email ?? undefined,
               nickname,
               imageSrc: image ?? undefined,
+              emailNotify,
+              smsNotify,
+              postLikeAlarm,
+              postReviewAlarm,
+              popularPostAlarm,
             }}
             onSave={handleSaveProfile}
           />

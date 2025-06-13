@@ -7,18 +7,9 @@ export interface SignupFormData {
   email: string;
   nickname: string;
   imageId?: string | number;
-  agreements: {
-    all: boolean;
-    service: boolean;
-    privacy: boolean;
-    marketing: {
-      email: boolean;
-      sms: boolean;
-    };
-  };
   terms: number[];
-  notifyOn: boolean;
-  pushOn: boolean;
+  emailNotify: boolean;
+  smsNotify: boolean;
 }
 
 export interface SignupResponse {
@@ -30,6 +21,11 @@ export interface SignupResponse {
     nickname: string;
     email: string;
     createdAt: string;
+    emailNotify: boolean;
+    smsNotify: boolean;
+    postLikeAlarm: boolean;
+    postReviewAlarm: boolean;
+    popularPostAlarm: boolean;
   };
 }
 
@@ -54,6 +50,11 @@ export interface LoginResponse {
   email: string;
   nickname: string;
   imageSrc: string;
+  emailNotify: boolean;
+  smsNotify: boolean;
+  postLikeAlarm: boolean;
+  postReviewAlarm: boolean;
+  popularPostAlarm: boolean;
 }
 
 export interface LoginError {

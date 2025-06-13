@@ -45,8 +45,8 @@ interface SignupFormData {
     };
   };
   terms: number[];
-  notifyOn: boolean;
-  pushOn: boolean;
+  emailNotify: boolean;
+  smsNotify: boolean;
 }
 
 // Validation
@@ -111,8 +111,8 @@ const SignupForm = () => {
         },
       },
       terms: [],
-      notifyOn: false,
-      pushOn: false,
+      emailNotify: false,
+      smsNotify: false,
     },
   });
 
@@ -185,10 +185,10 @@ const SignupForm = () => {
     setValue('terms', terms, { shouldValidate: true });
 
     // Update notification settings based on marketing agreements
-    const notifyOn = getValues('agreements.marketing.email');
-    const pushOn = getValues('agreements.marketing.sms');
-    setValue('notifyOn', notifyOn, { shouldValidate: true });
-    setValue('pushOn', pushOn, { shouldValidate: true });
+    const emailNotify = getValues('agreements.marketing.email');
+    const smsNotify = getValues('agreements.marketing.sms');
+    setValue('emailNotify', emailNotify, { shouldValidate: true });
+    setValue('smsNotify', smsNotify, { shouldValidate: true });
   }, [watchedAgreeService, watchedAgreePrivacy, watchedAgreeAll, setValue, getValues]);
 
   // --- Handlers ---
@@ -253,8 +253,8 @@ const SignupForm = () => {
 
       // Update terms and notification settings
       setValue('terms', isChecked ? [1, 2] : [], { shouldValidate: true });
-      setValue('notifyOn', isChecked, { shouldValidate: true });
-      setValue('pushOn', isChecked, { shouldValidate: true });
+      setValue('emailNotify', isChecked, { shouldValidate: true });
+      setValue('smsNotify', isChecked, { shouldValidate: true });
     },
     [setValue]
   );

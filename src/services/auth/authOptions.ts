@@ -7,6 +7,11 @@ declare module 'next-auth' {
     accessToken?: string;
     expiresIn?: number;
     nickname?: string;
+    emailNotify?: boolean;
+    smsNotify?: boolean;
+    postLikeAlarm?: boolean;
+    postReviewAlarm?: boolean;
+    popularPostAlarm?: boolean;
   }
 }
 
@@ -37,6 +42,11 @@ export const authOptions: NextAuthOptions = {
         expiresIn: { label: 'Expires In', type: 'text' },
         nickname: { label: 'Nickname', type: 'text' },
         birth: { label: 'Birth', type: 'text' },
+        emailNotify: { label: 'Email Notify', type: 'boolean' },
+        smsNotify: { label: 'Sms Notify', type: 'boolean' },
+        postLikeAlarm: { label: 'Post Like Alarm', type: 'boolean' },
+        postReviewAlarm: { label: 'Post Review Alarm', type: 'boolean' },
+        popularPostAlarm: { label: 'Popular Post Alarm', type: 'boolean' },
       },
       async authorize(credentials) {
         try {
@@ -79,6 +89,11 @@ export const authOptions: NextAuthOptions = {
             expiresIn: response.expiresIn,
             nickname: response.nickname,
             birth: response.birth,
+            emailNotify: response.emailNotify,
+            smsNotify: response.smsNotify,
+            postLikeAlarm: response.postLikeAlarm,
+            postReviewAlarm: response.postReviewAlarm,
+            popularPostAlarm: response.popularPostAlarm,
           };
         } catch (error) {
           console.error('Login error:', error);
@@ -91,9 +106,9 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      console.log('jwt user', user);
+    async jwt({ token, user, trigger, session }) {
       if (user) {
+        // 로그인 시
         return {
           ...token,
           id: user.id,
@@ -103,8 +118,27 @@ export const authOptions: NextAuthOptions = {
           accessToken: user.accessToken,
           expiresIn: user.expiresIn,
           nickname: user.nickname,
+          emailNotify: user.emailNotify,
+          smsNotify: user.smsNotify,
+          postLikeAlarm: user.postLikeAlarm,
+          postReviewAlarm: user.postReviewAlarm,
+          popularPostAlarm: user.popularPostAlarm,
         };
       }
+
+      // 세션 업데이트 시
+      if (trigger === 'update' && session?.user) {
+        return {
+          ...token,
+          nickname: session.user.nickname,
+          emailNotify: session.user.emailNotify,
+          smsNotify: session.user.smsNotify,
+          postLikeAlarm: session.user.postLikeAlarm,
+          postReviewAlarm: session.user.postReviewAlarm,
+          popularPostAlarm: session.user.popularPostAlarm,
+        };
+      }
+
       return token;
     },
     async session({ session, token }) {
@@ -120,6 +154,11 @@ export const authOptions: NextAuthOptions = {
           birth: token.birth as string,
           name: token.name as string,
           nickname: token.nickname as string,
+          emailNotify: token.emailNotify as boolean,
+          smsNotify: token.smsNotify as boolean,
+          postLikeAlarm: token.postLikeAlarm as boolean,
+          postReviewAlarm: token.postReviewAlarm as boolean,
+          popularPostAlarm: token.popularPostAlarm as boolean,
         },
       };
     },

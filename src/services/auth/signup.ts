@@ -71,8 +71,8 @@ export const signup = async (formData: SignupFormData): Promise<SignupResponse> 
       nickname: formData.nickname,
       imageId: formData.imageId || null,
       terms: formData.terms,
-      notifyOn: formData.notifyOn,
-      pushOn: formData.pushOn,
+      emailNotify: formData.emailNotify,
+      smsNotify: formData.smsNotify,
     };
 
     const response = await apiClient.post<SignupResponse>('/accounts', requestData);

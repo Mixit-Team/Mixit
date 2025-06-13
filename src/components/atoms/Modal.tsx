@@ -43,12 +43,14 @@ const Modal: React.FC<ModalProps> = ({
             {message}
           </div>
           {/* Buttons */}
-          <div className={`flex ${cancelText ? 'space-x-2' : ''}`}>
+          <div
+            className={`mt-6 flex ${cancelText ? 'justify-between space-x-3' : 'justify-center'}`}
+          >
             {cancelText && (
               <button
                 onClick={onClose}
                 disabled={isLoading}
-                className="flex-1 rounded-md border border-gray-300 bg-white py-1.5 font-normal text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="w-1/2 rounded-md border border-gray-300 bg-white py-1.5 font-normal text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
                 {cancelText}
               </button>
@@ -56,9 +58,7 @@ const Modal: React.FC<ModalProps> = ({
             <button
               onClick={onConfirm ? onConfirm : onClose}
               disabled={isLoading}
-              className={`${
-                cancelText ? 'flex-1' : 'w-full'
-              } rounded-md bg-[#FF6B00] py-1.5 font-normal text-white hover:bg-[#E55C00] disabled:opacity-50`}
+              className={`${cancelText ? 'w-1/2' : 'w-full'} rounded-md bg-[#FF6B00] py-1.5 font-normal text-white hover:bg-[#E55C00] disabled:opacity-50`}
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
@@ -85,7 +85,7 @@ const Modal: React.FC<ModalProps> = ({
                   처리중...
                 </div>
               ) : (
-                buttonText
+                buttonText || '확인'
               )}
             </button>
           </div>

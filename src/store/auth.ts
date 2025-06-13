@@ -11,18 +11,9 @@ export const signupFormState = atom<SignupFormData>({
     birth: '',
     email: '',
     nickname: '',
-    agreements: {
-      all: false,
-      service: false,
-      privacy: false,
-      marketing: {
-        email: false,
-        sms: false,
-      },
-    },
     terms: [],
-    notifyOn: false,
-    pushOn: false,
+    emailNotify: false,
+    smsNotify: false,
   },
 });
 

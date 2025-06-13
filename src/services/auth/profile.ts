@@ -4,8 +4,11 @@ import { AxiosError } from 'axios';
 export interface ProfileUpdateRequest {
   nickname: string;
   imageId: number | string | null;
-  notification: boolean;
-  alarm: boolean;
+  emailNotify: boolean;
+  smsNotify: boolean;
+  postLikeAlarm: boolean;
+  postReviewAlarm: boolean;
+  popularPostAlarm: boolean;
 }
 
 export interface ProfileUpdateResponse {
@@ -14,8 +17,11 @@ export interface ProfileUpdateResponse {
   data: {
     nickname: string;
     imageId: number | string | null;
-    notification: boolean;
-    alarm: boolean;
+    emailNotify: boolean;
+    smsNotify: boolean;
+    postLikeAlarm: boolean;
+    postReviewAlarm: boolean;
+    popularPostAlarm: boolean;
   };
 }
 
