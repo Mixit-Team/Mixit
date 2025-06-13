@@ -121,7 +121,7 @@ const PostHeader: React.FC<PostHeaderProps> = ({ title, backHref, isAuthor, id }
 
         <Title label={title} />
 
-        {isAuthor && (
+        {isAuthor && ( 
           <button
             onClick={openMenu}
             className="absolute top-1/2 right-4 -translate-y-1/2 rounded p-1 hover:bg-gray-100"
