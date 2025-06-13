@@ -133,25 +133,25 @@ export const LoginForm: React.FC = () => {
         </p>
 
         {/* Form Fields */}
-        <div className="w-full space-y-4 pt-20">
-          <div>
+        <div className="w-full items-center justify-center space-y-4 pt-20">
+          <div className="flex w-full items-center justify-center">
             <input
               type="text"
               placeholder="아이디"
               maxLength={12}
-              className="w-full rounded border border-gray-300 px-4 py-3 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none"
+              className="w-[80%] rounded border border-gray-300 px-4 py-3 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none"
               {...register('loginId')}
             />
             {errors.loginId && (
               <p className="mt-1 text-sm text-red-500">{errors.loginId.message}</p>
             )}
           </div>
-          <div>
+          <div className="flex w-full items-center justify-center">
             <input
               type="password"
               placeholder="비밀번호"
               maxLength={12}
-              className="w-full rounded border border-gray-300 px-4 py-3 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none"
+              className="w-[80%] rounded border border-gray-300 px-4 py-3 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none"
               {...register('password')}
             />
             {errors.password && (
@@ -161,7 +161,7 @@ export const LoginForm: React.FC = () => {
         </div>
 
         {/* Save ID Checkbox */}
-        <div className="flex w-full items-center justify-start">
+        <div className="flex w-[80%] items-center justify-start">
           <input
             type="checkbox"
             id="saveId"
@@ -177,7 +177,7 @@ export const LoginForm: React.FC = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full cursor-pointer rounded-md bg-orange-500 py-3.5 font-semibold text-white hover:bg-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-[80%] cursor-pointer rounded-md bg-orange-500 py-3.5 font-semibold text-white hover:bg-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? '로그인 중...' : '로그인하기'}
         </button>

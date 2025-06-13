@@ -17,7 +17,7 @@ const ProfileMainLayout: React.FC<ProfileMainLayoutProps> = ({
 }) => {
   return (
     <div className="fixed inset-0 bg-gray-100">
-      <div className="relative mx-auto flex h-full w-full max-w-sm flex-col bg-white shadow-lg md:max-w-md lg:max-w-lg">
+      <div className="relative mx-auto flex h-screen w-full max-w-[767px] flex-col bg-white">
         {title && (
           <header className="sticky top-0 z-10 flex h-12 flex-shrink-0 items-center justify-center border-b border-gray-200 bg-white px-4">
             {showBackButton && (

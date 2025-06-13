@@ -18,7 +18,7 @@ const LoginTemplate: React.FC = () => {
   return (
     <div className="mx-auto flex min-h-screen max-w-[767px] min-w-[767px] flex-col bg-gray-100">
       <div className="flex flex-1 items-center justify-center">
-        <div className="relative mx-4 w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+        <div className="relative mx-auto flex h-screen w-full max-w-[767px] flex-col bg-white">
           <LoginForm />
         </div>
       </div>

@@ -5,8 +5,8 @@ import Footer from '../molecules/Footer';
 
 const SignupTemplate: React.FC = () => {
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gray-100">
-      <div className="relative mx-auto w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+    <div className="mx-auto flex min-h-screen max-w-[767px] flex-col items-center bg-gray-100">
+      <div className="relative mx-auto w-full rounded-lg bg-white p-8 shadow-md">
         <div className="absolute top-6 left-4">
           <BackButton />
         </div>
