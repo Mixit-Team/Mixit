@@ -11,7 +11,7 @@ const MyPageContent: React.FC = () => {
   const { data: session, status } = useSession();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  console.log(process.env.BACKEND_URL);
+  console.log('NEXT_PUBLIC_DOMAIN:', process.env.NEXT_PUBLIC_DOMAIN);
 
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
@@ -19,7 +19,7 @@ const MyPageContent: React.FC = () => {
     try {
       await signOut({
         redirect: true,
-        callbackUrl: `${process.env.NEXT_AUTH_URL}/home`,
+        callbackUrl: `${process.env.NEXT_PUBLIC_DOMAIN}/home`,
       });
       toast.success('로그아웃 되었습니다.', {
         duration: 2000,
