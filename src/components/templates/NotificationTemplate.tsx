@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNotifications } from '@/hooks/useNotificationsSSE';
 import dayjs from 'dayjs';
 import Title from '@/components/atoms/Title';
@@ -17,7 +17,36 @@ interface Notification {
 }
 
 const NotificationTemplate = () => {
-  const { notifications, error } = useNotifications();
+  // SSE 훅에서 원본 알림 목록과 refetch 함수 가져오기
+  const { notifications: rawNotis = [], error, refetch } = useNotifications();
+
+  // 로컬 상태로 복제해서 직접 수정 가능하도록 함
+  const [notifications, setNotifications] = useState<Notification[]>(rawNotis);
+
+  // 서버에서 새 데이터가 올 때마다 로컬에도 동기화
+  useEffect(() => {
+    setNotifications(rawNotis);
+  }, [rawNotis]);
+
+  // 읽음 처리 함수 (옵티미스틱 업데이트)
+  const markAsRead = async (id: number) => {
+    // 1) 로컬 상태 즉시 변경
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+    );
+
+    try {
+      // 2) 서버에 패치 요청
+      await axios.patch('/api/notifications/read', { id });
+      // 요청 후 전체 목록을 다시 불러오고 싶으면 아래 주석 해제
+      // await refetch();
+    } catch (e) {
+      console.error('읽음 처리 실패', e);
+      // 3) 실패 시 원래 서버 상태로 롤백
+      setNotifications(rawNotis);
+    }
+  };
+
   if (error) {
     return (
       <div className="p-4 text-red-500">
@@ -31,7 +60,7 @@ const NotificationTemplate = () => {
   const yesterday = today.subtract(1, 'day');
   const groups: Record<string, Notification[]> = { 오늘: [], 어제: [], 지난: [] };
 
-  notifications?.forEach((n) => {
+  notifications.forEach((n) => {
     const created = dayjs(n.createdAt);
     if (created.isSame(today, 'day')) groups['오늘'].push(n);
     else if (created.isSame(yesterday, 'day')) groups['어제'].push(n);
@@ -41,7 +70,7 @@ const NotificationTemplate = () => {
 
   return (
     <div className="relative mx-auto flex h-screen w-full max-w-[767px] flex-col bg-white">
-
+      {/* 헤더 */}
       <div
         className="
           fixed top-0 left-1/2 transform -translate-x-1/2
@@ -56,8 +85,9 @@ const NotificationTemplate = () => {
         </div>
       </div>
 
+      {/* 본문: 알림 리스트 */}
       <div className="flex-1 overflow-auto pt-[80px] pb-[80px]">
-        <div className="relative box-border w-full rounded-lg bg-white p-5 p-y space-y-6">
+        <div className="relative box-border w-full rounded-lg bg-white p-5 space-y-6">
           {sectionOrder.map((section) => {
             const list = groups[section];
             if (!list.length) return null;
@@ -68,13 +98,7 @@ const NotificationTemplate = () => {
                   {list.map((n) => (
                     <li
                       key={n.id}
-                      onClick={async () => {
-                        try {
-                          await axios.patch('/api/notifications/read', { id: n.id });
-                        } catch (e) {
-                          console.error('읽음 처리 실패', e);
-                        }
-                      }}
+                      onClick={() => markAsRead(n.id)}
                       className={`
                         cursor-pointer flex items-start gap-3 p-3
                         rounded-lg shadow-sm transition-colors
@@ -90,7 +114,7 @@ const NotificationTemplate = () => {
                       <div className="flex-1">
                         <p className="text-sm text-gray-800">{n.message}</p>
                         <time className="text-xs text-gray-400">
-                          {dayjs(n.createdAt).format('HH:mm')}
+                          {dayjs(n.createdAt).format('YYYY-MM-DD HH:mm')}
                         </time>
                       </div>
                     </li>
@@ -102,6 +126,7 @@ const NotificationTemplate = () => {
         </div>
       </div>
 
+      {/* 푸터 */}
       <div
         className="
           fixed bottom-0 left-1/2 transform -translate-x-1/2
@@ -112,6 +137,6 @@ const NotificationTemplate = () => {
       </div>
     </div>
   );
-}
+};
 
 export default withAuth(NotificationTemplate);

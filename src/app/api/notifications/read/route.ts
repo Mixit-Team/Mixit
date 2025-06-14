@@ -16,7 +16,8 @@ export async function PATCH(request: Request) {
       
       console.log('token',token)
     const backendRes = await axios.patch(
-        url,
+      url,
+        {},
         {
         headers: {
             Authorization: `Bearer ${token}`,
