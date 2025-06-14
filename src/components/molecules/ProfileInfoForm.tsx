@@ -6,18 +6,14 @@ import { Image as ImageIcon, Trash2 } from 'lucide-react';
 import InputField from './InputField';
 import Button from '../atoms/Button';
 import Modal from '../atoms/Modal';
-import { checkDuplicate } from '@/services/auth/signup';
-import { changePassword } from '@/services/auth/password';
 import { toast } from 'react-hot-toast';
-import { uploadImage } from '@/services/auth/image';
 import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
-import { updateProfile } from '@/services/auth/profile';
 import { signOut, useSession } from 'next-auth/react';
 
 // Validation constants
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
-const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i; // 이메일 인증 기능 추후 추가 예정
+const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const NICKNAME_MIN_LENGTH = 2;
 const NICKNAME_MAX_LENGTH = 10;
 const MAX_FILE_SIZE_MB = 10;
@@ -49,8 +45,6 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
   const { update } = useSession();
   const [isCheckingNickname, setIsCheckingNickname] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // const [kakaoToken, setKakaoToken] = useState(''); // SNS 계정 연동 기능 추후 추가 예정
-  // const [isVerifyingEmail, setIsVerifyingEmail] = useState(false); // 이메일 인증 기능 추후 추가 예정
   const [profileImage, setProfileImage] = useState<string | null>(initialData.imageSrc || null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({
@@ -102,9 +96,28 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
         clearErrors(field);
 
         try {
-          const isDuplicate = await checkDuplicate('nickname', value);
+          const response = await fetch('/api/v1/accounts/duplicate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              nickname: value,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw {
+              status: data.status,
+              message: data.message,
+              field: data.field,
+            };
+          }
+
           setModalType('duplicate');
-          if (isDuplicate) {
+          if (data.data) {
             setError(field, {
               type: 'duplicate',
               message: '이미 사용중인 닉네임입니다.',
@@ -137,45 +150,6 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
     [watchedUserId, watchedNickname, setError, clearErrors]
   );
 
-  // SNS 계정 연동 기능 추후 추가 예정
-  // const handleConnectionToggle = useCallback(async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     await new Promise(resolve => setTimeout(resolve, 800));
-
-  //     if (kakaoToken) {
-  //       setKakaoToken('');
-  //     } else {
-  //       setKakaoToken('sample-token-' + Math.random().toString(36).substring(2, 10));
-  //     }
-  //   } catch (error) {
-  //     console.error('Error connecting SNS:', error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }, [kakaoToken]);
-
-  // const handleEmailVerification = useCallback(async () => { // 이메일 인증 기능 추후 추가 예정
-  //   const email = watch('email');
-  //   if (!email) return;
-
-  //   setIsVerifyingEmail(true);
-  //   clearErrors('email');
-
-  //   try {
-  //     await new Promise(resolve => setTimeout(resolve, 800));
-  //     console.log('Email verification sent to:', email);
-  //   } catch (error) {
-  //     console.error('Error verifying email:', error);
-  //     setError('email', {
-  //       type: 'validate',
-  //       message: '이메일 인증 중 오류가 발생했습니다.',
-  //     });
-  //   } finally {
-  //     setIsVerifyingEmail(false);
-  //   }
-  // }, [watch, setError, clearErrors]);
-
   const handleProfileImageClick = () => {
     fileInputRef.current?.click();
   };
@@ -203,12 +177,23 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
 
     setIsLoading(true);
     try {
-      // 이미지 업로드 API 호출
-      const response = await uploadImage(file);
-      const imageId = response.data.id;
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/v1/images', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '이미지 업로드에 실패했습니다.');
+      }
+
+      const data = await response.json();
 
       // 이미지 ID 설정 및 폼 상태 업데이트
-      setValue('imageId', imageId, {
+      setValue('imageId', data.id, {
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true,
@@ -223,7 +208,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
       reader.readAsDataURL(file);
     } catch (error) {
       console.error('프로필 이미지 업로드 실패:', error);
-      toast.error('프로필 이미지 업로드에 실패했습니다.');
+      toast.error(error instanceof Error ? error.message : '프로필 이미지 업로드에 실패했습니다.');
       setError('imageId', { type: 'manual', message: '프로필 이미지 업로드에 실패했습니다.' });
     } finally {
       setIsLoading(false);
@@ -246,37 +231,66 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
       try {
         // 비밀번호가 변경된 경우에만 비밀번호 변경 API 호출
         if (data.oldPwd && data.newPwd) {
-          await changePassword({
-            oldPwd: data.oldPwd,
-            newPwd: data.newPwd,
+          const passwordResponse = await fetch('/api/v1/accounts/password', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              oldPwd: data.oldPwd,
+              newPwd: data.newPwd,
+            }),
           });
+
+          if (!passwordResponse.ok) {
+            const errorData = await passwordResponse.json();
+            throw new Error(errorData.error || '비밀번호 변경에 실패했습니다.');
+          }
+
           toast.success('비밀번호가 성공적으로 변경되었습니다.');
         }
 
         // 프로필 정보 업데이트
-        const profileData = {
-          nickname: data.nickname,
-          imageId: data.imageId ? Number(data.imageId) : null,
-          emailNotify: data.emailNotify,
-          smsNotify: data.smsNotify,
-          postLikeAlarm: data.postLikeAlarm,
-          postReviewAlarm: data.postReviewAlarm,
-          popularPostAlarm: data.popularPostAlarm,
-        };
+        const profileResponse = await fetch('/api/v1/users/my-page', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nickname: data.nickname,
+            imageId: data.imageId,
+            emailNotify: data.emailNotify,
+            smsNotify: data.smsNotify,
+            postLikeAlarm: data.postLikeAlarm,
+            postReviewAlarm: data.postReviewAlarm,
+            popularPostAlarm: data.popularPostAlarm,
+          }),
+        });
 
-        const response = await updateProfile(profileData);
+        if (!profileResponse.ok) {
+          const errorData = await profileResponse.json();
+          throw new Error(errorData.error || '프로필 수정에 실패했습니다.');
+        }
+
+        const responseData = await profileResponse.json();
+
+        // 응답 데이터 검증
+        if (!responseData.data || !responseData.data.nickname) {
+          throw new Error('프로필 정보가 올바르게 반환되지 않았습니다.');
+        }
+
         toast.success('프로필이 성공적으로 업데이트되었습니다.');
 
         // 세션 정보 갱신
         if (update) {
           await update({
             user: {
-              nickname: response.data.nickname,
-              emailNotify: response.data.emailNotify,
-              smsNotify: response.data.smsNotify,
-              postLikeAlarm: response.data.postLikeAlarm,
-              postReviewAlarm: response.data.postReviewAlarm,
-              popularPostAlarm: response.data.popularPostAlarm,
+              nickname: responseData.data.nickname,
+              emailNotify: responseData.data.emailNotify ?? false,
+              smsNotify: responseData.data.smsNotify ?? false,
+              postLikeAlarm: responseData.data.postLikeAlarm ?? false,
+              postReviewAlarm: responseData.data.postReviewAlarm ?? false,
+              popularPostAlarm: responseData.data.popularPostAlarm ?? false,
               image: profileImage || '', // 이미지가 없는 경우 빈 문자열로 설정
             },
           });
@@ -314,11 +328,10 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
       });
 
       if (!res.ok) {
-        throw new Error('회원 탈퇴에 실패했습니다.');
+        const errorData = await res.json();
+        throw new Error(errorData.error || '회원 탈퇴에 실패했습니다.');
       }
 
-      const data = await res.json();
-      console.log(data);
       toast.success('회원 탈퇴가 완료되었습니다.');
 
       // 로그아웃 처리
@@ -445,19 +458,6 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
               message: '올바른 이메일 형식이 아닙니다',
             },
           })}
-          // error={errors.email}
-          // button={
-          //   <Button
-          //     type="button"
-          //     onClick={handleEmailVerification}
-          //     disabled={isVerifyingEmail || !watchedEmail || !EMAIL_REGEX.test(watchedEmail)}
-          //     isLoading={isVerifyingEmail}
-          //     variant="primary"
-          //     className="whitespace-nowrap"
-          //   >
-          //     인증하기
-          //   </Button>
-          // }
         />
 
         {/* Nickname with duplicate check */}
@@ -553,28 +553,6 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
             </p>
           </div>
         </div>
-
-        {/* SNS 계정 연동 기능 추후 추가 예정 */}
-        {/* <div className="pt-4">
-          <h3 className="mb-3 text-sm font-medium text-gray-700">SNS 계정 연결 관리</h3>
-          <div className="flex w-full items-center">
-            <input
-              type="text"
-              className="mr-2 flex-grow rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-400"
-              placeholder="카카오톡"
-              readOnly
-              value={kakaoToken ? '연결됨' : ''}
-            />
-            <Button
-              type="button"
-              variant={kakaoToken ? 'outline' : 'primary'}
-              onClick={handleConnectionToggle}
-              className={kakaoToken ? 'border-red-500 text-red-500 hover:bg-red-50' : ''}
-            >
-              {kakaoToken ? '해제/연결' : '연결하기'}
-            </Button>
-          </div>
-        </div> */}
 
         {/* 약관 알림 */}
         <div className="space-y-3 pt-4">

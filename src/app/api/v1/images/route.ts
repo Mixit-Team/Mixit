@@ -5,10 +5,10 @@ import { Buffer } from 'node:buffer';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/services/auth/authOptions';
 
-export const runtime = 'nodejs';   
+export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions)
-  
+  const session = await getServerSession(authOptions);
+
   const formData = await request.formData();
   const image = formData.get('image') as File | null;
 
@@ -25,17 +25,19 @@ export async function POST(request: NextRequest) {
   outForm.append('image', buffer, { filename: image.name, contentType: image.type });
 
   const BACKEND = process.env.BACKEND_URL!;
-  const { data, status } = await axios.post(
-    `${BACKEND}/api/v1/images`,
-    outForm,
-    {
-      headers: {
-        ...outForm.getHeaders(),
-        Authorization: `Bearer ${session?.accessToken}`,
-      },
-      maxBodyLength: Infinity,
-    },
-  );
+  const headers: Record<string, string> = {
+    ...outForm.getHeaders(),
+  };
+
+  // 세션이 있는 경우에만 Authorization 헤더 추가
+  if (session?.accessToken) {
+    headers.Authorization = `Bearer ${session.accessToken}`;
+  }
+
+  const { data, status } = await axios.post(`${BACKEND}/api/v1/images`, outForm, {
+    headers,
+    maxBodyLength: Infinity,
+  });
 
   if (status !== 200) {
     return NextResponse.json({ error: '백엔드 업로드 실패' }, { status });

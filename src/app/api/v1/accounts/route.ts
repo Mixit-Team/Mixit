@@ -1,21 +1,31 @@
+import { NextResponse } from 'next/server';
+import axios from 'axios';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/services/auth/authOptions';
-import axios from 'axios';
-import { NextResponse } from 'next/server';
 
 export async function DELETE() {
-  const session = await getServerSession(authOptions);
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.accessToken) {
+      return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
+    }
 
-  const BACKEND = process.env.BACKEND_URL!;
-  const url = `${BACKEND}/api/v1/accounts`;
+    const BACKEND = process.env.BACKEND_URL!;
+    const response = await axios.delete(`${BACKEND}/api/v1/accounts`, {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    });
 
-  const response = await axios.delete(url, {
-    headers: {
-      Authorization: `Bearer ${session?.accessToken}`,
-    },
-  });
-
-  console.log('DELETE /api/v1/accounts response:', response);
-
-  return NextResponse.json({ success: true });
+    return NextResponse.json(response.data);
+  } catch (error) {
+    console.error('Account deletion error:', error);
+    if (axios.isAxiosError(error)) {
+      return NextResponse.json(
+        { error: error.response?.data?.error || '회원 탈퇴에 실패했습니다.' },
+        { status: error.response?.status || 500 }
+      );
+    }
+    return NextResponse.json({ error: '회원 탈퇴 중 오류가 발생했습니다.' }, { status: 500 });
+  }
 }

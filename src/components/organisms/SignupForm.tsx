@@ -6,8 +6,6 @@ import Image from 'next/image';
 import { Eye, EyeOff, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSignup } from '../../hooks/useSignup';
-import { uploadImage } from '@/services/auth/image';
-import { requestEmailVerification, verifyEmail } from '@/services/auth/email';
 import { SignupError } from '@/types/auth';
 import Link from 'next/link';
 
@@ -141,10 +139,19 @@ const SignupForm = () => {
           setImagePreview(objectUrl);
 
           // 이미지 업로드 API 호출
-          uploadImage(selectedFile)
-            .then(response => {
-              console.log('Upload response:', response);
-              const imageId = response.data.id;
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+
+          fetch('/api/v1/images', {
+            method: 'POST',
+            body: formData,
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (!data.success) {
+                throw new Error(data.message);
+              }
+              const imageId = data.data.id;
               setValue('imageId', imageId, { shouldValidate: true });
             })
             .catch(error => {
@@ -277,10 +284,35 @@ const SignupForm = () => {
     [setValue]
   );
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
+    if (!file) return;
+
+    // 이미지 미리보기
+    const objectUrl = URL.createObjectURL(file);
+    setImagePreview(objectUrl);
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/v1/images', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '이미지 업로드에 실패했습니다.');
+      }
+
+      const data = await response.json();
+      setValue('imageId', data.id);
+    } catch (error) {
+      console.error('Image upload error:', error);
+      alert(error instanceof Error ? error.message : '이미지 업로드에 실패했습니다.');
+      setImagePreview(null);
+      event.target.value = ''; // 파일 입력 초기화
     }
   };
 
@@ -322,7 +354,20 @@ const SignupForm = () => {
         setError('email', { type: 'duplicate', message: '이미 사용중인 이메일입니다.' });
       } else {
         try {
-          await requestEmailVerification(email);
+          const verifyResponse = await fetch('/api/v1/accounts/email/verify-request', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+          });
+
+          const verifyData = await verifyResponse.json();
+
+          if (!verifyResponse.ok) {
+            throw new Error(verifyData.message || '이메일 인증 요청에 실패했습니다.');
+          }
+
           showModal('알림', '인증 코드가 이메일로 전송되었습니다.');
           setShowVerificationCode(true);
         } catch (error) {
@@ -344,7 +389,23 @@ const SignupForm = () => {
     setIsVerifyingEmail(true);
 
     try {
-      await verifyEmail(email, verificationCode);
+      const response = await fetch('/api/v1/accounts/email/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          code: verificationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || '이메일 인증에 실패했습니다.');
+      }
+
       showModal('알림', '이메일 인증이 완료되었습니다.');
       setIsEmailVerified(true);
       setShowVerificationCode(false);
