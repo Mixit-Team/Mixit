@@ -174,7 +174,7 @@ export const authOptions: NextAuthOptions = {
         sameSite: 'lax',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_DOMAIN : undefined,
+        domain: process.env.NEXT_PUBLIC_DOMAIN,
       },
     },
     pkceCodeVerifier: {
