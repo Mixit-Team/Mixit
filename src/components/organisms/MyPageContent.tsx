@@ -14,6 +14,7 @@ const MyPageContent: React.FC = () => {
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
 
+    console.log('process.env', process.env);
     try {
       await signOut({
         callbackUrl: `/home`,
