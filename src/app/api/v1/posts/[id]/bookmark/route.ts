@@ -5,15 +5,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  console.log('POST /api/v1/posts/[id]/bookmark id:', id);
   const session = await getServerSession(authOptions)
 
   const BACKEND = process.env.BACKEND_URL!;
   const url = `${BACKEND}/api/v1/posts/${id}/bookmark`;
 
-  const body = {};
-  console.log('POST /api/v1/posts request body:', body);
-  console.log('POST /api/v1/posts/[id]/bookmark url:', url);
 
   const response = await axios.post(
     url,

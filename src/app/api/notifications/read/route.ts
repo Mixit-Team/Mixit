@@ -14,8 +14,10 @@ export async function PATCH(request: Request) {
     console.log("알림 읽음 처리 URL:", url);
     try {
       
+      console.log('token',token)
     const backendRes = await axios.patch(
-        url,
+      url,
+        {},
         {
         headers: {
             Authorization: `Bearer ${token}`,
