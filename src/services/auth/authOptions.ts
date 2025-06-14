@@ -167,16 +167,6 @@ export const authOptions: NextAuthOptions = {
     },
   },
   cookies: {
-    // sessionToken: {
-    //   name: `${useSecureCookie ? `__Secure-` : ''}${COOKIE_NAME}`,
-    //   options: {
-    //     httpOnly: true,
-    //     sameSite: 'lax',
-    //     path: '/',
-    //     domain: COOKIE_DOMAIN,
-    //     secure: useSecureCookie,
-    //   },
-    // }, 기존 코드, session-token이 나오지 않아서 수정
     sessionToken: {
       name: COOKIE_NAME,
       options: {
@@ -184,7 +174,7 @@ export const authOptions: NextAuthOptions = {
         sameSite: 'lax',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NEXT_PUBLIC_SSO_COOKIE_DOMAIN,
+        domain: process.env.NEXT_PUBLIC_DOMAIN,
       },
     },
     pkceCodeVerifier: {
