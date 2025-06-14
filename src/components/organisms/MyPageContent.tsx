@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import UserInfoSection from '../molecules/UserInfoSection';
 import ActionLinks from '../molecules/ActionLinks';
 import Button from '../atoms/Button';
@@ -10,20 +10,13 @@ import { useSession, signOut } from 'next-auth/react';
 const MyPageContent: React.FC = () => {
   const { data: session, status } = useSession();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [origin, setOrigin] = useState('');
-
-  useEffect(() => {
-    setOrigin(window.location.origin);
-  }, []);
-
-  console.log('origin', origin);
 
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
 
     try {
       await signOut({
-        callbackUrl: `${origin}/home`,
+        callbackUrl: `/home`,
       });
       toast.success('로그아웃 되었습니다.', {
         duration: 2000,
@@ -39,7 +32,7 @@ const MyPageContent: React.FC = () => {
     } finally {
       setIsLoggingOut(false);
     }
-  }, [origin]);
+  }, []);
 
   if (status !== 'authenticated') {
     return null;

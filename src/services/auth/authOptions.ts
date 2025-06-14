@@ -107,8 +107,16 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async redirect({ url, baseUrl }) {
-      if (url.startsWith('/')) return `${baseUrl}${url}`;
-      else if (new URL(url).origin === baseUrl) return url;
+      if (url.startsWith('/')) {
+        const result = `${baseUrl}${url}`;
+        console.log('Final redirect URL:', result);
+        return result;
+      }
+
+      if (url.startsWith(baseUrl)) {
+        return url;
+      }
+
       return baseUrl;
     },
     async jwt({ token, user, trigger, session }) {
