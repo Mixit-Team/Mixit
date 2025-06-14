@@ -11,6 +11,8 @@ const MyPageContent: React.FC = () => {
   const { data: session, status } = useSession();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  console.log(process.env.BACKEND_URL);
+
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
 

@@ -1,17 +1,17 @@
-import type { NextConfig } from 'next'
-import { config as loadDotenvFlow } from 'dotenv-flow'
+import type { NextConfig } from 'next';
+import { config as loadDotenvFlow } from 'dotenv-flow';
 
 loadDotenvFlow({
   node_env: process.env.NODE_ENV || 'production',
-})
+});
 
 const nextConfig: NextConfig = {
-   async redirects() {
+  async redirects() {
     return [
       {
-        source: '/',      
+        source: '/',
         destination: '/home',
-        permanent: false,   
+        permanent: false,
       },
     ];
   },
@@ -20,11 +20,11 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'mixit-local.s3.ap-northeast-2.amazonaws.com',
-        port: '',        
-        pathname: '/**',  
+        port: '',
+        pathname: '/**',
       },
     ],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

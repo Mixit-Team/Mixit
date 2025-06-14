@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { Eye, EyeOff, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSignup } from '../../hooks/useSignup';
-import { checkDuplicate } from '../../services/auth/signup';
 import { uploadImage } from '@/services/auth/image';
 import { requestEmailVerification, verifyEmail } from '@/services/auth/email';
 import { SignupError } from '@/types/auth';
@@ -216,8 +215,27 @@ const SignupForm = () => {
       clearErrors(fieldType);
 
       try {
-        const isDuplicate = await checkDuplicate(fieldType, value);
-        if (isDuplicate) {
+        const response = await fetch('/api/v1/accounts/duplicate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            [fieldType]: value,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw {
+            status: data.status,
+            message: data.message,
+            field: data.field,
+          } as SignupError;
+        }
+
+        if (data.data) {
           const message = `사용중인 ${fieldLabel} 입니다. 다른 ${fieldLabel}를 입력해 주세요.`;
           showModal('알림', message);
           setError(fieldType, { type: 'duplicate', message: `이미 사용중인 ${fieldLabel}입니다.` });
@@ -279,8 +297,27 @@ const SignupForm = () => {
     clearErrors('email');
 
     try {
-      const isDuplicate = await checkDuplicate('email', email);
-      if (isDuplicate) {
+      const response = await fetch('/api/v1/accounts/duplicate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw {
+          status: data.status,
+          message: data.message,
+          field: data.field,
+        } as SignupError;
+      }
+
+      if (data.data) {
         showModal('알림', '사용중인 이메일 입니다. 다른 이메일을 입력해 주세요.');
         setError('email', { type: 'duplicate', message: '이미 사용중인 이메일입니다.' });
       } else {
