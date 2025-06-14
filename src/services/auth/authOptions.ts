@@ -120,6 +120,7 @@ export const authOptions: NextAuthOptions = {
           nickname: user.nickname,
           emailNotify: user.emailNotify,
           smsNotify: user.smsNotify,
+          image: user.image,
           postLikeAlarm: user.postLikeAlarm,
           postReviewAlarm: user.postReviewAlarm,
           popularPostAlarm: user.popularPostAlarm,
@@ -133,6 +134,7 @@ export const authOptions: NextAuthOptions = {
           nickname: session.user.nickname,
           emailNotify: session.user.emailNotify,
           smsNotify: session.user.smsNotify,
+          image: session.user.image,
           postLikeAlarm: session.user.postLikeAlarm,
           postReviewAlarm: session.user.postReviewAlarm,
           popularPostAlarm: session.user.popularPostAlarm,
@@ -159,6 +161,7 @@ export const authOptions: NextAuthOptions = {
           postLikeAlarm: token.postLikeAlarm as boolean,
           postReviewAlarm: token.postReviewAlarm as boolean,
           popularPostAlarm: token.popularPostAlarm as boolean,
+          image: token.image as string,
         },
       };
     },

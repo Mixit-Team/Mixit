@@ -268,7 +268,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
         toast.success('프로필이 성공적으로 업데이트되었습니다.');
 
         // 세션 정보 갱신
-        if (update && response.data) {
+        if (update) {
           await update({
             user: {
               nickname: response.data.nickname,
@@ -277,6 +277,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
               postLikeAlarm: response.data.postLikeAlarm,
               postReviewAlarm: response.data.postReviewAlarm,
               popularPostAlarm: response.data.popularPostAlarm,
+              image: profileImage || '', // 이미지가 없는 경우 빈 문자열로 설정
             },
           });
         }
@@ -290,7 +291,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
         setIsLoading(false);
       }
     },
-    [onSave, update]
+    [onSave, update, profileImage]
   );
 
   const handleDeleteAccount = async () => {
