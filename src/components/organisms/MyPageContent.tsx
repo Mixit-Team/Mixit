@@ -16,7 +16,6 @@ const MyPageContent: React.FC = () => {
 
     try {
       await signOut({
-        redirect: true,
         callbackUrl: `/home`,
       });
       toast.success('로그아웃 되었습니다.', {
