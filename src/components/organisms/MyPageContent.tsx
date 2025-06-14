@@ -16,13 +16,14 @@ const MyPageContent: React.FC = () => {
     setOrigin(window.location.origin);
   }, []);
 
+  console.log('origin', origin);
+
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
 
     try {
       await signOut({
         callbackUrl: `${origin}/home`,
-        redirect: true,
       });
       toast.success('로그아웃 되었습니다.', {
         duration: 2000,
