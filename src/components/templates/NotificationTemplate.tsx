@@ -7,6 +7,7 @@ import Title from '@/components/atoms/Title';
 import BackButton from '@/components/atoms/BackButton';
 import axios from 'axios';
 import Footer from '../organisms/Footer';
+import { withAuth } from '../withAuth';
 
 interface Notification {
   id: number;
@@ -15,7 +16,7 @@ interface Notification {
   read?: boolean;
 }
 
-export default function NotificationTemplate() {
+const NotificationTemplate = () => {
   const { notifications, error } = useNotifications();
   if (error) {
     return (
@@ -112,3 +113,5 @@ export default function NotificationTemplate() {
     </div>
   );
 }
+
+export default withAuth(NotificationTemplate);
