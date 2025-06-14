@@ -8,17 +8,21 @@ import BackButton from '@/components/atoms/BackButton';
 import axios from 'axios';
 import Footer from '../organisms/Footer';
 import { withAuth } from '../withAuth';
+import { useRouter } from 'next/navigation';
 
 interface Notification {
   id: number;
   message: string;
   createdAt: string;
   read?: boolean;
+  type: string;
+  entityId: number;
 }
 
 const NotificationTemplate = () => {
   // SSE 훅에서 원본 알림 목록과 refetch 함수 가져오기
-  const { notifications: rawNotis = [], error, refetch } = useNotifications();
+  const { notifications: rawNotis = [], error } = useNotifications();
+  const router = useRouter();
 
   // 로컬 상태로 복제해서 직접 수정 가능하도록 함
   const [notifications, setNotifications] = useState<Notification[]>(rawNotis);
@@ -29,7 +33,7 @@ const NotificationTemplate = () => {
   }, [rawNotis]);
 
   // 읽음 처리 함수 (옵티미스틱 업데이트)
-  const markAsRead = async (id: number) => {
+  const markAsRead = async (id: number, entityId:number, type:string) => {
     // 1) 로컬 상태 즉시 변경
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
@@ -44,6 +48,13 @@ const NotificationTemplate = () => {
       console.error('읽음 처리 실패', e);
       // 3) 실패 시 원래 서버 상태로 롤백
       setNotifications(rawNotis);
+    }
+    if (type === 'TOP5_VIEW' || type === 'TOP5_BOOKMARK' || type === 'TOP5_LIKE') {
+      router.push('/home')
+    } else {
+      
+      
+      router.push(`/post/${entityId}`);
     }
   };
 
@@ -98,7 +109,7 @@ const NotificationTemplate = () => {
                   {list.map((n) => (
                     <li
                       key={n.id}
-                      onClick={() => markAsRead(n.id)}
+                      onClick={() => markAsRead(n.id, n.entityId, n.type)}
                       className={`
                         cursor-pointer flex items-start gap-3 p-3
                         rounded-lg shadow-sm transition-colors

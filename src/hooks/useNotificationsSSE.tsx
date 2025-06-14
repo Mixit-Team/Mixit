@@ -8,7 +8,9 @@ export interface Notification {
   id: number;
   message: string;
   createdAt: string;
-  read: boolean;
+  read?: boolean;
+  type: string;
+  entityId: number;
 }
 
 export function useNotifications() {
