@@ -11,12 +11,14 @@ const MyPageContent: React.FC = () => {
   const { data: session, status } = useSession();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  console.log(window.location.origin);
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
 
     try {
       await signOut({
-        callbackUrl: `/home`,
+        callbackUrl: `${window.location.origin}/home`,
+        redirect: true,
       });
       toast.success('로그아웃 되었습니다.', {
         duration: 2000,
