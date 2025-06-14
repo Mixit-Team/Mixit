@@ -6,7 +6,6 @@ import { Eye, EyeOff } from 'lucide-react';
 import InputField from './InputField';
 import Button from '../atoms/Button';
 import Modal from '../atoms/Modal';
-import { verifyUser } from '@/services/auth/verify';
 
 interface ProfileAuthFormData {
   userId: string;
@@ -54,15 +53,23 @@ const ProfileAuthForm: React.FC<ProfileAuthFormProps> = ({ onAuthenticated, user
       setIsLoading(true);
 
       try {
-        await verifyUser(data.password);
+        const response = await fetch('/api/auth/verify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ password: data.password }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || '인증에 실패했습니다.');
+        }
+
         onAuthenticated();
       } catch (error) {
-        const verifyError = error as { status: number; message: string };
-        if (verifyError.status === 401) {
-          showErrorModal('로그인이 필요합니다.');
-        } else {
-          showErrorModal('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
-        }
+        const errorMessage = error instanceof Error ? error.message : '인증에 실패했습니다.';
+        showErrorModal(errorMessage);
       } finally {
         setIsLoading(false);
       }

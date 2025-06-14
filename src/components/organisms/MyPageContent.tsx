@@ -17,7 +17,7 @@ const MyPageContent: React.FC = () => {
     try {
       await signOut({
         redirect: true,
-        callbackUrl: '/home',
+        callbackUrl: `${window.location.origin}/home`,
       });
       toast.success('로그아웃 되었습니다.', {
         duration: 2000,

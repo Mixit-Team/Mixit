@@ -183,7 +183,8 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false, // 임시 지금현재 도메인없어서
+        secure: process.env.NODE_ENV === 'production',
+        domain: process.env.NEXT_PUBLIC_SSO_COOKIE_DOMAIN,
       },
     },
     pkceCodeVerifier: {
