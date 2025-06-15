@@ -4,8 +4,52 @@ import '../styles/globals.css';
 
 export const metadata: Metadata = {
   title: 'Mixit',
-  description: 'Mixit Application',
-  keywords: ['Next.js', 'React', 'App Router'],
+  description: '믹스잇 음식/음료 조합 추천 커뮤니티',
+  keywords: [
+    '음식조합',
+    '음료조합',
+    '카페메뉴추천',
+    '믹스잇',
+    'mixit',
+    '편의점 음식조합',
+    '카페 음료레시피',
+    '편의점 음식 레시피',
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    title: 'Mixit',
+    description: '믹스잇 음식/음료 조합 추천 커뮤니티',
+    url: 'https://mixit.io.kr',
+    siteName: 'Mixit',
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon.png', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-icon.png' },
+      { url: '/apple-icon-180x180.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  manifest: '/site.webmanifest',
+  verification: {
+    google: 'aA4kTSnhP1DmGqeMIeVdFJ0kOUDIVtkvjpEXGJs_wkc', // 구글 코드
+    other: {
+      'naver-site-verification': 'e438aca974fbb29320fb7c5e872e542b320e0b78', // 네이버 코드
+    },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
