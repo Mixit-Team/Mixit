@@ -1,6 +1,13 @@
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 import Providers from './providers';
 import '../styles/globals.css';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
   title: 'Mixit',
