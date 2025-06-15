@@ -16,8 +16,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     {},
     {
       headers: {
-        Authorization:
-          `Bearer ${session?.accessToken}`,
+        ...(session && { Authorization: `Bearer ${session.accessToken}` }),
+
       },
     }
   );

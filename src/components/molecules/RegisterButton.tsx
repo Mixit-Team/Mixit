@@ -2,9 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import Button from '../atoms/Button';
+import { useSession } from 'next-auth/react';
 
 export default function RegisterButton() {
   const router = useRouter();
+  const { status } = useSession();
 
   return (
     <div
@@ -23,7 +25,14 @@ export default function RegisterButton() {
       "
     >
       <Button
-        onClick={() => router.push('/register')}
+        onClick={() => {
+          if (status === 'unauthenticated') {
+            alert('로그인 후 이용 가능 합니다');
+            router.push('/login')
+          }
+          router.push('/register')
+        }
+        }
         variant="primary"
         size="lg"
         className="

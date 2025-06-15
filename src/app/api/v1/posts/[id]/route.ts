@@ -32,7 +32,7 @@ export async function PUT(request: NextRequest) {
     // 외부 백엔드에 JSON 형태로 다시 PUT
     const response = await axios.put(url, body, {
       headers: {
-        Authorization: `Bearer ${session?.accessToken}`,
+        ...(session && { Authorization: `Bearer ${session.accessToken}` }),
         'Content-Type': 'application/json',
       },
     });

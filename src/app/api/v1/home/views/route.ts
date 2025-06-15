@@ -11,7 +11,7 @@ export async function GET() {
   console.log('GET /api/v1/home/views url:', url);
   const res = await axios.get(url, {
     headers: {
-      Authorization: `Bearer ${session?.accessToken}`,
+        ...(session && { Authorization: `Bearer ${session.accessToken}` }),
       'Content-Type': 'application/json',
     },
   });
