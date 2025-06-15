@@ -118,7 +118,7 @@ export const LoginForm: React.FC = () => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="contents-center flex min-h-screen flex-col items-center justify-start gap-6 pt-50"
+        className="flex min-h-screen flex-col items-center justify-start gap-6 px-4 pt-30"
       >
         {/* Logo */}
         <div className="text-5xl font-bold">
@@ -126,14 +126,14 @@ export const LoginForm: React.FC = () => {
           <span className="text-orange-500">i</span>
           <span className="text-pink-500">t</span>
         </div>
-        <p className="text-md pb-10 text-center text-gray-600">
+        <p className="text-md pb-6 text-center text-gray-600">
           요즘 뜨는 꿀조합부터
           <br />
           나만의 비밀 조합까지 믹스잇!
         </p>
 
         {/* Form Fields */}
-        <div className="w-full items-center justify-center space-y-4 pt-20">
+        <div className="w-full space-y-4 pt-10">
           <div className="flex w-full items-center justify-center">
             <input
               type="text"
@@ -183,7 +183,7 @@ export const LoginForm: React.FC = () => {
         </button>
 
         {/* Links */}
-        <div className="text-center text-sm text-gray-500">
+        <div className="mt-4 text-center text-sm text-gray-500">
           <a href="/find-account" className="hover:underline">
             아이디 / 비밀번호 찾기
           </a>
