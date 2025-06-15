@@ -98,6 +98,7 @@ const FavoriteSection = ({ title }: FavoriteSectionProps) => {
             <div className="text-xl text-[#F86885]">{index + 1}</div>
             <CardItem
               {...item}
+                authorNickname={item.authorNickname ?? null}
               comments={Array.isArray(item.comments) ? item.comments : [item.comments]}
               onClick={() => handleClickCard(item.id)}
             />

@@ -135,7 +135,8 @@ const SearchTemplate: React.FC = () => {
           {list.map((card: Card) => (
             <CardItem
               key={card.id}
-              {...card}
+              {...card}            authorNickname={card.authorNickname ?? null}
+
               comments={Array.isArray(card.comments) ? card.comments : card.comments ? [card.comments] : []}
               onClick={() => router.push(`/post/${card.id}`)}
             />

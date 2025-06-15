@@ -84,6 +84,7 @@ const TodayRecomendationSection = ({ title }: TodayRecomendationSectionProps) =>
           <div key={item.id}>
             <CardItem
               {...item}
+              authorNickname={item.authorNickname ?? ''}
               comments={Array.isArray(item.comments) ? item.comments : [item.comments]}
             />
           </div>

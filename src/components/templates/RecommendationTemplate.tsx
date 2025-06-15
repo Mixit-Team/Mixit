@@ -58,6 +58,7 @@ const RecommendationTemplate = () => {
           <CardItem
             key={item.id}
             {...item}
+            authorNickname={item.authorNickname ?? ''}
             comments={Array.isArray(item.comments) ? item.comments : item.comments ? [item.comments] : []}
             onClick={() => handleClickCard(item.id)}
             isDetail={true}
