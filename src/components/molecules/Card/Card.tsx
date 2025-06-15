@@ -36,20 +36,23 @@ interface CardProps {
   }[];
   onClick?: () => void;
   isDetail?: boolean;
+  authorNickname: string | null;
+
 }
 
 const CardItem = ({
   id,
   title,
-  userId,
   defaultImage,
-  likeCount: initialLikeCount,
   hasLiked: initialHasLiked = false,
   hasBookmarked: initialHasBookmarked = false,
   authorProfileImage,
   isDetail = false,
+  authorNickname,
+  images,
+  rating
 }: CardProps) => {
-  const thumbnail = defaultImage ?? '/images/default_thumbnail.png';
+  const thumbnail = defaultImage ?  defaultImage : images?.[0]?.src ?  images?.[0]?.src : '/images/default_thumbnail.png';
   const router = useRouter();
   const queryClient = useQueryClient();
   const { status } = useSession();
@@ -57,7 +60,7 @@ const CardItem = ({
   // — 로컬 상태로 관리: 서버에서 내려주는 초기값을 바탕으로 토글 가능하도록 함
   const [localBookmarked, setLocalBookmarked] = useState<boolean>(initialHasBookmarked);
   const [localLiked, setLocalLiked] = useState<boolean>(initialHasLiked);
-  const [localLikeCount, setLocalLikeCount] = useState<number>(initialLikeCount);
+  const [localLikeCount, setLocalLikeCount] = useState<number>(rating.averageRating);
 
   // prop이 바뀌었을 때 내부 상태 동기화
   useEffect(() => {
@@ -69,8 +72,8 @@ const CardItem = ({
   }, [initialHasLiked]);
 
   useEffect(() => {
-    setLocalLikeCount(initialLikeCount);
-  }, [initialLikeCount]);
+    setLocalLikeCount(rating.averageRating);
+  }, [rating.averageRating]);
 
 
 
@@ -218,18 +221,21 @@ const CardItem = ({
         {title}
       </h3>
 
+      
       {isDetail && (
         <div className="flex flex-col px-3 pb-2">
           <div className="flex h-[30px] items-center gap-2 px-0">
             <Image
-              src={authorProfileImage || '/images/default_thumbnail.png'}
+              src={  authorProfileImage
+                ? authorProfileImage
+                : '/images/default_thumbnail.png'}
               alt="Author Profile"
               width={18}    
               height={18}
               className='rounded-sm  object-contain align-middle height-[18px] w-[18px] flex-shrink-0'
               style={{ objectFit: 'cover', height: '18px', width: '18px' }}
             />
-            <h3 className="line-clamp-2 text-sm font-medium text-gray-800">{userId}</h3>
+            <h3 className="line-clamp-2 text-sm font-medium text-gray-800">{authorNickname}</h3>
           </div>
           <div className="flex items-center gap-4 pt-1 text-[12px] text-gray-500">
             <div
@@ -237,9 +243,9 @@ const CardItem = ({
             >
               <Star
                 className="w-[14px] h-[14px]"
-                fill={`${initialLikeCount} ? '#FD7A19' : 'gray`} 
+                fill={`${rating.averageRating} ? '#FD7A19' : 'gray`} 
               />
-              <span className="ml-1">{initialLikeCount}</span>
+              <span className="ml-1">{rating.averageRating}</span>
             </div>
 
                <div className="flex items-center cursor-pointer" onClick={handleClickLike}>

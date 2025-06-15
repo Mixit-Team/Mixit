@@ -100,6 +100,7 @@ const CategoryDetail = () => {
           <CardItem
             key={card.id}
             {...card}
+            isDetail={true}
             comments={Array.isArray(card.comments) ? card.comments : card.comments ? [card.comments] : []}
             onClick={() => router.push(`/post/${card.id}`)}
           />

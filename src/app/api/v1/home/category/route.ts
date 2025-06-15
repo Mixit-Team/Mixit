@@ -22,6 +22,8 @@ export async function GET(request: Request) {
     },
   });
 
+  console.log('res api/v1/home/categor' ,res.data.data)
+
   const nextPage = +page + 1 < +res.data.data.totalPages ? +page + 1 : undefined;
 
   // console.log('GET /api/v1/home/category response:', res.data.data.content);
