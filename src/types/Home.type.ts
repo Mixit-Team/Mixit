@@ -32,6 +32,8 @@ export interface Card {
     id: string;
     content: string;
   };
+  authorNickname?: string;
+
 }
 
 export interface Comment {

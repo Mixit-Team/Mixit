@@ -9,13 +9,14 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
   const session = await getServerSession(authOptions)
+
   
   const res = await fetch(`${process.env.BACKEND_URL}/api/v1/posts/${id}`, {
     method: 'GET',
     cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${session?.accessToken}`,
+        ...(session && { Authorization: `Bearer ${session.accessToken}` }),
     },
   });
 
@@ -24,6 +25,6 @@ export default async function Page({ params }: PageProps) {
     throw new Error('게시물 로드 실패');
   }
   const { data } = await res.json();
-
+ 
   return <PostTemplate data={data} />;
 }

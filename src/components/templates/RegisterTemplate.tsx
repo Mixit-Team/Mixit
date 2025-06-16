@@ -110,8 +110,9 @@ const RegisterTemplate = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto w-full space-y-6 rounded-lg bg-white p-6"
-    >
+     className="mx-auto w-full space-y-6 rounded-lg bg-white p-6 pb-[40px] md:pb-0">
+
+    
       <RegisterHeader />
       <RegisterCategory category={params.category} onChange={handleChange('category')} />
       <RegisterTitle title={params.title} onChange={handleChange('title')} />

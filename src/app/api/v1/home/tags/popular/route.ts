@@ -11,7 +11,7 @@ export async function GET() {
 
   const res = await axios.get(url, {
     headers: {
-      Authorization: `Bearer ${session?.accessToken}`,
+        ...(session && { Authorization: `Bearer ${session.accessToken}` }),
       'Content-Type': 'application/json',
     },
   });

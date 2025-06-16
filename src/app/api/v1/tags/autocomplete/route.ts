@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const url = `${BACKEND}/api/v1/tags/autocomplete?prefix=${prefix}&limit=4`;
     const res = await axios.get(url, {
       headers: {
-        Authorization: `Bearer ${session?.accessToken}`,
+        ...(session && { Authorization: `Bearer ${session.accessToken}` }),
       },
     });
 

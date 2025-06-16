@@ -13,7 +13,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const res = await axios.get(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${session?.accessToken}`,
+        ...(session && { Authorization: `Bearer ${session.accessToken}` }),
     },
   });
 
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     { rate },
     {
       headers: {
-        Authorization: `Bearer ${session?.accessToken}`,
+        ...(session && { Authorization: `Bearer ${session.accessToken}` }),
       },
     }
   );

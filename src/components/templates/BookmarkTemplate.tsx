@@ -73,6 +73,8 @@ const BookmarkTemplate = () => {
           {items.map(item => (
             <CardItem
               {...item}
+              isDetail={true}
+              authorNickname={item.authorNickname ?? ''}
               comments={Array.isArray(item.comments) ? item.comments : [item.comments]}
               key={item.id}
               onClick={() => router.push(`/post/${item.id}`)}

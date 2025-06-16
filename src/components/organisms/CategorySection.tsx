@@ -92,7 +92,8 @@ console.log('visibleCount ',visibleCount)
         {items.map((card) => (
           <CardItem
             key={card.id}
-            {...card}
+            {...card}            authorNickname={card.authorNickname ?? null}
+
             comments={Array.isArray(card.comments) ? card.comments : card.comments ? [card.comments] : []}
             onClick={() => router.push(`/post/${card.id}`)}
           />

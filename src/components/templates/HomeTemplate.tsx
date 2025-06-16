@@ -14,8 +14,10 @@ import Footer from '../organisms/Footer';
 
 const HomeTemplate: React.FC = () => {
   return (
-   <div className="mx-auto flex h-screen w-full max-w-[767px] flex-col bg-white">
-      <div className="flex-1 overflow-auto">
+    // <div className="mx-auto flex h-screen w-full max-w-[767px] flex-col bg-white">
+  <div className="mx-auto flex h-full w-full max-w-[767px] flex-col bg-white min-h-screen">
+
+    <div className="flex-1 overflow-auto pb-[40px] md:pb-0">
         <div className="relative box-border w-full rounded-lg bg-white p-5">
           <HomeHeader />
           <SearchBar />

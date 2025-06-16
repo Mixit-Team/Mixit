@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     console.log('GET /api/v1/home/recommendations/today url:', url);
     const res = await axios.get(url, {
       headers: {
-        Authorization: `Bearer ${session?.accessToken}`,
+        ...(session && { Authorization: `Bearer ${session.accessToken}` }),
         'Content-Type': 'application/json',
       },
     });

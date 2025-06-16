@@ -50,12 +50,11 @@ const PopularTemplate = () => {
       <div className="mt-4 grid w-full grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] gap-4">
         {items.map(item => (
           <CardItem
-            key={item.id}
+            authorNickname={null} key={item.id}
             {...item}
             comments={Array.isArray(item.comments) ? item.comments : item.comments ? [item.comments] : []}
             onClick={() => handleClickCard(item.id)}
-            isDetail={true}
-          />
+            isDetail={true}          />
         ))}
       </div>
 
