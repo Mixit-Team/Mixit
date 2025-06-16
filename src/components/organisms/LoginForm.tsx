@@ -118,7 +118,7 @@ export const LoginForm: React.FC = () => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex min-h-screen flex-col items-center justify-start gap-6 px-4 pt-30"
+        className="flex min-h-screen flex-col items-center justify-start gap-6 px-4 pt-20"
       >
         {/* Logo */}
         <div className="text-5xl font-bold">
@@ -133,7 +133,7 @@ export const LoginForm: React.FC = () => {
         </p>
 
         {/* Form Fields */}
-        <div className="w-full space-y-4 pt-10">
+        <div className="w-full space-y-4 pt-6">
           <div className="flex w-full items-center justify-center">
             <input
               type="text"

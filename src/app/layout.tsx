@@ -51,17 +51,20 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/site.webmanifest',
-  verification: {
-    google: 'aA4kTSnhP1DmGqeMIeVdFJ0kOUDIVtkvjpEXGJs_wkc', // 구글 코드
-    other: {
-      'naver-site-verification': 'e438aca974fbb29320fb7c5e872e542b320e0b78', // 네이버 코드
-    },
+  other: {
+    'naver-site-verification': 'e438aca974fbb29320fb7c5e872e542b320e0b78',
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
+      <head>
+        <meta
+          name="google-site-verification"
+          content="aA4kTSnhP1DmGqeMIeVdFJ0kOUDIVtkvjpEXGJs_wkc"
+        />
+      </head>
       <body>
         <Providers>
           <main className="bg-[#F4F4F5]">{children}</main>

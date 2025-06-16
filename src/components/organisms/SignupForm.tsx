@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import { Eye, EyeOff, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useSignup } from '../../hooks/useSignup';
 import { SignupError } from '@/types/auth';
 import Link from 'next/link';
 
@@ -56,7 +55,6 @@ const validateFile = (file: File): string | boolean => {
 
 const SignupForm = () => {
   const router = useRouter();
-  const { mutate: signup, isPending } = useSignup();
   // --- States ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<{
@@ -64,6 +62,7 @@ const SignupForm = () => {
     message: string;
     isSuccess?: boolean;
   }>({ title: '', message: '', isSuccess: false });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isCheckingloginId, setIsCheckingloginId] = useState(false);
@@ -86,7 +85,7 @@ const SignupForm = () => {
     setValue,
     setError,
     clearErrors,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isValid, isSubmitting: formIsSubmitting },
   } = useForm<SignupFormData>({
     mode: 'onBlur',
     defaultValues: {
@@ -418,29 +417,40 @@ const SignupForm = () => {
   }, [getValues, verificationCode, showModal]);
 
   // Form Submit
-  const onSubmit = useCallback(
-    (data: SignupFormData) => {
-      signup(data, {
-        onSuccess: () => {
-          setModalContent({
-            title: '알림',
-            message: '회원가입에 성공했습니다.\n가입한 정보로 로그인 해주세요.',
-            isSuccess: true,
-          });
-          setIsModalOpen(true);
+  const onSubmit = useCallback(async (data: SignupFormData) => {
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/v1/accounts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        onError: error => {
-          setModalContent({
-            title: '오류',
-            message: error.message,
-            isSuccess: false,
-          });
-          setIsModalOpen(true);
-        },
+        body: JSON.stringify(data),
       });
-    },
-    [signup]
-  );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || '회원가입에 실패했습니다.');
+      }
+
+      setModalContent({
+        title: '알림',
+        message: '회원가입에 성공했습니다.\n가입한 정보로 로그인 해주세요.',
+        isSuccess: true,
+      });
+      setIsModalOpen(true);
+    } catch (error) {
+      setModalContent({
+        title: '오류',
+        message: error instanceof Error ? error.message : '회원가입 중 오류가 발생했습니다.',
+        isSuccess: false,
+      });
+      setIsModalOpen(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, []);
 
   // --- Derived State for Disabling Buttons ---
   const isloginIdCheckDisabled = isCheckingloginId || !watchedloginId || !!errors.loginId;
@@ -450,7 +460,11 @@ const SignupForm = () => {
     watchedNickname.length < NICKNAME_MIN_LENGTH ||
     !!errors.nickname;
   const isSubmitDisabled =
-    isSubmitting || !isValid || !watchedAgreeService || !watchedAgreePrivacy || !isEmailVerified;
+    formIsSubmitting ||
+    !isValid ||
+    !watchedAgreeService ||
+    !watchedAgreePrivacy ||
+    !isEmailVerified;
 
   return (
     <>
@@ -763,8 +777,8 @@ const SignupForm = () => {
         {/* --- Submit Button --- */}
         <Button
           type="submit"
-          disabled={isSubmitDisabled || isPending}
-          isLoading={isPending}
+          disabled={isSubmitDisabled}
+          isLoading={isSubmitting}
           className="mt-6 w-full"
           variant="primary"
         >
