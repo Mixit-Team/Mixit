@@ -84,7 +84,7 @@ const CategoryDetail = () => {
           fetchNextPage();
         }
       },
-      { threshold: 0.5 },
+      { threshold: 0.3 },
     );
 
     io.observe(sentinelRef.current);
