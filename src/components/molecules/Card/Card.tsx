@@ -135,35 +135,35 @@ const CardItem = ({
   );
 
   // 좋아요 추가
-  const postLikeMutate = useApiMutation<{ success: boolean }, void>(
-    `/api/v1/posts/${id}/like`,
-    'post',
-    {
-      onSuccess: () => {
-        setLocalLiked(true);
-        // averageRating을 어떻게 올릴지는 정책에 따라 다르므로 예시는 +0.1
-        setLocalAverageRating(prev => +(prev + 0.1).toFixed(1));
-      },
-      onError: () => {
-        alert('좋아요 요청에 실패했습니다.');
-      },
-    },
-  );
+  // const postLikeMutate = useApiMutation<{ success: boolean }, void>(
+  //   `/api/v1/posts/${id}/like`,
+  //   'post',
+  //   {
+  //     onSuccess: () => {
+  //       setLocalLiked(true);
+  //       // averageRating을 어떻게 올릴지는 정책에 따라 다르므로 예시는 +0.1
+  //       setLocalAverageRating(prev => +(prev + 0.1).toFixed(1));
+  //     },
+  //     onError: () => {
+  //       alert('좋아요 요청에 실패했습니다.');
+  //     },
+  //   },
+  // );
 
   // 좋아요 취소
-  const postLikeDeleteMutate = useApiMutation<{ success: boolean }, void>(
-    `/api/v1/posts/${id}/like`,
-    'delete',
-    {
-      onSuccess: () => {
-        setLocalLiked(false);
-        setLocalAverageRating(prev => Math.max(0, +(prev - 0.1).toFixed(1)));
-      },
-      onError: () => {
-        alert('좋아요 취소 요청에 실패했습니다.');
-      },
-    },
-  );
+  // const postLikeDeleteMutate = useApiMutation<{ success: boolean }, void>(
+  //   `/api/v1/posts/${id}/like`,
+  //   'delete',
+  //   {
+  //     onSuccess: () => {
+  //       setLocalLiked(false);
+  //       setLocalAverageRating(prev => Math.max(0, +(prev - 0.1).toFixed(1)));
+  //     },
+  //     onError: () => {
+  //       alert('좋아요 취소 요청에 실패했습니다.');
+  //     },
+  //   },
+  // );
 
   /* ------------------------------------------------------------------ */
   /* 이벤트 핸들러                                                      */
@@ -181,18 +181,18 @@ const CardItem = ({
     }
   };
 
-  const handleClickLike = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (status !== 'authenticated') {
-      alert('로그인이 필요합니다.');
-      return;
-    }
-    if (localLiked) {
-      await postLikeDeleteMutate.mutateAsync();
-    } else {
-      await postLikeMutate.mutateAsync();
-    }
-  };
+  // const handleClickLike = async (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   if (status !== 'authenticated') {
+  //     alert('로그인이 필요합니다.');
+  //     return;
+  //   }
+  //   if (localLiked) {
+  //     await postLikeDeleteMutate.mutateAsync();
+  //   } else {
+  //     await postLikeMutate.mutateAsync();
+  //   }
+  // };
 
   const onCardClick = () => {
     router.push(`/post/${id}`);
@@ -261,17 +261,17 @@ const CardItem = ({
             </div>
 
             {/* ♥ 좋아요 토글 */}
-            <div
+            {/* <div
               className="flex items-center cursor-pointer"
               onClick={handleClickLike}
-            >
+            > */}
               <Heart
                 size={14}
                 fill={localLiked ? 'red' : 'none'}
                 stroke={localLiked ? 'red' : '#ccc'}
                 strokeWidth={2}
               />
-            </div>
+            {/* </div> */}
           </div>
         </div>
       )}
