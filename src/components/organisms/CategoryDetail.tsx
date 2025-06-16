@@ -7,26 +7,25 @@ import { CategoryList } from '@/config/home.config';
 import CategoryTabs from '../molecules/CategoryTabs';
 import CardItem from '../molecules/Card/Card';
 import LoadingSpinner from '../atoms/LoadingSpinner';
-import { useApiInfinite } from '@/hooks/useApi';
 import type { Card, Category } from '@/types/Home.type';
+import { useApiInfinite } from '@/hooks/useApi';
 
 export type Sort = 'latest' | 'createdAt' | 'popular';
+
 export interface FetchParams {
   category: Category;
   size: number;
-  page: number;
   sort: Sort;
 }
 
-const COL_WIDTH = 140;         
-const DEFAULT_ROWS = 2;       
+const COL_WIDTH = 140;
+const DEFAULT_ROWS = 2;
 const calcPageSize = () => {
   const cols = Math.max(1, Math.floor(window.innerWidth / COL_WIDTH));
   return cols * DEFAULT_ROWS;
 };
 
 const CategoryDetail = () => {
-  /* refs & router */
   const sentinelRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -37,29 +36,31 @@ const CategoryDetail = () => {
 
   const [params, setParams] = useState<FetchParams>({
     category: CategoryList[0].value,
-    page: 0,
     size: pageSize,
     sort: 'createdAt',
   });
 
   useEffect(() => {
-    const onResize = () => setPageSize(calcPageSize());
+    const onResize = () => {
+      const newSize = calcPageSize();
+      setPageSize(newSize);
+    };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
   useEffect(() => {
-    setParams(prev => ({ ...prev, size: pageSize, page: 0 }));
-    // 캐시 비우고 새로 가져오기
+    setParams((prev) => ({ ...prev, size: pageSize }));
     queryClient.removeQueries({ queryKey: ['category'] });
+    window.scrollTo({ top: 0 });
   }, [pageSize, queryClient]);
 
-  /* ⑥ 카테고리/정렬 변경 핸들러 */
   const handleChange =
     <K extends keyof FetchParams>(key: K) =>
     (value: FetchParams[K]) => {
-      setParams(prev => ({ ...prev, [key]: value, page: 0 }));
+      setParams((prev) => ({ ...prev, [key]: value }));
       queryClient.removeQueries({ queryKey: ['category'] });
+      window.scrollTo({ top: 0 });
     };
 
   const {
@@ -73,10 +74,11 @@ const CategoryDetail = () => {
     params,
   );
 
-  const items: Card[] = data?.pages.flatMap(p => p.content) ?? [];
-  console.log('items', items);
+  const items: Card[] = data?.pages.flatMap((p) => p.content) ?? [];
+
   useEffect(() => {
-    if (!sentinelRef.current || !hasNextPage) return;
+    const el = sentinelRef.current;
+    if (!el || !hasNextPage) return;
 
     const io = new IntersectionObserver(
       ([entry]) => {
@@ -84,10 +86,10 @@ const CategoryDetail = () => {
           fetchNextPage();
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.1 },
     );
 
-    io.observe(sentinelRef.current);
+    io.observe(el);
     return () => io.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
@@ -101,15 +103,21 @@ const CategoryDetail = () => {
             key={card.id}
             {...card}
             authorNickname={card.authorNickname ?? null}
-            isDetail={true}
-            comments={Array.isArray(card.comments) ? card.comments : card.comments ? [card.comments] : []}
+            isDetail
+            comments={Array.isArray(card.comments)
+              ? card.comments
+              : card.comments
+              ? [card.comments]
+              : []}
             onClick={() => router.push(`/post/${card.id}`)}
           />
         ))}
       </div>
 
+      {/* sentinel */}
       <div ref={sentinelRef} className="h-1" />
 
+      {/* 로딩 스피너 */}
       {isFetchingNextPage && (
         <div className="flex justify-center py-4">
           <LoadingSpinner />
