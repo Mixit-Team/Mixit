@@ -365,7 +365,10 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-4 flex flex-col space-y-5 pb-[80px]">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-4 flex min-h-[calc(100vh-200px)] flex-col space-y-5 pb-6 md:pb-[80px]"
+      >
         <InputField
           label="아이디"
           id="userId"
