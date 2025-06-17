@@ -120,7 +120,7 @@ const PostsPage: React.FC = () => {
 
   return (
     <ProfileMainLayout title="내 게시물" showBackButton>
-      <div className="min-h-[80vh] bg-white px-2 pb-4">
+      <div className="pb-40px min-h-[80vh] bg-white px-2 md:pb-[60px]">
         <div className="pt-4 pb-2">
           <SortTabs sort={sort} onChange={setSort} />
         </div>
