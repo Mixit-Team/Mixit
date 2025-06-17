@@ -367,7 +367,7 @@ const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSave }
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="pb-40px mt-4 flex flex-col space-y-5 md:pb-[60px]"
+        className="mt-4 flex flex-col space-y-5 pb-[40px] md:pb-[60px]"
       >
         <InputField
           label="아이디"
