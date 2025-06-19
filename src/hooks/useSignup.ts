@@ -1,24 +1,24 @@
 import { useMutation } from '@tanstack/react-query';
-import { signup } from '@/services/auth/signup';
-import { SignupFormData, SignupResponse, SignupError } from '@/types/auth';
-import { useToast } from '@/hooks/useToast';
+import { SignupFormData } from '@/types/auth';
 
 export const useSignup = () => {
-  const { showToast } = useToast();
+  return useMutation({
+    mutationFn: async (data: SignupFormData) => {
+      const response = await fetch('/api/v1/accounts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-  return useMutation<SignupResponse, SignupError, SignupFormData>({
-    mutationFn: signup,
-    onSuccess: data => {
-      showToast({
-        type: 'success',
-        message: data.message,
-      });
-    },
-    onError: error => {
-      showToast({
-        type: 'error',
-        message: error.message,
-      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || '회원가입에 실패했습니다.');
+      }
+
+      return result;
     },
   });
 };
