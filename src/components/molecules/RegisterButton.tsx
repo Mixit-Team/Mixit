@@ -41,6 +41,7 @@ export default function RegisterButton() {
         background-gradient-to-r from-[#FF6B6B] to-[#FFB6B6] 
          hover:scale-[1.02] transform
           transition-transform duration-200 ease-out
+          cursor-pointer
         "
       >
         + 조합 등록

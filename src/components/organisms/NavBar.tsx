@@ -37,8 +37,8 @@ export default function NavBar() {
           >
             <Icon
               className="
-                h-5 w-5       /* 기본: 작게 */
-                sm:h-6 sm:w-6 /* 640px 이상에서 크기 유지 */
+                h-5 w-5       
+                sm:h-6 sm:w-6 
               "
               style={{
                 color: isActive
@@ -48,8 +48,8 @@ export default function NavBar() {
             />
             <span
               className="
-                text-[10px]    /* 기본: 작게 */
-                sm:text-xs    /* 640px 이상에서 원래 text-xs */
+                text-[10px]   
+                sm:text-xs    
               "
               style={{
                 color: isActive

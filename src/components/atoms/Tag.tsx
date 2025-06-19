@@ -2,7 +2,7 @@ import { COLOR_SEMANTIC_FILL_NORMAL, COLOR_SEMANTIC_LABEL_NEUTRAL } from '@/conf
 
 const Tag = ({ tag, onClick }: { tag: string, onClick: ()=>void }) => (
   <div
-    className="flex justify-center h-[32px] w-[90px] items-center rounded-lg px-[8px] text-center text-sm whitespace-nowrap box-border cursor-pointer"
+    className="flex justify-center h-[32px] w-[90px] items-center rounded-lg px-[8px] text-center text-sm whitespace-nowrap box-border cursor-pointer hover:scale-105"
     style={{ backgroundColor: COLOR_SEMANTIC_FILL_NORMAL }}
     onClick={onClick}
   >

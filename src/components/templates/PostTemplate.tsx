@@ -101,14 +101,14 @@ const PostTemplate = ({ data }: { data: Card }) => {
       <div className="flex space-x-6 text-gray-600">
         <button
           type="button"
-          className="flex items-center gap-1 transition hover:text-red-500"
+          className="flex items-center gap-1 transition hover:text-red-500 cursor-pointer"
           onClick={handleClickLike}
         >
           {data.hasLiked ? '❤️' : '🤍'} 좋아요 {data.likeCount}
         </button>
         <button
           type="button"
-          className="flex items-center gap-1 transition hover:text-indigo-500"
+          className="flex items-center gap-1 transition hover:text-indigo-500 cursor-pointer"
           onClick={handleClickBookmark}
         >
           {data?.hasBookmarked ? '📌' : '📍'} 북마크 {data.bookmarkCount}

@@ -69,26 +69,26 @@ const PostHeader: React.FC<PostHeaderProps> = ({ title, backHref, isAuthor, id }
       >
         <button
           onClick={() => menuDialog.current?.close()}
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 cursor-pointer"
         >
           ✕
         </button>
         <div className="flex flex-col divide-y divide-gray-200">
           <button
             onClick={onChooseShare}
-            className="py-3 text-center text-sm hover:bg-gray-100"
+            className="py-3 text-center text-sm hover:bg-gray-100 cursor-pointer"
           >
             공유하기
           </button>
           <button
             onClick={onChooseEdit}
-            className="py-3 text-center text-sm hover:bg-gray-100"
+            className="py-3 text-center text-sm hover:bg-gray-100 cursor-pointer"
           >
             수정하기
           </button>
           <button
             onClick={onChooseDelete}
-            className="py-3 text-center text-sm hover:bg-gray-100"
+            className="py-3 text-center text-sm hover:bg-gray-100 cursor-pointer"
           >
             삭제하기
           </button>
@@ -124,7 +124,7 @@ const PostHeader: React.FC<PostHeaderProps> = ({ title, backHref, isAuthor, id }
         {isAuthor && ( 
           <button
             onClick={openMenu}
-            className="absolute top-1/2 right-4 -translate-y-1/2 rounded p-1 hover:bg-gray-100"
+            className="absolute top-1/2 right-4 -translate-y-1/2 rounded p-1 hover:bg-gray-100 cursor-pointer"
           >
             <EllipsisVertical size={16} />
           </button>

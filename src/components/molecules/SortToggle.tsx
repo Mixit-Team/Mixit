@@ -17,7 +17,8 @@ export default function SortToggle({ flags, active, onChange }: SortToggleProps)
         <button
           key={value}
           onClick={() => onChange(value)}
-          className={`text-500 rounded border-none px-2 py-1 text-sm ${active === value ? 'text-black' : 'text-gray-700'} `}
+          className={`text-500 rounded border-none cursor-pointer px-2 py-1      hover:scale-105
+ text-sm ${active === value ? 'text-black' : 'text-gray-700'} `}
         >
           {label}
         </button>
