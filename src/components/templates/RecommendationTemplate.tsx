@@ -17,7 +17,7 @@ const RecommendationTemplate = () => {
 
   const params = {
     page: 0,
-    size: 10,
+    size: 20,
     sort: 'latest',
   };
 

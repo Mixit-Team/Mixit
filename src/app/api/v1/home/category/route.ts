@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const page = searchParams.get('page') ?? '0';
-  const size = searchParams.get('size') ?? '10';
+  const size = searchParams.get('size') ?? '20';
   const category = searchParams.get('category') ?? 'CAFE';
   const sort = searchParams.get('sort') ?? 'createdAt';
 

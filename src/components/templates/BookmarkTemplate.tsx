@@ -20,7 +20,7 @@ interface FetchParams {
 const BookmarkTemplate = () => {
   const [params, setParams] = useState<FetchParams>({
     page: 0,
-    size: 10,
+    size: 20,
     sort: 'latest',
   });
 
@@ -33,7 +33,7 @@ const BookmarkTemplate = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useApiInfinite<Card>(
     ['bookmark', params.sort],
     '/api/v1/users/me/bookmarks',
-    { size: 10, sort: params.sort }
+    { size: 20, sort: params.sort }
   );
 
   console.log('북마크 데이터:', data);

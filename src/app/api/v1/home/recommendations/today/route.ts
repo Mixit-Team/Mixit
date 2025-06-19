@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   
     const { searchParams } = new URL(request.url);
     const page = searchParams.get('page') || '0';
-    const size = searchParams.get('size') || '10';
+    const size = searchParams.get('size') || '20';
 
     const BACKEND = process.env.BACKEND_URL!;
     const url = `${BACKEND}/api/v1/home/recommendations/today?page=${page}&size=${size}`;

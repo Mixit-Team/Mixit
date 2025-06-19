@@ -31,7 +31,7 @@ const CategoryDetail = () => {
   const router = useRouter();
 
   const [pageSize, setPageSize] = useState<number>(() =>
-    typeof window !== 'undefined' ? calcPageSize() : 8,
+    typeof window !== 'undefined' ? calcPageSize() : 20,
   );
 
   const [params, setParams] = useState<FetchParams>({
