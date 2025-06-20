@@ -21,7 +21,7 @@ interface ApiReview {
   id: string;
 }
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 const CommentsPage: React.FC = () => {
   const [sort, setSort] = useState<'latest' | 'popular'>('latest');
@@ -29,56 +29,71 @@ const CommentsPage: React.FC = () => {
   const [comments, setComments] = useState<CommentItemProps[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
-  const fetchComments = useCallback(async (page: number) => {
-    try {
-      const response = await fetch(`/api/v1/users/my-page/reviews?page=${page}&size=${PAGE_SIZE}`);
-      if (!response.ok) {
-        throw new Error('댓글 데이터를 불러오지 못했습니다.');
+  const fetchComments = useCallback(
+    async (page: number) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // API는 0-based pagination을 사용하므로 page-1을 전달
+        const response = await fetch(
+          `/api/v1/users/my-page/reviews?page=${page - 1}&size=${PAGE_SIZE}&sort=${sort}`
+        );
+
+        if (!response.ok) {
+          throw new Error('댓글 데이터를 불러오지 못했습니다.');
+        }
+
+        const data: ReviewApiPage<ApiReview> = await response.json();
+
+        const formatted: CommentItemProps[] = data.content.map(item => ({
+          id: item.id,
+          postImage: item.review.image,
+          postTitle: item.post.title,
+          comment: item.review.content,
+          createdAt: item.review.createdAt,
+        }));
+
+        setComments(formatted);
+        setTotalPages(data.totalPages);
+        setLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '에러가 발생했습니다.');
+        setLoading(false);
       }
-      const data: ReviewApiPage<ApiReview> & { nextPage?: number } = await response.json();
-      const formatted: CommentItemProps[] = data.content.map(item => ({
-        id: item.id,
-        postImage: item.review.image,
-        postTitle: item.post.title,
-        comment: item.review.content,
-        createdAt: item.review.createdAt,
-      }));
-      return {
-        comments: formatted,
-        totalPages: data.totalPages,
-        hasMore: !!data.nextPage,
-      };
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '에러가 발생했습니다.');
-      return { comments: [], totalPages: 1, hasMore: false };
-    }
+    },
+    [sort]
+  );
+
+  // 페이지 변경 핸들러
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
   }, []);
 
-  const loadComments = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    const { comments: newComments, totalPages } = await fetchComments(currentPage - 1);
-    setComments(newComments);
-    setTotalPages(totalPages);
-    setLoading(false);
-  }, [currentPage, fetchComments]);
-
-  useEffect(() => {
-    loadComments();
-  }, [sort, currentPage, loadComments]);
-
-  const handlePageChange = useCallback((page: number) => setCurrentPage(page), []);
-  const handleSortChange = useCallback((s: 'latest' | 'popular') => {
-    setSort(s);
+  // 정렬 변경 시 첫 페이지로 리셋
+  const handleSortChange = useCallback((newSort: 'latest' | 'popular') => {
+    setSort(newSort);
     setCurrentPage(1);
   }, []);
 
+  // 정렬이나 페이지가 변경될 때 데이터 로드
+  useEffect(() => {
+    fetchComments(currentPage);
+  }, [currentPage, fetchComments]);
+
+  // 정렬이 변경될 때 첫 페이지로 리셋
+  useEffect(() => {
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    }
+  }, [sort]);
+
   return (
     <ProfileMainLayout title="내 댓글" showBackButton>
-      <div className="flex min-h-[80vh] flex-col bg-white p-0">
-        <div className="px-4 pt-4 pb-2">
+      <div className="bg-white px-2 pb-[160px]">
+        <div className="pt-4 pb-2">
           <SortTabs sort={sort} onChange={handleSortChange} />
         </div>
         <div className="px-2">
@@ -86,7 +101,14 @@ const CommentsPage: React.FC = () => {
           {loading ? (
             <div className="py-10 text-center text-gray-400">불러오는 중...</div>
           ) : comments.length > 0 ? (
-            <CommentList comments={comments} />
+            <>
+              <CommentList comments={comments} />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </>
           ) : (
             <div className="py-10 text-center text-gray-400">
               작성한 댓글이 없습니다.
@@ -94,13 +116,6 @@ const CommentsPage: React.FC = () => {
               댓글을 남겨보세요.
             </div>
           )}
-        </div>
-        <div className="py-2">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
         </div>
       </div>
     </ProfileMainLayout>
