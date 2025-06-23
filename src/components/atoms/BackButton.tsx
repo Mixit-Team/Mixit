@@ -10,7 +10,12 @@ const BackButton: React.FC<BackButtonProps> = ({ className = '' }) => {
   const router = useRouter();
 
   return (
-    <button onClick={() => router.back()} className={` ${className}`}>
+    <button onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      router.back() 
+      
+    }} className={` ${className}`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-6 w-6"

@@ -8,9 +8,11 @@
     }
   },
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev ",
     "build": "next build",
     "start": "next start",
+    "build:live": "NODE_ENV=production APP_ENV=live next build",
+    "start:live": "NODE_ENV=production APP_ENV=live next start",
     "lint": "next lint",
     "format": "prettier --write .",
     "test:unit:jest": "jest",
@@ -30,31 +32,44 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
+    "@react-spring/web": "^10.0.0",
     "@tanstack/react-query": "^5.74.0",
     "axios": "^1.8.4",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
+    "dotenv-flow": "^4.1.0",
+    "formidable": "^3.5.4",
+    "framer-motion": "^12.9.2",
     "lucide-react": "^0.501.0",
     "next": "15.3.0",
+    "next-auth": "^4.24.11",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.55.0",
+    "react-hot-toast": "^2.5.2",
     "recoil": "^0.7.7",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "zustand": "^5.0.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@svgr/webpack": "^8.1.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^13.3.0",
     "@types/cypress": "^1.1.6",
+    "@types/formidable": "^3.4.5",
     "@types/jest": "^29.5.14",
-    "@types/node": "^20.17.30",
+    "@types/node": "20.17.32",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.2.0",
     "@typescript-eslint/eslint-plugin": "^8.29.1",
     "@typescript-eslint/parser": "^8.29.1",
+    "cross-env": "^7.0.3",
     "eslint": "^9.24.0",
     "eslint-config-next": "^15.3.0",
     "eslint-config-prettier": "^10.1.2",
@@ -73,5 +88,10 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
+  },
+  "overrides": {
+    "eslint-plugin-tailwindcss": {
+      "tailwindcss": ">=4.0.0"
+    }
   }
 }

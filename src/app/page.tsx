@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: '홈 | 내 Next.js 앱',
-  description: '환영합니다! 내 Next.js 앱의 홈페이지입니다.',
+  title: '홈 | Mixit',
+  description: '환영합니다! Mixit의 홈페이지입니다.',
 };
 
 export default function HomePage() {
@@ -15,8 +15,11 @@ export default function HomePage() {
         <Link href="/login" className="text-blue-500 hover:underline">
           로그인
         </Link>
-        <Link href="/dashboard " className="text-blue-500 hover:underline">
-          대시보드
+        <Link href="/mypage " className="text-blue-500 hover:underline">
+          마이페이지
+        </Link>
+        <Link href="/home " className="text-blue-500 hover:underline">
+          홈
         </Link>
       </div>
     </main>

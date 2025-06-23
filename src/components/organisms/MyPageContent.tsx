@@ -1,88 +1,62 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useCallback, useEffect } from 'react';
 import UserInfoSection from '../molecules/UserInfoSection';
 import ActionLinks from '../molecules/ActionLinks';
 import Button from '../atoms/Button';
-
-interface UserProfile {
-  nickname: string;
-}
-
-// Placeholder function to simulate fetching user data
-const fetchUserProfile = async (): Promise<UserProfile> => {
-  console.log('Simulating fetch user profile...');
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
-  // Simulate success/failure
-  if (Math.random() > 0.2) {
-    return { nickname: '믹스잇테스터' };
-  } else {
-    throw new Error('Failed to fetch user profile.'); // Simulate error
-  }
-};
+import { toast } from 'react-hot-toast';
+import { useSession, signOut } from 'next-auth/react';
 
 const MyPageContent: React.FC = () => {
-  const router = useRouter();
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: session, status } = useSession();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [callbackUrl, setCallbackUrl] = useState('/home');
 
   useEffect(() => {
-    const loadProfile = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const profile = await fetchUserProfile();
-        setUserProfile(profile);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-        console.error('Error fetching profile:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadProfile();
+    const isProd = process.env.NODE_ENV === 'production';
+    setCallbackUrl(isProd ? 'https://mixit.io.kr/home' : '/home');
   }, []);
 
-  const handleLogout = useCallback(() => {
-    console.log('Logout');
-    router.push('/login');
-  }, [router]);
+  const handleLogout = useCallback(async () => {
+    setIsLoggingOut(true);
 
-  if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center p-4">
-        <p className="text-gray-500">Loading profile...</p>
-      </div>
-    );
+    try {
+      await signOut({
+        callbackUrl,
+        redirect: true,
+      });
+      toast.success('로그아웃 되었습니다.', {
+        duration: 2000,
+        position: 'top-center',
+        style: {
+          background: '#333',
+          color: '#fff',
+        },
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('로그아웃 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }, [callbackUrl]);
+
+  if (status !== 'authenticated') {
+    return null;
   }
 
-  if (error) {
-    return (
-      <div className="flex h-64 flex-col items-center justify-center p-4 text-center">
-        <p className="mb-2 text-red-600">Error loading profile:</p>
-        <p className="mb-4 text-sm text-gray-700">{error}</p>
-        <Button onClick={() => window.location.reload()} variant="secondary" size="sm">
-          Retry
-        </Button>
-      </div>
-    );
-  }
-
-  // Success State
   return (
     <div className="flex flex-col space-y-6 p-4">
-      <UserInfoSection nickname={userProfile?.nickname || 'Guest'} />
+      <UserInfoSection nickname={session.user.nickname || 'User'} />
       <ActionLinks />
       <Button
         onClick={handleLogout}
         variant="outline"
         fullWidth
-        className="rounded-lg border-black"
+        className="cursor-pointer rounded-lg border-black"
+        disabled={isLoggingOut}
       >
-        로그아웃
+        {isLoggingOut ? '로그아웃 중...' : '로그아웃'}
       </Button>
     </div>
   );

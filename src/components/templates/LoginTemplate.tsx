@@ -2,20 +2,25 @@
 
 import React from 'react';
 import LoginForm from '../organisms/LoginForm';
-import BackButton from '../atoms/BackButton';
 
+// const LoginTemplate: React.FC = () => {
+//   return (
+//     <div className="relative mx-auto flex min-h-screen w-full max-w-[767px] flex-col bg-white">
+//       <div className="flex-1 overflow-auto">
+//         <div className="relative box-border w-full rounded-lg bg-white p-5">
+//           <LoginForm />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 const LoginTemplate: React.FC = () => {
   return (
-    <div className="fixed inset-0 bg-gray-100">
-      <div className="flex h-full w-full flex-col">
-        <div className="flex-1" />
-        <div className="relative mx-auto w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-          <div className="absolute top-6 left-4">
-            <BackButton />
-          </div>
+    <div className="mx-auto flex min-h-screen w-full max-w-[767px] flex-col bg-gray-100">
+      <div className="flex flex-1 items-center justify-center">
+        <div className="relative w-full flex-col bg-white">
           <LoginForm />
         </div>
-        <div className="flex-1" />
       </div>
     </div>
   );
