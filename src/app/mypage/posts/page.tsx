@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ProfileMainLayout from '@/components/templates/ProfileMainLayout';
 import SortTabs from '@/components/molecules/SortTabs';
 import PostGrid from '@/components/organisms/PostGrid';
-// import InfiniteScrollLoader from '@/components/organisms/InfiniteScrollLoader';
+import Pagination from '@/components/molecules/Pagination';
 import type { PostCardProps } from '@/components/molecules/PostCard';
 import type { PostApiPage } from '@/app/api/v1/users/my-page/posts/route';
 import Button from '@/components/atoms/Button';
@@ -22,30 +22,33 @@ interface ApiPost {
   };
 }
 
-const PAGE_SIZE = 16;
+const PAGE_SIZE = 20;
 
 const PostsPage: React.FC = () => {
   const [sort, setSort] = useState<'latest' | 'popular'>('latest');
   const [posts, setPosts] = useState<PostCardProps[]>([]);
-  const [hasMore, setHasMore] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const pageRef = useRef(0);
   const router = useRouter();
 
-  console.log(posts);
   const fetchPosts = useCallback(
     async (page: number) => {
       try {
+        setLoading(true);
+        setError(null);
+
+        // API는 0-based pagination을 사용하므로 page-1을 전달
         const response = await fetch(
-          `/api/v1/users/my-page/posts?page=${page}&size=${PAGE_SIZE}&sort=${sort}`
+          `/api/v1/users/my-page/posts?page=${page - 1}&size=${PAGE_SIZE}&sort=${sort}`
         );
 
         if (!response.ok) {
           throw new Error('Failed to fetch posts');
         }
 
-        const data: PostApiPage<ApiPost> & { nextPage?: number } = await response.json();
+        const data: PostApiPage<ApiPost> = await response.json();
 
         const formattedPosts: PostCardProps[] = data.content.map(post => ({
           id: post.id,
@@ -57,62 +60,39 @@ const PostsPage: React.FC = () => {
           profileImage: post.authorProfileImage,
         }));
 
-        return {
-          posts: formattedPosts,
-          hasMore: !!data.nextPage,
-        };
+        setPosts(formattedPosts);
+        setTotalPages(data.totalPages);
+        setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
-        return { posts: [], hasMore: false };
+        setLoading(false);
       }
     },
     [sort]
   );
 
-  const loadMore = useCallback(async () => {
-    if (loading || !hasMore) return;
+  // 페이지 변경 핸들러
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+  }, []);
 
-    setLoading(true);
-    setError(null);
+  // 정렬 변경 시 첫 페이지로 리셋
+  const handleSortChange = useCallback((newSort: 'latest' | 'popular') => {
+    setSort(newSort);
+    setCurrentPage(1);
+  }, []);
 
-    const nextPage = pageRef.current + 1;
-    const { posts: newPosts, hasMore: morePosts } = await fetchPosts(nextPage);
-
-    setPosts(prev => [...prev, ...newPosts]);
-    pageRef.current = nextPage;
-    setHasMore(morePosts);
-    setLoading(false);
-  }, [loading, hasMore, fetchPosts]);
-
+  // 정렬이나 페이지가 변경될 때 데이터 로드
   useEffect(() => {
-    const resetAndLoad = async () => {
-      setPosts([]);
-      pageRef.current = 0;
-      setHasMore(true);
-      setError(null);
-      setLoading(true);
+    fetchPosts(currentPage);
+  }, [currentPage, fetchPosts]);
 
-      const { posts: initialPosts, hasMore: morePosts } = await fetchPosts(0);
-      setPosts(initialPosts);
-      setHasMore(morePosts);
-      setLoading(false);
-    };
-
-    resetAndLoad();
-  }, [sort, fetchPosts]);
-
+  // 정렬이 변경될 때 첫 페이지로 리셋
   useEffect(() => {
-    if (!hasMore || loading) return;
-
-    const handleScroll = () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
-        loadMore();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [loadMore, hasMore, loading]);
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    }
+  }, [sort]);
 
   const handleRegisterClick = useCallback(() => {
     router.push('/register');
@@ -122,14 +102,21 @@ const PostsPage: React.FC = () => {
     <ProfileMainLayout title="내 게시물" showBackButton>
       <div className="bg-white px-2 pb-[160px]">
         <div className="pt-4 pb-2">
-          <SortTabs sort={sort} onChange={setSort} />
+          <SortTabs sort={sort} onChange={handleSortChange} />
         </div>
         <div className="px-2">
           {error && <div className="py-2 text-center text-red-500">{error}</div>}
           {loading ? (
             <div className="py-10 text-center text-gray-400">불러오는 중...</div>
           ) : posts.length > 0 ? (
-            <PostGrid posts={posts} />
+            <>
+              <PostGrid posts={posts} />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </>
           ) : (
             <div className="py-10 text-center text-gray-400">
               작성한 게시글이 없습니다.
@@ -148,14 +135,6 @@ const PostsPage: React.FC = () => {
             </div>
           )}
         </div>
-        {/* {error ? (
-          <div className="flex h-40 items-center justify-center text-red-500">{error}</div>
-        ) : (
-          <>
-            <PostGrid posts={posts} />
-            {loading && <InfiniteScrollLoader />}
-          </>
-        )} */}
       </div>
     </ProfileMainLayout>
   );
