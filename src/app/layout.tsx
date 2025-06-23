@@ -1,6 +1,7 @@
 import { Metadata, Viewport } from 'next';
 import Providers from './providers';
 import '../styles/globals.css';
+import Script from 'next/script';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -64,6 +65,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           name="google-site-verification"
           content="aA4kTSnhP1DmGqeMIeVdFJ0kOUDIVtkvjpEXGJs_wkc"
         />
+         <>
+            <Script
+
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUCLIC_GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="gtag-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUCLIC_GA_ID}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
       </head>
       <body>
         <Providers>
